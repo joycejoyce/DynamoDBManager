@@ -1,23 +1,3 @@
-body {
-    margin: 10px;
-}
-
-#grid-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 10px;
-}
-
-#grid-wrapper > div {
-    border: 6px solid #ccccff;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-.query-form {
+#tbl-name-dropdown {
     display: none;
-}
-
-.my-table td {
-    color: red;
 }

@@ -17,74 +17,35 @@
             4. SystemJS-extra
             [CSS]
             1. Bootstrap
-            2. (mine)
+            2. (mine) //must be the last style sheet
         -->
         <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
         <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/system.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/extras/named-exports.js"></script>
         <!--<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
-        <link rel="stylesheet" type="text/css" href="./styles/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="./styles/db-operations.css">
 	</head>
 	<body>
-        <div id="grid-wrapper">
-            <div id="creat-delete-table-section">
-                <h3>Create / Delete Tables</h3>
-                <table class="table w-auto my-table" width="400">
-                    <tbody>
-                        <tr>
-                            <td><div id="track">track</div></td>
-                            <td><button id="track-tbl-create-btn" type="button" class="btn btn-primary">Create</button></td>
-                            <td><button id="track-tbl-delete-btn" type="button" class="btn btn-danger">Delete</button></td>
-                        </tr>
-                        <tr>
-                            <td>user</td>
-                            <td><button id="user-tbl-create-btn" type="button" class="btn btn-primary">Create</button></td>
-                            <td><button id="user-tbl-delete-btn" type="button" class="btn btn-danger">Delete</button></td>
-                        </tr>
-                        <tr>
-                            <td>habit</td>
-                            <td><button id="habit-tbl-create-btn" type="button" class="btn btn-primary">Create</button></td>
-                            <td><button id="habit-tbl-delete-btn" type="button" class="btn btn-danger">Delete</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="form-group">
-                    <label for="comment">Result:</label>
-                    <textarea class="form-control" rows="6" id="result"></textarea>
-                </div>
+        <div id="container">
+            <h2>Dynamo DB Controller</h2>
+            <div id="action-tab">
+                <button class="tablinks">Query</button>
+                <button class="tablinks">Create Tables</button>
+                <button class="tablinks">Insert Records</button>
             </div>
             
-            <div id="query-section">
-                <h3>Query Table Data</h3>
-                <div id="table-dropdown-list" class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose a table...
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" id="query-table-track">track</a></li>
-                        <li><a href="#" id="query-table-user">user</a></li>
-                        <li><a href="#" id="query-table-habit">habit</a></li>
-                    </ul>
+            <form id="Query" action="./php/query-table-data.php" method="post">
+                <button id="choose-tbl-btn">Choose a table...</button>
+                <div id="tbl-name-dropdown">
+                    <input id="search-tbl-input" type="text" placeholder="Search..." name="tbl-name">
+                    <a href="#">Track</a>
+                    <a href="#">User</a>
+                    <a href="#">Habit</a>
                 </div>
-                
-                <form action="./php/query-table-data.php" method="post" class="query-form" id="track-table-query-form">
-                    <div class="form-group">
-                        <label>user_id:</label>
-                        <input type="text" name="user_id" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>habit_id:</label>
-                        <input type="text" name="habit_id" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>date:</label>
-                        <input type="text" name="date" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </form>
-            </div>
+            </form>
         </div>
+        
         <script>
             if(!window.isTesting) {
                 window.addEventListener("load", executeEventHandler);

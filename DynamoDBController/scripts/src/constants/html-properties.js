@@ -1,12 +1,10 @@
 const HTML_CLASS = {
-    queryForm: "query-form"
+    
 }
 
 const HTML_ID = {
-    createTrackTblBtn: "create-track-tbl-btn",
-    result: "result",
-    queryTableTrack: "query-table-track",
-    trackTableQueryForm: "track-table-query-form"
+    chooseTblBtn: "choose-tbl-btn",
+    searchTblInput: "search-tbl-input"
 };
 
 const HTML_PROPERTY = {

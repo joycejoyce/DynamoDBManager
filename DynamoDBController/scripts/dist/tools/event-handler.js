@@ -7,11 +7,10 @@ System.register(["../table-processors/table-processor.js", "../constants/html-pr
 
   function EventHandler() {
     this.addEventHandlers = function () {
-      console.log("Enter addEventHandlers()");
+      //console.log("Enter addEventHandlers()");
       addClickEventHandlerOnCreateTblButton();
       addClickEventHandlerOnDeleteTblButton();
-      addEventHandlersForQuerying();
-      console.log("Exit addEventHandlers()");
+      addEventHandlersForQuerying(); //console.log("Exit addEventHandlers()");
     };
 
     function addClickEventHandlerOnCreateTblButton() {

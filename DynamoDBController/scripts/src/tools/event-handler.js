@@ -1,14 +1,24 @@
 import {TableProcessor, PROCESS} from "../table-processors/table-processor.js";
-import {HTML_CLASS, HTML_ID, HTML_PROPERTY, EVENT} from "../constants/html-properties.js";
+import {HTML_CLASS, HTML_ID, HTML_PROPERTY, EVENT, CSS_PROPERTY, CSS_VALUE} from "../constants/html-properties.js";
 import {TABLE_NAME} from "../constants/db-info.js";
 
 function EventHandler() {
     this.addEventHandlers = function() {
-        console.log("Enter addEventHandlers()");
-        addClickEventHandlerOnCreateTblButton();
+        addClickEventOnChooseTblBtn();
+        //console.log("Enter addEventHandlers()");
+        /*addClickEventHandlerOnCreateTblButton();
         addClickEventHandlerOnDeleteTblButton();
-        addEventHandlersForQuerying();
-        console.log("Exit addEventHandlers()");
+        addEventHandlersForQuerying();*/
+        //console.log("Exit addEventHandlers()");
+    }
+    
+    function addClickEventOnChooseTblBtn() {
+        $(document).find(`#${HTML_ID.chooseTblBtn}`).on(
+            EVENT.click,
+            () => {
+                $(document).find(`#${HTML_ID.searchTblInput}`).css(CSS_PROPERTY.display, CSS_VALUE.block);
+            }
+        );
     }
     
     function addClickEventHandlerOnCreateTblButton() {
