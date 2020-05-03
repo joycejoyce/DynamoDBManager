@@ -1,0 +1,31 @@
+{
+  "name": "GitRepo_DynamoDBController",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 10000 --require @babel/register",
+    "build": "babel scripts/src --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joycejoyce/DynamoDBController.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joycejoyce/DynamoDBController/issues"
+  },
+  "homepage": "https://github.com/joycejoyce/DynamoDBController#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/register": "^7.9.0",
+    "chai": "^4.2.0",
+    "jquery": "^3.5.0",
+    "jsdom": "^16.2.2",
+    "mocha": "^7.1.2"
+  }
+}

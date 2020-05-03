@@ -1,0 +1,7 @@
+GitStatus_*.txt
+GitCommit_*.bat
+node_modules/
+design/*.png
+~*.pptx
+*.txt
+deprecated/
