@@ -19,7 +19,7 @@
             1. Bootstrap
             2. (mine) //must be the last style sheet
         -->
-        <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
         <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/system.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/extras/named-exports.js"></script>
@@ -35,14 +35,12 @@
                 <button class="tablinks">Insert Records</button>
             </div>
             
-            <form id="Query" action="./php/query-table-data.php" method="post">
-                <button id="choose-tbl-btn">Choose a table...</button>
-                <div id="tbl-name-dropdown">
-                    <input id="search-tbl-input" type="text" placeholder="Search..." name="tbl-name">
-                    <a href="#">Track</a>
-                    <a href="#">User</a>
-                    <a href="#">Habit</a>
-                </div>
+            <button id="choose-tbl-btn">Choose a table...</button>
+            <form id="tbl-name-dropdown" action="./php/query.php">
+                <input id="search-tbl-input" type="text" placeholder="Search..." name="tbl-name">
+                <a href="#" class="tbl-name">track</a>
+                <a href="#" class="tbl-name">user</a>
+                <a href="#" class="tbl-name">habit</a>
             </form>
         </div>
         

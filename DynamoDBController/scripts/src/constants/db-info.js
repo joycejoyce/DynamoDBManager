@@ -1,5 +1,7 @@
 const TABLE_NAME = {
-    track: "track"
+    track: "track",
+    user: "user",
+    habit: "habit"
 };
 
 const TBL_TRACK_COLUMN = {

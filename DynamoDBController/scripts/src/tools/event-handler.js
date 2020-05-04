@@ -1,10 +1,12 @@
 import {TableProcessor, PROCESS} from "../table-processors/table-processor.js";
-import {HTML_CLASS, HTML_ID, HTML_PROPERTY, EVENT, CSS_PROPERTY, CSS_VALUE} from "../constants/html-properties.js";
+import {HTML_CLASS, HTML_ID, HTML_TAG, HTML_PROPERTY, EVENT, CSS_PROPERTY, CSS_VALUE} from "../constants/html-properties.js";
 import {TABLE_NAME} from "../constants/db-info.js";
 
 function EventHandler() {
     this.addEventHandlers = function() {
         addClickEventOnChooseTblBtn();
+        addKeyupEventOnSearchTblInput();
+        addClickEventOnTblName();
         //console.log("Enter addEventHandlers()");
         /*addClickEventHandlerOnCreateTblButton();
         addClickEventHandlerOnDeleteTblButton();
@@ -13,12 +15,54 @@ function EventHandler() {
     }
     
     function addClickEventOnChooseTblBtn() {
-        $(document).find(`#${HTML_ID.chooseTblBtn}`).on(
+        $(`#${HTML_ID.chooseTblBtn}`).on(
             EVENT.click,
             () => {
-                $(document).find(`#${HTML_ID.searchTblInput}`).css(CSS_PROPERTY.display, CSS_VALUE.block);
+                $(document).find(`#${HTML_ID.tblNameDropdown}`).toggle();
             }
         );
+    }
+    
+    function addKeyupEventOnSearchTblInput() {
+        $(`#${HTML_ID.searchTblInput}`).on(
+            EVENT.keyup,
+            (evt) => {
+                const _this = $(evt.target);
+                const filter = _this.val().toUpperCase();
+                const tblNameElems = getTblNameElems();
+                $.each(tblNameElems, (index, elem) => {
+                    const txtValue = $(elem).text().toUpperCase();
+                    if(txtValue.indexOf(filter) > -1) {
+                        $(elem).css(CSS_PROPERTY.display, "");
+                    }
+                    else {
+                        $(elem).css(CSS_PROPERTY.display, CSS_VALUE.none);
+                    }
+                });
+            }
+        );
+    }
+    
+    function getTblNameElems() {
+        const dropDownElem = $(`#${HTML_ID.tblNameDropdown}`);
+        const aElems = $(dropDownElem).find(`${HTML_TAG.a}`);
+        return aElems;
+    }
+    
+    function addClickEventOnTblName() {
+        $(`#${HTML_ID.tblNameDropdown}`).find(`.${HTML_CLASS.tblName}`).on(
+            EVENT.click,
+            (evt) => {
+                const _this = $(evt.target);
+                const tblName = _this.text();
+                console.log(`tblName = ${tblName}`);
+                $(`#${HTML_ID.searchTblInput}`).val(tblName);
+                const tblNameElems = getTblNameElems();
+                $.each(tblNameElems, (index, elem) => {
+                    $(elem).css(CSS_PROPERTY.display, CSS_VALUE.none);
+                });
+            }
+        )
     }
     
     function addClickEventHandlerOnCreateTblButton() {

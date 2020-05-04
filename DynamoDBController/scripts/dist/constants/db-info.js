@@ -8,7 +8,9 @@ System.register([], function (_export, _context) {
     setters: [],
     execute: function () {
       _export("TABLE_NAME", TABLE_NAME = {
-        track: "track"
+        track: "track",
+        user: "user",
+        habit: "habit"
       });
 
       _export("TBL_TRACK_COLUMN", TBL_TRACK_COLUMN = {
