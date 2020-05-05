@@ -1,3 +1,7 @@
+const DB_PROPERTY = {
+    TableNames: "TableNames"
+};
+
 const TABLE_NAME = {
     track: "track",
     user: "user",
@@ -11,6 +15,7 @@ const TBL_TRACK_COLUMN = {
 };
 
 export {
+    DB_PROPERTY,
     TABLE_NAME,
     TBL_TRACK_COLUMN
 };

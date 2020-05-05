@@ -1,4 +1,4 @@
-function DBSetter() {
+function DBConnection() {
     this.getDynamoDB = function() {
         configure();
         let dynamoDB = new AWS.DynamoDB();
@@ -19,5 +19,5 @@ function DBSetter() {
 }
 
 export {
-    DBSetter
+    DBConnection
 };

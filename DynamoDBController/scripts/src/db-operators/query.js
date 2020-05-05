@@ -1,19 +1,21 @@
-import {DBSetter} from "../tools/db-setter.js";
+import {DBConnection} from "../tools/db-connection.js";
+import {DB_PROPERTY} from "../constants/db-info.js";
 
 function Query() {
-    let dynamoDB = new DBSetter().getDynamoDB();
+    let dynamoDB = new DBConnection().getDynamoDB();
     
     this.getAllTblNames = () => {
-        const params = {};
-        const tblNames = dynamoDB.listTables(params, () => {
-            if(err) {
-                console.log(JSON.stringify(err, undefined, 2));
-            }
-            else {
-                console.log("listTables() success");
-            }
+        return new Promise((resolve) => {
+            const params = {};
+            dynamoDB.listTables(params, (err, data) => {
+                if(err) {
+                    throw `listTables() failed! err: ${err.stack}`;
+                }
+                else {
+                    resolve(data[DB_PROPERTY.TableNames]);
+                }
+            });
         });
-        console.log("tblNames");
     };
 }
 
