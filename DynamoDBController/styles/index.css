@@ -1,0 +1,11 @@
+.main-page {
+    display: none;
+}
+
+.main-tab {
+    display: inline-block;
+}
+
+div>.active {
+    display: block;
+}
