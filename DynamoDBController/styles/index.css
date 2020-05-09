@@ -1,11 +1,33 @@
-.main-page {
+#main-pages>* {
     display: none;
 }
 
-.main-tab {
-    display: inline-block;
-}
-
-div>.active {
+#main-pages>.active {
     display: block;
 }
+
+#main-page-2>.collapsible-content {
+    display: none;
+}
+
+.collapsible-btn {
+    cursor: pointer;
+    text-align: left;
+}
+
+.collapsible-btn:after {
+    content: '\2304';
+    float: right;
+    border: solid 2px black;
+}
+
+.active-collapsible-btn:after {
+    content: '\2303';
+}
+
+.collapsible-page {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
