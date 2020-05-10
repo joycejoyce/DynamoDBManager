@@ -11,18 +11,17 @@
 }
 
 .collapsible-btn {
+    font-size: 18px;
+    height: 40px;
     cursor: pointer;
     text-align: left;
+    position: relative;
+    width: 600px;
 }
 
-.collapsible-btn:after {
-    content: '\2304';
-    float: right;
-    border: solid 2px black;
-}
-
-.active-collapsible-btn:after {
-    content: '\2303';
+.fa-caret-down,.fa-caret-up {
+    position: absolute;
+    right: 3px;
 }
 
 .collapsible-page {
