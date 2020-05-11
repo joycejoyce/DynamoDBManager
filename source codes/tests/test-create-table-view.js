@@ -14,14 +14,18 @@ async function getDom() {
 describe(`CreateTableView`, () => {
     it(`Click "Create Table collapsible" makes "create-table-page" display style changes from "none" to "display"`, () => {
         const pageElem = document.getElementById("create-table-page");
-        const displayValue1 = 
-        window.getComputedStyle(pageElem).getPropertyValue("display");
-        expect(displayValue1).to.eql("none");
         
         const collapsibleElem = document.getElementById("create-table-collapsible");
-        collapsibleElem.click();
         
-        const displayValue2 = window.getComputedStyle(pageElem).getPropertyValue("display");
-        expect(displayValue2).to.eql("block");
+        for(let i=0; i<2; i++) {
+            collapsibleElem.click();
+            let maxHeight = window.getComputedStyle(pageElem).getPropertyValue("max-height");
+            /*if(i%2 == 0) {
+                expect(pageElem.style.maxHeight === true).to.be.true;
+            }
+            else {
+                expect(pageElem.style.maxHeight === true).to.be.false;
+            }*/
+        }
     });
 });

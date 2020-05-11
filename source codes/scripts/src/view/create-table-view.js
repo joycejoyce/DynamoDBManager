@@ -1,10 +1,10 @@
 function CreateTableView() {
     this.addEventListeners = () => {
-        listenOnClickCreateTableBtn();
+        listenOnClickCreateTableCollapsible();
     };
     
-    function listenOnClickCreateTableBtn() {
-        const elem = document.getElementById("create-table-btn");
+    function listenOnClickCreateTableCollapsible() {
+        const elem = document.getElementById("create-table-collapsible");
         elem.addEventListener("click", () => toggleCreateTablePage(elem));
     }
     
@@ -13,10 +13,12 @@ function CreateTableView() {
         toggleFaCaretUpAndDown(faCaretElem);
         
         const page = elem.nextElementSibling;
-        if(page.style.maxHeight) {
+        if(page.style.maxHeight) { //not zero, not empty string, not null
+            console.log("A");
             page.style.maxHeight = null;
         }
         else {
+            console.log("B");
             page.style.maxHeight = page.scrollHeight + "px";
         }
     }

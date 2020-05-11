@@ -5,11 +5,11 @@ System.register([], function (_export, _context) {
 
   function CreateTableView() {
     this.addEventListeners = function () {
-      listenOnClickCreateTableBtn();
+      listenOnClickCreateTableCollapsible();
     };
 
-    function listenOnClickCreateTableBtn() {
-      var elem = document.getElementById("create-table-btn");
+    function listenOnClickCreateTableCollapsible() {
+      var elem = document.getElementById("create-table-collapsible");
       elem.addEventListener("click", function () {
         return toggleCreateTablePage(elem);
       });
@@ -21,8 +21,11 @@ System.register([], function (_export, _context) {
       var page = elem.nextElementSibling;
 
       if (page.style.maxHeight) {
+        //not zero, not empty string, not null
+        console.log("A");
         page.style.maxHeight = null;
       } else {
+        console.log("B");
         page.style.maxHeight = page.scrollHeight + "px";
       }
     }

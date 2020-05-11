@@ -1,0 +1,64 @@
+<html>
+	<head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="./styles/index.css">
+        <script type="systemjs-importmap">
+            {
+              "imports": {
+                "event-listener": "./scripts/dist/view/event-listener.js"
+              }
+            }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/system.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/extras/named-exports.js"></script>
+	</head>
+	<body>
+        <h1>DB Data Manager</h1>
+        <div id="main-tabs">
+            <button id="main-tab-1" class="active">DB Overview</button>
+            <button id="main-tab-2">Manage Tables</button>
+            <button id="main-tab-3">Manage Table Items</button>
+        </div>
+        
+        <div id="main-pages">
+            <div id="main-page-1" class="active">
+                <p>db-overview page</p>
+            </div>
+
+            <div id="main-page-2">
+                <p>manage-tables page</p>
+                <button id="create-table-collapsible" class="collapsible-btn">
+                    Create a table <i class="fa fa-caret-down"></i>
+                </button>
+                <div id="create-table-page" class="collapsible-page">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer consequat est et orci hendrerit faucibus. Nulla mollis tortor a sem tempor convallis. Ut ultricies tellus eget lectus placerat auctor. Integer luctus eget urna et volutpat. In hac habitasse platea dictumst. Maecenas mattis, metus eu aliquet posuere, justo est dictum ligula, a tincidunt elit diam a urna. Quisque viverra risus vel volutpat tristique. Nunc venenatis, lacus at dignissim scelerisque, nunc diam convallis massa, at egestas dui justo nec justo.
+
+Nam auctor, massa nec scelerisque consectetur, purus velit sagittis mauris, sit amet gravida augue sapien eu dui. Etiam dictum a velit id tempus. Cras blandit tortor non tortor dapibus, non rutrum odio bibendum. Sed ullamcorper nisi metus. Curabitur gravida ornare lorem, ut egestas elit tempor porttitor. Maecenas quis leo cursus, fermentum turpis vel, laoreet enim. Duis tincidunt libero sed urna pellentesque egestas. Vestibulum mollis vestibulum purus a tincidunt. Aliquam ex libero, laoreet non dui sit amet, interdum mollis mauris. Integer mattis ultricies nibh eu vehicula.
+
+Nam commodo, est a pulvinar consectetur, sem est sollicitudin elit, ac sollicitudin nisi velit vitae sapien. Nunc quis mollis neque. Vivamus et faucibus velit, non pretium nibh. In hac habitasse platea dictumst. Donec nisl orci, feugiat vel libero ac, convallis interdum ex. Donec fermentum ornare ante. Cras vehicula lacus nec nisi elementum posuere. Etiam vel feugiat felis. Nunc aliquet auctor nulla, eget auctor magna rhoncus a.
+
+In ex metus, ornare ac ex consectetur, ullamcorper sollicitudin nunc. Aliquam erat volutpat. Sed posuere lectus ac velit finibus, sit amet efficitur arcu laoreet. Morbi sit amet massa nisl. Nulla mauris nunc, tincidunt ut ex ut, sodales varius dui. Pellentesque lobortis massa rhoncus, volutpat felis eget, vulputate dolor. Suspendisse potenti. Donec vestibulum risus ac auctor interdum. Ut facilisis ipsum ac odio aliquet aliquet.
+
+Aliquam ultrices enim in lacus hendrerit, et varius erat scelerisque. Cras eget arcu libero. In hac habitasse platea dictumst. Cras placerat eros non ligula facilisis fringilla. Vivamus facilisis, lacus pellentesque iaculis tincidunt, ipsum erat blandit dolor, convallis dignissim neque ipsum eu diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed ipsum lectus, varius ac pulvinar nec, auctor quis ipsum. Aliquam ornare ligula risus, non hendrerit neque egestas dapibus. Curabitur ac auctor leo, sit amet posuere elit. Sed nec condimentum velit.</p>
+                </div>
+            </div>
+
+            <div id="main-page-3">
+                <p>manage-table-items page</p>
+            </div>
+        </div>
+        
+        <script>
+            if(!window.isTesting) {
+                window.addEventListener("load", executeEventListener);
+            }
+            
+            function executeEventListener() {
+                System.import("event-listener").then((module) => {
+                    new module.EventListener().addEventListeners();
+                });
+            }
+        </script>
+    </body>
+</html>
