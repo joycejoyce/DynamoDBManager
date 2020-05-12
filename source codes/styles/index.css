@@ -10,13 +10,11 @@
     display: none;
 }
 
-.collapsible-btn {
-    font-size: 18px;
-    height: 40px;
+#create-table-btn {
+    width: 600px;
     cursor: pointer;
     text-align: left;
     position: relative;
-    width: 600px;
 }
 
 .fa-caret-down,.fa-caret-up {
@@ -24,9 +22,31 @@
     right: 3px;
 }
 
-.collapsible-page {
+#create-table-contents {
+    border: solid 1px grey;
+    padding: 5px;
+}
+
+#create-table-page {
+    width: 600px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
 }
 
+.delete-attribute-control-item-btn {
+    width: 20px;
+}
+
+.attribute-control-item>* {
+    display: inline-block;
+}
+
+.attribute-type-contents {
+    display: none;
+    position: absolute;
+}
+
+.attribute-type-contents>a {
+    display: block;
+}
