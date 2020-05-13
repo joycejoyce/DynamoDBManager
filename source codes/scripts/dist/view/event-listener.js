@@ -1,6 +1,6 @@
 "use strict";
 
-System.register(["./common-view.js", "./create-table-view.js"], function (_export, _context) {
+System.register(["./common-view.js", "./create-table-view/create-table-view.js"], function (_export, _context) {
   "use strict";
 
   var CommonView, CreateTableView;
@@ -17,8 +17,8 @@ System.register(["./common-view.js", "./create-table-view.js"], function (_expor
   return {
     setters: [function (_commonViewJs) {
       CommonView = _commonViewJs.CommonView;
-    }, function (_createTableViewJs) {
-      CreateTableView = _createTableViewJs.CreateTableView;
+    }, function (_createTableViewCreateTableViewJs) {
+      CreateTableView = _createTableViewCreateTableViewJs.CreateTableView;
     }],
     execute: function () {}
   };

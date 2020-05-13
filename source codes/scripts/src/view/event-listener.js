@@ -1,5 +1,5 @@
 import {CommonView} from "./common-view.js";
-import {CreateTableView} from "./create-table-view.js";
+import {CreateTableView} from "./create-table-view/create-table-view.js";
 
 function EventListener() {
     this.addEventListeners = () => {

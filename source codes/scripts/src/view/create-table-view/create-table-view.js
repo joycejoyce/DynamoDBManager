@@ -1,10 +1,13 @@
+import {DeleteAllAttrBtnView} from "./delete-all-attr-btn-view.js";
+
 function CreateTableView() {
     this.addEventListeners = () => {
-        listenOnClickCreateTableCollapsible();
+        listenOnClickCreateTableBtn();
         listenOnClickAddAttributeBtn();
+        //new DeleteAllAttrBtnView().addEventListeners();
     };
     
-    function listenOnClickCreateTableCollapsible() {
+    function listenOnClickCreateTableBtn() {
         const elem = document.getElementById("create-table-btn");
         elem.addEventListener("click", () => toggleCreateTablePage(elem));
     }
@@ -57,7 +60,6 @@ function CreateTableView() {
         const attrDefElem = document.getElementById("attribute-definitions");
         const attrCtrlItem = getAttributeControlItem();
         attrDefElem.appendChild(attrCtrlItem);
-        addEventListenersOnAttributeControlItem(attrCtrlItem);
     }
     
     function getAttributeControlItem() {
@@ -72,6 +74,8 @@ function CreateTableView() {
         
         const attrNameInputElem = getAttributeNameInputElem();
         attrCtrlItem.appendChild(attrNameInputElem);
+        
+        addEventListenersOnAttributeControlItem(attrCtrlItem);
         
         return attrCtrlItem;
     }
@@ -153,12 +157,8 @@ function CreateTableView() {
     
     function disableDeleteAllBtnWhenNoItem() {
         const num = document.getElementsByClassName("attribute-control-item").length;
-        if(num == 0) {
-            console.log("1");
+        if(num - 1 == 0) {
             document.getElementById("delete-all-attributes-btn").disabled = true;
-        }
-        else {
-            console.log("2");
         }
     }
     

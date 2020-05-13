@@ -1,6 +1,7 @@
 function CommonView() {
     this.addEventListeners = () => {
         listenOnClickMainTabs();
+        listenOnClickWindow();
     };
     
     function listenOnClickMainTabs() {
@@ -15,6 +16,20 @@ function CommonView() {
         const num = elem.id.split("-").pop();
         const targetId = `main-page-${num}`;
         document.getElementById(targetId).classList.add("active");
+    }
+    
+    function listenOnClickWindow() {
+        window.addEventListener("click", (e) => {
+            hideConfirmContainer(e);
+        });
+    }
+    
+    function hideConfirmContainer(event) {
+        const confirmContainer = document.getElementsByClassName("confirm-container")[0];
+        if(event.target == confirmContainer) {
+            confirmContainer.style.display = "none";
+            confirmContainer.id = "";
+        }
     }
 }
 

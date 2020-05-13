@@ -1,13 +1,14 @@
 "use strict";
 
-System.register([], function (_export, _context) {
+System.register(["./delete-all-attr-btn-view.js"], function (_export, _context) {
   "use strict";
+
+  var DeleteAllAttrBtnView;
 
   function CreateTableView() {
     this.addEventListeners = function () {
       listenOnClickCreateTableBtn();
-      listenOnClickAddAttributeBtn();
-      listenOnClickDeleteAllBtn();
+      listenOnClickAddAttributeBtn(); //new DeleteAllAttrBtnView().addEventListeners();
     };
 
     function listenOnClickCreateTableBtn() {
@@ -179,31 +180,14 @@ System.register([], function (_export, _context) {
         contents.style.display = "none";
       }
     }
-
-    function listenOnClickDeleteAllBtn() {
-      var deleteAllBtn = document.getElementById("delete-all-attributes-btn");
-      deleteAllBtn.addEventListener("click", function () {
-        showConfirmPageOfDeleteAllAttributes();
-        listenOnConfirmButtonsOfDeleteAllAttributes();
-      });
-    }
-
-    function showConfirmPageOfDeleteAllAttributes() {
-      var confirmContainer = document.getElementsByClassName("confirm-container")[0];
-      var confirmMsg = "Are you sure you want to delete all attributes?";
-      confirmContainer.getElementsByClassName("confirm-msg")[0].textContent = confirmMsg;
-      var id = "confirm-delete-all-attributes-page";
-      confirmContainer.id = id;
-      confirmContainer.style.display = "block";
-    }
-
-    function listenOnConfirmButtonsOfDeleteAllAttributes() {}
   }
 
   _export("CreateTableView", CreateTableView);
 
   return {
-    setters: [],
+    setters: [function (_deleteAllAttrBtnViewJs) {
+      DeleteAllAttrBtnView = _deleteAllAttrBtnViewJs.DeleteAllAttrBtnView;
+    }],
     execute: function () {}
   };
 });
