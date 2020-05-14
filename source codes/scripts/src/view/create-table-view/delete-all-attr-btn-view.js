@@ -1,48 +1,48 @@
-import {ConfirmPageView} from "../confirm-page-view.js";
+import {ConfirmView} from "../confirm-view.js";
 
-function DeleteAllAttrBtnView() {    
+function DeleteAllAttrBtnView() {
+    const confirmPage = ConfirmView.get();
+    
     this.addEventListeners = () => {
         listenOnClick();
     };
     
     function listenOnClick() {
         const btn = document.getElementById("delete-all-attributes-btn");
-        btn.addEventListener("click", setupConfirmPage);
+        btn.addEventListener("click", () => {
+            showConfirmPage();
+            listenOnClickYesBtn();
+        });
     }
     
-    function setupConfirmPage() {
-        const info = {
-            id: "confirm-delete-all-attributes",
-            msg: "Are you sure you want to delete all attributes?",
-            action: clickAllDeleteAttrBtns
-        };
-        const confirmPage = new ConfirmPageView();
-        confirmPage.setPageInfo(info);
-        confirmPage.show();
-        
-        const confirmContainer = document.getElementsByClassName("confirm-container")[0];
-        
-        const confirmMsg = "Are you sure you want to delete all attributes?";
-        confirmContainer.getElementsByClassName("confirm-msg")[0].textContent = confirmMsg;
-        
-        confirmContainer.id = id;
-        
-        confirmContainer.style.display = "block";
+    function showConfirmPage() {
+        console.log("Enter showConfirmPage()");
+        confirmPage.style.display = "block";
+        confirmPage.id = "delete-all-attributes";
     }
     
-    function listenOnClickConfirmBtns() {
-        listenOnYesBtn();
-        listenOnNoBtn();
+    function listenOnClickYesBtn() {
+        const yesBtn = document.querySelector("#delete-all-attributes .yes");
+        yesBtn.addEventListener("click", () => {
+            clickAllDeleteAttrBtn();
+            ConfirmView.reset();
+        });
     }
     
-    function listenOnYesBtn() {
-        const btn = document.querySelector("#"+id+">.yes");
-        btn.addEventListener("click", clickAllDeleteAttrBtns);
-    }
-    
-    function listenOnNoBtn() {
+    function clickAllDeleteAttrBtn() {
+        while(1) {
+            const deleteAttrBtn = document.querySelector(".delete-attribute-control-item-btn");
+            
+            if(null == deleteAttrBtn) {
+                break;
+            }
+            
+            deleteAttrBtn.click();
+        }
     }
 }
+
+DeleteAllAttrBtnView.confirmMessage = "Are you sure you want to delete all attributes?";
 
 export {
     DeleteAllAttrBtnView

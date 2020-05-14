@@ -4,7 +4,7 @@ function CreateTableView() {
     this.addEventListeners = () => {
         listenOnClickCreateTableBtn();
         listenOnClickAddAttributeBtn();
-        //new DeleteAllAttrBtnView().addEventListeners();
+        new DeleteAllAttrBtnView().addEventListeners();
     };
     
     function listenOnClickCreateTableBtn() {

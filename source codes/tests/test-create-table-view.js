@@ -10,177 +10,228 @@ async function refreshDom() {
     $ = jsdom.$;
 }
 
-describe(`CreateTableView`, () => {
+describe(`(CreateTableView) Entry Point`, () => {
     describe(`"Create Table" button`, () => {
+        let createTableBtn;
+        
         before(async () => {
             await refreshDom();
+            createTableBtn = document.getElementById("create-table-btn");
         });
         
-        it(`When click on "Create Table button", the max-height of "Create Table page" would be toggled between "0px" and null`, () => {
-            const pageElem = document.getElementById("create-table-page");
+        describe(`#click`, () => {
+            it(`Toggle the max-height of "Create Table page" between "0px" and null`, () => {
+                const createTablePage = document.getElementById("create-table-page");
 
-            const collapsibleElem = document.getElementById("create-table-btn");
-
-            for(let i=0; i<3; i++) {
-                collapsibleElem.click();
-                let maxHeight = window.getComputedStyle(pageElem).getPropertyValue("max-height");
-                if(i%2 == 0) {
-                    expect(maxHeight).to.eql("0px");
+                for(let i=0; i<3; i++) {
+                    createTableBtn.click();
+                    let maxHeight = window.getComputedStyle(createTablePage).getPropertyValue("max-height");
+                    if(i%2 == 0) {
+                        expect(maxHeight).to.eql("0px");
+                    }
+                    else {
+                        expect(maxHeight).to.eql("0");
+                    }
                 }
-                else {
-                    expect(maxHeight).to.eql("0");
-                }
-            }
+            });
         });
     });
-    
-    describe(`"Attribute Definitions" section`, () => {
-        describe(`"Add" button`, () => {
-            before(async () => {
-                await refreshDom();
-            });
-            
-            it(`When click on "Add (attribute) button", an attribute control item will be generated`, () => {
-                const addBtn = document.getElementById("add-attribute-btn");
+});
+
+describe(`(CreateTableView) "Attribute Definitions" section`, () => {
+    describe(`"Add" button`, () => {
+        let addBtn;
+
+        beforeEach(async () => {
+            await refreshDom();
+            addBtn = document.querySelector("#attribute-definitions #add-attribute-btn");
+        });
+        
+        describe(`#click`, () => {
+            it(`Generate an attribute control item`, () => {
                 for(let i=0; i<3; i++) {
                     addBtn.click();
                     let numOfAttributeControlItems = document.getElementsByClassName("attribute-control-item").length;
                     expect(numOfAttributeControlItems).to.eql(i+1);
                 }
             });
-            
-            it(`When click on "Add (attribute) button", the "Delete All (attributes) button" will be clickable`, () => {
-                const addBtn = document.getElementById("add-attribute-btn");
-                addBtn.click();
+
+            it(`"Delete All (attributes)" button is enabled`, () => {
                 const deleteAllBtn = document.getElementById("delete-all-attributes-btn");
-                const disabled = deleteAllBtn.disabled;
+
+                let disabled = deleteAllBtn.disabled;
+                expect(disabled).to.be.true;
+
+                addBtn.click();
+
+                disabled = deleteAllBtn.disabled;
                 expect(disabled).to.be.false;
             });
         });
+    });
+
+    describe(`Attribute Control Item`, () => {
+        let attrCtrlItem;
         
-        describe(`"Delete All" button`, () => {
+        function createAttrCtrlItem() {
+            getAddBtn().click();
+            attrCtrlItem = document.getElementsByClassName("attribute-control-item")[0];
+        }
+        
+        function getAddBtn() {
+            return document.getElementById("add-attribute-btn");
+        }
+        
+        describe(`#components`, () => {
             before(async () => {
                 await refreshDom();
+                createAttrCtrlItem();
             });
             
-            it(`When click on "Delete All (attributes) button", a confirm message box will be shown`, () => {
-                const deleteAllBtn = document.getElementById("delete-all-attributes-btn");
-                deleteAllBtn.disabled = false;
-                
-                const id = "confirm-delete-all-attributes";
-                
-                let confirmPage = document.getElementById(id);
-                expect(null === confirmPage).to.be.true;
-                
-                deleteAllBtn.click();
-                
-                confirmPage = document.getElementById(id);
-                expect(null === confirmPage).to.be.false;
-            });
-        });
-
-        describe(`Components of an Attribute Control Item`, () => {
-            let attrCtrlItem;
-            before(async () => {
-                await refreshDom();
-                document.getElementById("add-attribute-btn").click();
-                attrCtrlItem = document.getElementsByClassName("attribute-control-item")[0];
+            it(`has 3 components`, () => {
+                expect(attrCtrlItem.childElementCount).to.eql(3);
             });
 
-            it(`has a delete button`, () => {
+            it(`a delete button`, () => {
                 const numOfDeleteAttrBtn = attrCtrlItem.getElementsByClassName("delete-attribute-control-item-btn").length;
                 expect(numOfDeleteAttrBtn).to.eql(1);
             });
 
-            it(`has a attribute type dropdown`, () => {
+            it(`an attribute type dropdown`, () => {
                 const numOfAttrTypeDropdown = attrCtrlItem.getElementsByClassName("attribute-type-dropdown").length;
                 expect(numOfAttrTypeDropdown).to.eql(1);
             });
 
-            it(`has a attribute name input field`, () => {
+            it(`a attribute name input field`, () => {
                 const numOfAttrNameInputField = attrCtrlItem.getElementsByClassName("attribute-name-input").length;
                 expect(numOfAttrNameInputField).to.eql(1);
             });
         });
+        
+        describe(`delete button`, () => {
+            let addBtn;
+            
+            beforeEach(async () => {
+                await refreshDom();
+                addBtn = getAddBtn();
+            });
+            
+            describe(`#click`, () => {
+                it(`Delete the attribute control item`, () => {
+                    const num = 3;
+                    for(let i=0; i<num; i++) {
+                        addBtn.click();
+                    }
+                    let numOfItems = document.getElementsByClassName("attribute-control-item").length;
+                    expect(numOfItems).to.eql(num);
 
-        describe(`Attribute Control Item - delete button`, () => {
+                    for(let i=0; i<num; i++) {
+                        getDeleteBtn().click();
+                    }
+                    numOfItems = document.getElementsByClassName("attribute-control-item").length;
+                    expect(numOfItems).to.eql(0);
+                });
+                
+                function getDeleteBtn() {
+                    const attrCtrlItem = document.getElementsByClassName("attribute-control-item")[0];
+                    return attrCtrlItem.getElementsByClassName("delete-attribute-control-item-btn")[0];
+                }
+                
+                it(`If it's the last delete button, "Delete All (attributes) button" becomes disabled`, () => {
+                    let num = 3;
+
+                    for(let i=0; i<num; i++) {
+                        addBtn.click();
+                    }
+
+                    const deleteAllButton = document.getElementById("delete-all-attributes-btn");
+
+                    for(let i=0; i<num; i++) {
+                        expect(deleteAllButton.disabled).to.be.false;
+                        getDeleteBtn().click();
+                    }
+                    expect(deleteAllButton.disabled).to.be.true;
+                });
+            });
+        });
+        
+        describe(`Attribute Type dropdown`, () => {
+            let attrTypeDropdown;
+            
             before(async () => {
                 await refreshDom();
+                createAttrCtrlItem();
+                attrTypeDropdown = getAttrTypeDropdown();
             });
             
-            it(`When click on the delete button, the attribute control item will be deleted`, () => {
-                document.getElementById("add-attribute-btn").click();
-
-                const attrCtrlItem = document.getElementsByClassName("attribute-control-item")[0];
-
-                let numOfItems = document.getElementsByClassName("attribute-control-item").length;
-                expect(numOfItems).to.eql(1);
-
-                const deleteBtn = attrCtrlItem.getElementsByClassName("delete-attribute-control-item-btn")[0];
-                deleteBtn.click();
-
-                numOfItems = document.getElementsByClassName("attribute-control-item").length;
-                expect(numOfItems).to.eql(0);
-            });
-            
-            it(`When click on the last delete button, "Delete All (attributes) button" will be unclickable`, async () => {
-                const addBtn = document.getElementById("add-attribute-btn");
-                for(let i=0; i<3; i++) {
-                    addBtn.click();
-                }
-                const deleteAllButton = document.getElementById("delete-all-attributes-btn");
-                for(let i=0; i<3; i++) {
-                    const deleteButton = document.getElementsByClassName("delete-attribute-control-item-btn")[0];
-                    expect(deleteAllButton.disabled).to.be.false;
-                    deleteButton.click();
-                }
-                expect(deleteAllButton.disabled).to.be.true;
-            });
-        })
-
-        describe(`Attribute Control Item - attribute type dropdown`, () => {
-            before(async () => {
-                await refreshDom();
-                document.getElementById("add-attribute-btn").click();
-            });
-            
-            it(`An attribute type dropdown contains a button`, () => {
-                const numOfTypeBtn = document.getElementsByClassName("attribute-type-btn").length;
-                expect(numOfTypeBtn).to.eql(1);
-            });
-
-            it(`Types include: string, number, boolean`, () => {
-                const dropdown = document.getElementsByClassName("attribute-type-dropdown")[0];
-                const contents = getDropdownContents(dropdown);
-                expect(contents.length).to.eql(3);
-                expect(contents.includes("string")).to.be.true;
-                expect(contents.includes("number")).to.be.true;
-                expect(contents.includes("boolean")).to.be.true;
-            })
-
-            function getDropdownContents(dropdown) {
-                const contents = Array.from(dropdown.querySelectorAll(".attribute-type-contents>a"))
-                .map(elem => elem.textContent);
-                return contents;
+            function getAttrTypeDropdown() {
+                return document.getElementsByClassName("attribute-type-dropdown")[0];
             }
+            
+            describe(`#components`, () => {
+                it(`has 2 components`, () => {
+                    expect(attrTypeDropdown.childElementCount).to.eql(2);
+                });
+                
+                it(`a button`, () => {
+                    const numOfTypeBtn = attrTypeDropdown.getElementsByClassName("attribute-type-btn").length;
+                    expect(numOfTypeBtn).to.eql(1);
+                });
+                
+                it(`a list of types`, () => {
+                    const numOfList = attrTypeDropdown.getElementsByClassName("attribute-type-contents").length;
+                    expect(numOfList).to.eql(1);
+                });
+            });
+            
+            describe(`button`, () => {
+                let btn;
+                
+                before(() => {
+                    btn = $(attrTypeDropdown).find(".attribute-type-btn")[0];
+                });
+                
+                describe(`#click`, () => {
+                    it(`Toggle the list of types between displayed and hidden`, () => {
+                        const listOfTypes = attrTypeDropdown.getElementsByClassName("attribute-type-contents")[0];
+                        
+                        const num = 3;
+                        
+                        for(let i=0; i<num; i++) {
+                            let display = window.getComputedStyle(listOfTypes).getPropertyValue("display");
 
-            it(`When click on the attribute dropdown, the dropdown contents will be toggled between displayed and hidden`, () => {
-                const contentsElem = document.getElementsByClassName("attribute-type-contents")[0];
-                const attributeTypeBtn = document.getElementsByClassName("attribute-type-btn")[0];
+                            if(i%2 == 0) {
+                                expect(display).to.eql("none");
+                            }
+                            else {
+                                expect(display).to.eql("block");
+                            }
 
-                for(let i=0; i<3; i++) {
-                    let display = window.getComputedStyle(contentsElem).getPropertyValue("display");
+                            btn.click();
+                        }
+                    });
+                });
+            });
+            
+            describe(`list of types`, () => {
+                let listOfTypes;
+                
+                before(() => {
+                    listOfTypes = Array.from($(attrTypeDropdown).find(".attribute-type-contents>a")).map(elem => elem.textContent);
+                });
+                
+                describe(`#components`, () => {
+                    it(`has 3 types`, () => {
+                        expect(listOfTypes.length).to.eql(3);
+                    });
 
-                    if(i%2 == 0) {
-                        expect(display).to.eql("none");
-                    }
-                    else {
-                        expect(display).to.eql("block");
-                    }
-
-                    attributeTypeBtn.click();
-                }
-            })
+                    it(`string, number, boolean`, () => {
+                        expect(listOfTypes.includes("string")).to.be.true;
+                        expect(listOfTypes.includes("number")).to.be.true;
+                        expect(listOfTypes.includes("boolean")).to.be.true;
+                    });
+                });
+            });
         });
     });
 });

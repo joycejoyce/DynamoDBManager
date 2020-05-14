@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 10000 --require @babel/register tests/test*.js",
+    "test": "mocha --timeout 10000 --require @babel/register",
     "build": "babel scripts/src --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs",
     "start": "babel scripts/src --watch --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs"
   },

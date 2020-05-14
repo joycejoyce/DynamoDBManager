@@ -37,9 +37,16 @@ async function getJSDOM(file) {
     };
 }
 
+function expectDisplayValueToBe(window, elem, expectedValue) {
+    const actualValue = window.getComputedStyle(elem).getPropertyValue("display");
+
+    expect(expectedValue).to.eql(actualValue);
+}
+
 module.exports = {
     chai,
     expect,
     printErrorStack,
-    getJSDOM
+    getJSDOM,
+    expectDisplayValueToBe
 };

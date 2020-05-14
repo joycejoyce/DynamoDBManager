@@ -8,7 +8,8 @@ System.register(["./delete-all-attr-btn-view.js"], function (_export, _context) 
   function CreateTableView() {
     this.addEventListeners = function () {
       listenOnClickCreateTableBtn();
-      listenOnClickAddAttributeBtn(); //new DeleteAllAttrBtnView().addEventListeners();
+      listenOnClickAddAttributeBtn();
+      new DeleteAllAttrBtnView().addEventListeners();
     };
 
     function listenOnClickCreateTableBtn() {
