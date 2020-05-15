@@ -1,4 +1,4 @@
-function ConfirmView(obj) {
+function ConfirmView() {
     const confirmPage = ConfirmView.get();
     
     this.addEventListeners = () => {

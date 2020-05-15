@@ -49,7 +49,7 @@ function checkConfirmPageIsReset(window, confirmPage) {
 }
 
 function createAttrCtrlItems(document, num) {
-    const addAttrBtn = document.querySelector("#add-attribute-btn");
+    const addAttrBtn = document.querySelector("#add-attr-ctrl-item-btn");
 
     for(let i=0; i<num; i++) {
         addAttrBtn.click();

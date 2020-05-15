@@ -18,12 +18,12 @@ describe(`CommonView`, () => {
             });
             
             it(`Show the corresponding page`, () => {
-                const pageElem = document.getElementById("main-page-2");
+                const pageElem = document.getElementById("main-page-3");
                 const displayValue1 = 
                 window.getComputedStyle(pageElem).getPropertyValue("display");
                 expect(displayValue1).to.eql("none");
 
-                const tabElem = document.getElementById("main-tab-2");
+                const tabElem = document.getElementById("main-tab-3");
                 tabElem.click();
 
                 const displayValue2 = window.getComputedStyle(pageElem).getPropertyValue("display");

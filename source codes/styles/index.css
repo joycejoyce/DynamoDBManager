@@ -30,11 +30,11 @@
 #create-table-page {
     width: 600px;
     max-height: 0;
-    overflow: hidden;
+    /*overflow: hidden;*/
     transition: max-height 0.2s ease-out;
 }
 
-.delete-attribute-control-item-btn {
+.delete-attr-ctrl-item-btn {
     width: 20px;
 }
 
@@ -42,12 +42,12 @@
     display: inline-block;
 }
 
-.attribute-type-contents {
+.attribute-type-list {
     display: none;
     position: absolute;
 }
 
-.attribute-type-contents>a {
+.attribute-type-list>a {
     display: block;
 }
 
@@ -85,4 +85,26 @@
 @keyframes animatezoom {
 	from {transform: scale(0)} 
 	to {transform: scale(1)}
+}
+
+#key-schema-tbl td {
+    vertical-align: top;
+}
+
+.dropdown-btn {
+    position: relative;
+    width: 200px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.dropdown-btn>.fa-caret-down {
+    position: absolute;
+    right: 3px;
+    top: 0;
+    bottom: 0;
+}
+
+.dropdown-list {
+    display: none;
 }

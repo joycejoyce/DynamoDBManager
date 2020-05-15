@@ -1,3 +1,5 @@
+import {ConfirmView} from "./confirm-view.js";
+
 function CommonView() {
     this.addEventListeners = () => {
         listenOnClickMainTabs();
@@ -20,16 +22,10 @@ function CommonView() {
     
     function listenOnClickWindow() {
         window.addEventListener("click", (e) => {
-            hideConfirmContainer(e);
+            if(e.target == ConfirmView.get()) {
+                ConfirmView.reset();
+            }
         });
-    }
-    
-    function hideConfirmContainer(event) {
-        const confirmContainer = document.getElementsByClassName("confirm-container")[0];
-        if(event.target == confirmContainer) {
-            confirmContainer.style.display = "none";
-            confirmContainer.id = "";
-        }
     }
 }
 

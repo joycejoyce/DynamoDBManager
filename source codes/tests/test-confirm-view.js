@@ -26,7 +26,7 @@ describe(`ConfirmView`, () => {
         it(`When click on "Delete All" button in Create Table page`, () => {
             expectDisplayValueToBe(window, confirmPage, "none")
             
-            const deleteAllBtn = document.querySelector("#delete-all-attributes-btn");
+            const deleteAllBtn = document.querySelector("#delete-all-attr-ctrl-item-btn");
             deleteAllBtn.disabled = false;
             
             deleteAllBtn.click();

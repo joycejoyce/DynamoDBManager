@@ -1,5 +1,5 @@
 import {expect, getJSDOM, expectDisplayValueToBe, checkConfirmPageIsReset, createAttrCtrlItems} from "./common-func-for-tests.js";
-import {DeleteAllAttrBtnView} from "../scripts/src/view/create-table-view/delete-all-attr-btn-view.js";
+import {DeleteAllAttrBtnView} from "../scripts/src/view/create-table-view/delete-all-attr-ctrl-item-btn-view.js";
 import "regenerator-runtime/runtime.js";
 
 let window, document, $;
@@ -20,7 +20,7 @@ describe(`DeleteAllAttrBtnView`, () => {
             deleteAllBtn = getDeleteAllBtn();
         });
 
-        it(`The confirm page is given id = "delete-all-attributes"`, () => {
+        it(`The confirm page is given id = "delete-all-attr-ctrl-items"`, () => {
             let confirmPage = getConfirmPage();
             expect(null == confirmPage).to.be.true;
             
@@ -33,11 +33,11 @@ describe(`DeleteAllAttrBtnView`, () => {
     });
     
     function getDeleteAllBtn() {
-        return document.querySelector("#delete-all-attributes-btn");
+        return document.querySelector("#delete-all-attr-ctrl-item-btn");
     }
     
     function getConfirmPage() {
-        return document.querySelector(".confirm-container#delete-all-attributes");
+        return document.querySelector(".confirm-container#delete-all-attr-ctrl-items");
     }
     
     describe(`Confirm Page`, () => {
@@ -65,7 +65,7 @@ describe(`DeleteAllAttrBtnView`, () => {
             });
             
             function getYesBtn() {
-                return document.querySelector(".confirm-container#delete-all-attributes .yes");
+                return document.querySelector(".confirm-container#delete-all-attr-ctrl-items .yes");
             }
             
             describe(`#click`, () => {

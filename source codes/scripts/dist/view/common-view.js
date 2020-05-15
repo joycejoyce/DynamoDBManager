@@ -1,7 +1,9 @@
 "use strict";
 
-System.register([], function (_export, _context) {
+System.register(["./confirm-view.js"], function (_export, _context) {
   "use strict";
+
+  var ConfirmView;
 
   function CommonView() {
     this.addEventListeners = function () {
@@ -27,24 +29,19 @@ System.register([], function (_export, _context) {
 
     function listenOnClickWindow() {
       window.addEventListener("click", function (e) {
-        hideConfirmContainer(e);
+        if (e.target == ConfirmView.get()) {
+          ConfirmView.reset();
+        }
       });
-    }
-
-    function hideConfirmContainer(event) {
-      var confirmContainer = document.getElementsByClassName("confirm-container")[0];
-
-      if (event.target == confirmContainer) {
-        confirmContainer.style.display = "none";
-        confirmContainer.id = "";
-      }
     }
   }
 
   _export("CommonView", CommonView);
 
   return {
-    setters: [],
+    setters: [function (_confirmViewJs) {
+      ConfirmView = _confirmViewJs.ConfirmView;
+    }],
     execute: function () {}
   };
 });

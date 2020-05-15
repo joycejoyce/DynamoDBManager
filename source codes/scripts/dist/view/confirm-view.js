@@ -3,7 +3,7 @@
 System.register([], function (_export, _context) {
   "use strict";
 
-  function ConfirmView(obj) {
+  function ConfirmView() {
     var confirmPage = ConfirmView.get();
 
     this.addEventListeners = function () {

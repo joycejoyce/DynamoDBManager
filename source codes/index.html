@@ -23,22 +23,52 @@
         </div>
         
         <div id="main-pages">
-            <div id="main-page-1" class="active">
+            <div id="main-page-1">
                 <p>db-overview page</p>
             </div>
 
-            <div id="main-page-2">
+            <div id="main-page-2" class="active">
                 <button id="create-table-btn">
                     Create a table <i class="fa fa-caret-down"></i>
                 </button>
                 <div id="create-table-page">
                     <div id="create-table-contents">
-                        Table Name: <input type="text" id="table-name" required>
+                        <div id="table-name-input">
+                            Table Name: <input type="text" id="table-name" required>
+                        </div>
 
                         <section id="attribute-definitions">
                             <h1>Attribute Definitions</h1>
-                            <button id="add-attribute-btn">Add</button>
-                            <button id="delete-all-attributes-btn" disabled>Delete All</button>
+                            <button id="add-attr-ctrl-item-btn">Add</button>
+                            <button id="delete-all-attr-ctrl-item-btn" disabled>Delete All</button>
+                        </section>
+                        
+                        <section id="key-schema">
+                            <h1>Key Schema</h1>
+                            <table id="key-schema-tbl">
+                                <tr>
+                                    <td>Hash key: </td>
+                                    <td>
+                                        <div id="hash-key-dropdown">
+                                            <button id="hash-key-btn" class="dropdown-btn">
+                                                <i class="fa fa-caret-down"></i>
+                                            </button>
+                                            <div id="hash-key-list" class="dropdown-list"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Range key: </td>
+                                    <td>
+                                        <div id="range-key-dropdown">
+                                            <button id="range-key-btn" class="dropdown-btn">
+                                                <i class="fa fa-caret-down"></i>
+                                            </button>
+                                            <div id="range-key-list" class="dropdown-list"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </section>
                     </div>
                 </div>

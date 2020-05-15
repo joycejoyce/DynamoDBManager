@@ -8,7 +8,7 @@ function DeleteAllAttrBtnView() {
     };
     
     function listenOnClick() {
-        const btn = document.getElementById("delete-all-attributes-btn");
+        const btn = document.getElementById("delete-all-attr-ctrl-item-btn");
         btn.addEventListener("click", () => {
             showConfirmPage();
             listenOnClickYesBtn();
@@ -16,13 +16,13 @@ function DeleteAllAttrBtnView() {
     }
     
     function showConfirmPage() {
-        confirmPage.id = "delete-all-attributes";
+        confirmPage.id = "delete-all-attr-ctrl-items";
         confirmPage.querySelector(".confirm-msg").textContent = DeleteAllAttrBtnView.confirmMessage;
         confirmPage.style.display = "block";
     }
     
     function listenOnClickYesBtn() {
-        const yesBtn = document.querySelector("#delete-all-attributes .yes");
+        const yesBtn = document.querySelector("#delete-all-attr-ctrl-items .yes");
         yesBtn.addEventListener("click", () => {
             clickAllDeleteAttrBtn();
             ConfirmView.reset();
@@ -31,7 +31,7 @@ function DeleteAllAttrBtnView() {
     
     function clickAllDeleteAttrBtn() {
         while(1) {
-            const deleteAttrBtn = document.querySelector(".delete-attribute-control-item-btn");
+            const deleteAttrBtn = document.querySelector(".delete-attr-ctrl-item-btn");
             
             if(null == deleteAttrBtn) {
                 break;

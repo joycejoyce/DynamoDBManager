@@ -21,13 +21,13 @@ System.register(["../confirm-view.js"], function (_export, _context) {
     }
 
     function showConfirmPage() {
-      confirmPage.id = "delete-all-attributes";
+      confirmPage.id = "delete-all-attr-ctrl-items";
       confirmPage.querySelector(".confirm-msg").textContent = DeleteAllAttrBtnView.confirmMessage;
       confirmPage.style.display = "block";
     }
 
     function listenOnClickYesBtn() {
-      var yesBtn = document.querySelector("#delete-all-attributes .yes");
+      var yesBtn = document.querySelector("#delete-all-attr-ctrl-items .yes");
       yesBtn.addEventListener("click", function () {
         clickAllDeleteAttrBtn();
         ConfirmView.reset();
