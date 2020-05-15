@@ -43,10 +43,25 @@ function expectDisplayValueToBe(window, elem, expectedValue) {
     expect(expectedValue).to.eql(actualValue);
 }
 
+function checkConfirmPageIsReset(window, confirmPage) {
+    expectDisplayValueToBe(window, confirmPage, "none");
+    expect(confirmPage.id).to.eql("");
+}
+
+function createAttrCtrlItems(document, num) {
+    const addAttrBtn = document.querySelector("#add-attribute-btn");
+
+    for(let i=0; i<num; i++) {
+        addAttrBtn.click();
+    }
+}
+
 module.exports = {
     chai,
     expect,
     printErrorStack,
     getJSDOM,
-    expectDisplayValueToBe
+    expectDisplayValueToBe,
+    checkConfirmPageIsReset,
+    createAttrCtrlItems
 };

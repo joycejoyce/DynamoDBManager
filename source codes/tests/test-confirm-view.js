@@ -1,8 +1,7 @@
-import {expect, getJSDOM, expectDisplayValueToBe} from "./common-func-for-tests.js";
+import {expect, getJSDOM, expectDisplayValueToBe, checkConfirmPageIsReset} from "./common-func-for-tests.js";
 import "regenerator-runtime/runtime.js";
 
 let window, document, $;
-beforeEach(refreshDom);
 
 async function refreshDom() {
     const jsdom = await getJSDOM("index.html");
@@ -27,7 +26,7 @@ describe(`ConfirmView`, () => {
         it(`When click on "Delete All" button in Create Table page`, () => {
             expectDisplayValueToBe(window, confirmPage, "none")
             
-            const deleteAllBtn = document.querySelector("#attribute-definitions #delete-all-attributes-btn");
+            const deleteAllBtn = document.querySelector("#delete-all-attributes-btn");
             deleteAllBtn.disabled = false;
             
             deleteAllBtn.click();
@@ -58,12 +57,3 @@ describe(`ConfirmView`, () => {
         });
     });
 });
-
-function checkConfirmPageIsReset(window, confirmPage) {
-    expectDisplayValueToBe(window, confirmPage, "none");
-    expect(confirmPage.id).to.eql("");
-}
-
-export {
-    checkConfirmPageIsReset
-};

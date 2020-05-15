@@ -1,4 +1,4 @@
-import {expect, getJSDOM} from "./common-func-for-tests.js";
+import {expect, getJSDOM, createAttrCtrlItems} from "./common-func-for-tests.js";
 import "regenerator-runtime/runtime.js";
 
 let window, document, $;
@@ -73,8 +73,8 @@ describe(`(CreateTableView) "Attribute Definitions" section`, () => {
     describe(`Attribute Control Item`, () => {
         let attrCtrlItem;
         
-        function createAttrCtrlItem() {
-            getAddBtn().click();
+        function setAttrItem() {
+            createAttrCtrlItems(document, 1);
             attrCtrlItem = document.getElementsByClassName("attribute-control-item")[0];
         }
         
@@ -85,7 +85,7 @@ describe(`(CreateTableView) "Attribute Definitions" section`, () => {
         describe(`#components`, () => {
             before(async () => {
                 await refreshDom();
-                createAttrCtrlItem();
+                setAttrItem();
             });
             
             it(`has 3 components`, () => {
@@ -160,7 +160,7 @@ describe(`(CreateTableView) "Attribute Definitions" section`, () => {
             
             before(async () => {
                 await refreshDom();
-                createAttrCtrlItem();
+                setAttrItem();
                 attrTypeDropdown = getAttrTypeDropdown();
             });
             

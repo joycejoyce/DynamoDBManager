@@ -21,9 +21,9 @@ System.register(["../confirm-view.js"], function (_export, _context) {
     }
 
     function showConfirmPage() {
-      console.log("Enter showConfirmPage()");
-      confirmPage.style.display = "block";
       confirmPage.id = "delete-all-attributes";
+      confirmPage.querySelector(".confirm-msg").textContent = DeleteAllAttrBtnView.confirmMessage;
+      confirmPage.style.display = "block";
     }
 
     function listenOnClickYesBtn() {

@@ -1,5 +1,4 @@
-import {expect, getJSDOM, expectDisplayValueToBe} from "./common-func-for-tests.js";
-import {checkConfirmPageIsReset} from "./test-confirm-view.js";
+import {expect, getJSDOM, expectDisplayValueToBe, checkConfirmPageIsReset, createAttrCtrlItems} from "./common-func-for-tests.js";
 import {DeleteAllAttrBtnView} from "../scripts/src/view/create-table-view/delete-all-attr-btn-view.js";
 import "regenerator-runtime/runtime.js";
 
@@ -12,34 +11,30 @@ async function refreshDom() {
     $ = jsdom.$;
 }
 
-let deleteAllBtn;
-
-before(async () => {
-    await refreshDom();
-    deleteAllBtn = getDeleteAllBtn();
-});
-
-function getDeleteAllBtn() {
-    return document.querySelector("#attribute-definitions #delete-all-attributes-btn");
-}
-
 describe(`DeleteAllAttrBtnView`, () => {
     describe(`#click`, () => {
+        let deleteAllBtn;
+        
         beforeEach(async () => {
             await refreshDom();
+            deleteAllBtn = getDeleteAllBtn();
         });
-        
+
         it(`The confirm page is given id = "delete-all-attributes"`, () => {
             let confirmPage = getConfirmPage();
             expect(null == confirmPage).to.be.true;
             
             deleteAllBtn.disabled = false;
             deleteAllBtn.click();
-
+            
             confirmPage = getConfirmPage();
             expect(null == confirmPage).to.be.false;
         });
     });
+    
+    function getDeleteAllBtn() {
+        return document.querySelector("#delete-all-attributes-btn");
+    }
     
     function getConfirmPage() {
         return document.querySelector(".confirm-container#delete-all-attributes");
@@ -47,53 +42,50 @@ describe(`DeleteAllAttrBtnView`, () => {
     
     describe(`Confirm Page`, () => {
         describe(`#components`, () => {
-            beforeEach(async () => {
+            let deleteAllBtn;
+            
+            before(async () => {
                 await refreshDom();
-                createAttrCtrlItems(1);
+                deleteAllBtn = getDeleteAllBtn();
+                deleteAllBtn.disabled = false;
                 deleteAllBtn.click();
             });
-            
-            it(`confirm message = ${DeleteAllAttrBtnView.confirmMessage}`, async () => {
+            it(`confirm message = ${DeleteAllAttrBtnView.confirmMessage}`, () => {
                 const msg = getConfirmPage().querySelector(".confirm-msg").innerHTML;
                 expect(msg).to.eql(DeleteAllAttrBtnView.confirmMessage);
             })
         });
         
-        function createAttrCtrlItems(num) {
-            const addAttrBtn = document.querySelector("#add-attribute-btn");
-
-            for(let i=0; i<num; i++) {
-                addAttrBtn.click();
-            }
-        }
-        
         describe(`"Yes" button`, () => {
+            let deleteAllBtn;
+            
             beforeEach(async () => {
                 await refreshDom();
+                deleteAllBtn = getDeleteAllBtn();
             });
             
             function getYesBtn() {
-                deleteAllBtn.click();
                 return document.querySelector(".confirm-container#delete-all-attributes .yes");
             }
             
             describe(`#click`, () => {
                 it(`Remove all Attribute Control Items`, () => {
                     const num = 3;
-                    createAttrCtrlItems(num);
-                    
+                    createAttrCtrlItems(document, num);
+
                     const attrCtrlItems = document.getElementsByClassName("attribute-control-item");
-                    
                     expect(attrCtrlItems.length).to.eql(num);
                     
+                    getDeleteAllBtn().click();
                     getYesBtn().click();
                     
                     expect(attrCtrlItems.length).to.eql(0);
                 });
 
                 it(`Reset the confirm page()`, () => {
+                    createAttrCtrlItems(document, 1);
+                    getDeleteAllBtn().click();
                     const confirmPage = getConfirmPage();
-                    
                     expectDisplayValueToBe(window, confirmPage, "block");
                     
                     getYesBtn().click();
@@ -102,5 +94,5 @@ describe(`DeleteAllAttrBtnView`, () => {
                 });
             });
         });
-    })
+    });
 });
