@@ -1,5 +1,6 @@
 import {DeleteAllAttrBtnView} from "./delete-all-attr-ctrl-item-btn-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";
+import {DropdownView} from "../common-components/dropdown-view.js";
 
 function CreateTableView() {
     this.addEventListeners = () => {
@@ -66,24 +67,37 @@ function CreateTableView() {
     
     function listenOnClickHashKeyBtn() {
         const hashKeyBtn = document.getElementById("hash-key-btn");
-        hashKeyBtn.addEventListener("click", (e) => showOrHideHashKeyList(e));
+        hashKeyBtn.addEventListener("click", () => showOrHideHashKeyList());
     }
     
-    function showOrHideHashKeyList(event) {
-        const display = event.target.style.display;
+    function showOrHideHashKeyList() {
+        const attrs = getAttrs();
+        setHashKeyListDoc(attrs);
+        
+        /*const hashKeyList = document.getElementById("hash-key-list");
+        const display = hashKeyList.style.display;
         if(display == "block") {
-            event.target.style.display = "none";
+            hashKeyList.style.display = "none";
         }
         else {
-            const attrs = getAttrs();
-            
-        }
+            hashKeyList.style.display = "block";
+        }*/
     }
     
     function getAttrs() {
+        const elems = document.getElementsByClassName("attribute-name-input");
+        console.log("elems # = " + elems.length);
         const attrs = Array.from(document.getElementsByClassName("attribute-name-input")).forEach(elem => elem.value);
         
         return attrs;
+    }
+    
+    function setHashKeyListDoc(attrs) {
+        const dropdown = new DropdownView();
+        dropdown.setList(attrs);
+        const listDoc = dropdown.getList();
+        document.getElementById("hash-key-list").innerHTML = listDoc.innerHTML;
+        console.log(`document.getElementById("hash-key-list").innerHTML`);
     }
 }
 

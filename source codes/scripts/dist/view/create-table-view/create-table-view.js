@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-view.js"], function (_export, _context) {
+System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-view.js", "../common-components/dropdown-view.js"], function (_export, _context) {
   "use strict";
 
-  var DeleteAllAttrBtnView, AttrCtrlItemView;
+  var DeleteAllAttrBtnView, AttrCtrlItemView, DropdownView;
 
   function CreateTableView() {
     this.addEventListeners = function () {
@@ -73,26 +73,39 @@ System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-vi
 
     function listenOnClickHashKeyBtn() {
       var hashKeyBtn = document.getElementById("hash-key-btn");
-      hashKeyBtn.addEventListener("click", function (e) {
-        return showOrHideHashKeyList(e);
+      hashKeyBtn.addEventListener("click", function () {
+        return showOrHideHashKeyList();
       });
     }
 
-    function showOrHideHashKeyList(event) {
-      var display = event.target.style.display;
-
-      if (display == "block") {
-        event.target.style.display = "none";
-      } else {
-        var attrs = getAttrs();
+    function showOrHideHashKeyList() {
+      var attrs = getAttrs();
+      setHashKeyListDoc(attrs);
+      /*const hashKeyList = document.getElementById("hash-key-list");
+      const display = hashKeyList.style.display;
+      if(display == "block") {
+          hashKeyList.style.display = "none";
       }
+      else {
+          hashKeyList.style.display = "block";
+      }*/
     }
 
     function getAttrs() {
+      var elems = document.getElementsByClassName("attribute-name-input");
+      console.log("elems # = " + elems.length);
       var attrs = Array.from(document.getElementsByClassName("attribute-name-input")).forEach(function (elem) {
         return elem.value;
       });
       return attrs;
+    }
+
+    function setHashKeyListDoc(attrs) {
+      var dropdown = new DropdownView();
+      dropdown.setList(attrs);
+      var listDoc = dropdown.getList();
+      document.getElementById("hash-key-list").innerHTML = listDoc.innerHTML;
+      console.log("document.getElementById(\"hash-key-list\").innerHTML");
     }
   }
 
@@ -103,6 +116,8 @@ System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-vi
       DeleteAllAttrBtnView = _deleteAllAttrCtrlItemBtnViewJs.DeleteAllAttrBtnView;
     }, function (_attrCtrlItemViewJs) {
       AttrCtrlItemView = _attrCtrlItemViewJs.AttrCtrlItemView;
+    }, function (_commonComponentsDropdownViewJs) {
+      DropdownView = _commonComponentsDropdownViewJs.DropdownView;
     }],
     execute: function () {}
   };
