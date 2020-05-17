@@ -105,6 +105,11 @@
     bottom: 0;
 }
 
+.dropdown-list>* {
+    display: block;
+    cursor: pointer;
+}
+
 .dropdown-list {
     display: none;
 }

@@ -4,6 +4,7 @@ function DropdownView() {
     let dropdownList;
     (() => {
         dropdown = document.createElement("div");
+        dropdown.className = "dropdown";
         
         dropdownBtn = getDropdownBtn();
         dropdown.appendChild(dropdownBtn);
@@ -38,21 +39,64 @@ function DropdownView() {
         return dropdownList;
     };
     
-    this.setBtn = (obj) => {
-        dropdownBtn.value = obj.value;
-        dropdownBtn.addEventListener("click", obj.clickEvent);
+    this.setBtnText = (text) => {
+        dropdownBtn.textContent = text;
     };
     
-    this.setList = (ary) => {
-        if(ary.length == 0) {
+    this.setListItems = (items) => {
+        if(items == null || items.length == 0) {
             return;
         }
-        ary.forEach(item => {
+        items.forEach(item => {
             const elem = document.createElement("a");
             elem.textContent = item;
             dropdownList.appendChild(elem);
         });
     }
+    
+    this.createDropdownInDoc = (parent, id) => {
+        dropdown.id = id;
+        parent.appendChild(dropdown);
+        this.listenOnClickBtn(id);
+    }
+    
+    this.listenOnClickBtn = (id) => {
+        const btnInDoc = document.querySelector("#"+id+">.dropdown-btn");
+        btnInDoc.addEventListener("click", (e) => {
+            showOrHideDropdownList(e);
+        });
+    };
+
+    function showOrHideDropdownList(event) {
+        const siblings = Array.from(event.target.parentNode.childNodes);
+        
+        const dropdownList = siblings.filter(sibling => sibling.classList.contains("dropdown-list"))[0];
+        
+        const display = window.getComputedStyle(dropdownList).getPropertyValue("display");
+        if(display == "block") {
+            dropdownList.style.display = "none";
+        }
+        else {
+            dropdownList.style.display = "block";
+        }
+    }
+    
+    /*function listenOnClickListItems() {
+        const listItems = Array.from(dropdownList.querySelectorAll("a"));
+        listItems.forEach(item => item.addEventListener("click", (e) => {
+            changeBtnText(e);
+            hideList();
+        }));
+    }
+    
+    function changeBtnText(event) {
+        const text = event.target.textContent;
+        document.querySelector("#hash-key-btn").textContent = text;
+    }
+    
+    function hideList() {
+        dropdownList.style.display = "none";
+    }*/
 }
 
 export {

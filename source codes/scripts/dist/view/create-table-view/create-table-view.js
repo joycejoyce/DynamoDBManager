@@ -9,8 +9,7 @@ System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-vi
     this.addEventListeners = function () {
       listenOnClickCreateTableBtn();
       listenOnClickAddAttributeBtn();
-      new DeleteAllAttrBtnView().addEventListeners();
-      listenOnClickHashKeyBtn();
+      new DeleteAllAttrBtnView().addEventListeners(); //listenOnClickHashKeyBtn();
     };
 
     function listenOnClickCreateTableBtn() {
@@ -71,41 +70,14 @@ System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-vi
       attrDefElem.appendChild(attrCtrlItem);
     }
 
-    function listenOnClickHashKeyBtn() {
-      var hashKeyBtn = document.getElementById("hash-key-btn");
-      hashKeyBtn.addEventListener("click", function () {
-        return showOrHideHashKeyList();
-      });
-    }
-
-    function showOrHideHashKeyList() {
-      var attrs = getAttrs();
-      setHashKeyListDoc(attrs);
-      /*const hashKeyList = document.getElementById("hash-key-list");
-      const display = hashKeyList.style.display;
-      if(display == "block") {
-          hashKeyList.style.display = "none";
-      }
-      else {
-          hashKeyList.style.display = "block";
-      }*/
-    }
+    function listenOnClickHashKeyBtn() {}
 
     function getAttrs() {
-      var elems = document.getElementsByClassName("attribute-name-input");
-      console.log("elems # = " + elems.length);
-      var attrs = Array.from(document.getElementsByClassName("attribute-name-input")).forEach(function (elem) {
-        return elem.value;
+      var attrNameInputs = document.getElementsByClassName("attribute-name-input");
+      var attrs = Array.from(attrNameInputs).map(function (input) {
+        return input.value;
       });
       return attrs;
-    }
-
-    function setHashKeyListDoc(attrs) {
-      var dropdown = new DropdownView();
-      dropdown.setList(attrs);
-      var listDoc = dropdown.getList();
-      document.getElementById("hash-key-list").innerHTML = listDoc.innerHTML;
-      console.log("document.getElementById(\"hash-key-list\").innerHTML");
     }
   }
 

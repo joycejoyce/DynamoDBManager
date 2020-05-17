@@ -1,4 +1,4 @@
-import {expect, getJSDOM} from "./common-func-for-tests.js";
+import {expect, getJSDOM, expectDisplayValueToBe} from "./common-func-for-tests.js";
 import "regenerator-runtime/runtime.js";
 
 let window, document, $;
@@ -51,38 +51,22 @@ describe(`DropdownView`, () => {
         });
     });
     
-    describe(`setBtn()`, () => {
+    describe(`setBtnText()`, () => {
         let dropdownBtn;
         
         before(() => {
             dropdownBtn = dropdownModule.getBtn();
         });
         
-        it(`Set the value of the button`, () => {
-            const value = "Test";
-            dropdownModule.setBtn({value: value});
+        it(`Set the text of the button`, () => {
+            const text = "Test";
+            dropdownModule.setBtnText(text);
             
-            expect(dropdownBtn.value).to.eql(value);
-        });
-        
-        it(`Set the onclick event`, () => {
-            const attrName = "data-value";
-            const attrValue = "test";
-            const setDataValue = () => {
-                dropdownBtn.setAttribute(attrName, attrValue);
-            }
-            
-            dropdownModule.setBtn({value: "Test", clickEvent: setDataValue});
-            
-            expect(dropdownBtn.getAttribute(attrName)).to.eql(null);
-            
-            dropdownBtn.click();
-            
-            expect(dropdownBtn.getAttribute(attrName)).to.eql(attrValue);
+            expect(dropdownBtn.textContent).to.eql(text);
         });
     });
     
-    describe(`setList()`, () => {
+    describe(`setListItems()`, () => {
         let dropdownList;
         
         before(() => {
@@ -90,14 +74,55 @@ describe(`DropdownView`, () => {
         });
         
         it(`Create <a> elements for input`, () => {
-            const list = ["A","B","C"];
+            const items = ["A","B","C"];
             
-            dropdownModule.setList(list);
+            dropdownModule.setListItems(items);
             
-            expect(dropdownList.childElementCount).to.eql(list.length);
+            expect(dropdownList.childElementCount).to.eql(items.length);
             
             const dropdownListItems = Array.from(dropdownList.querySelectorAll("a")).map(elem => elem.textContent);
-            list.forEach(item => expect(dropdownListItems.includes(item)).to.be.true);
+            items.forEach(item => expect(dropdownListItems.includes(item)).to.be.true);
+        });
+    });
+    
+    describe(`createDropdownInDoc()`, () => {
+        after(async () => {
+            await getDropdownModule();
+        });
+        
+        it(`Create a dropdown in the current document`, () => {
+            const parent = document.querySelector("#hash-key-row");
+            const id = "test-id";
+            dropdownModule.createDropdownInDoc(parent, id);
+            expect(parent.querySelectorAll("#"+id).length).to.eql(1);
+        });
+    });
+    
+    describe(`Dropdown button`, () => {
+        describe(`#click`, () => {
+            after(async () => {
+                await getDropdownModule();
+            });
+            
+            it(`Toggle dropdown list to display or hide`, () => {
+                const id = "testId";
+                const parent = document.querySelectorAll("#hash-key-row td")[1];
+                dropdownModule.createDropdownInDoc(parent, id);
+                
+                const dropdown = document.getElementById(id);
+                const dropdownBtn = dropdown.querySelector(".dropdown-btn");
+                const dropdownList = dropdown.querySelector(".dropdown-list");
+                
+                for(let i=0; i<3; i++) {
+                    if(i%2 == 0) {
+                        expectDisplayValueToBe(window, dropdownList, "none");
+                    }
+                    else {
+                        expectDisplayValueToBe(window, dropdownList, "block");
+                    }
+                    dropdownBtn.click();
+                }
+            });
         });
     });
 });

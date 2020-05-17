@@ -7,7 +7,7 @@ function CreateTableView() {
         listenOnClickCreateTableBtn();
         listenOnClickAddAttributeBtn();
         new DeleteAllAttrBtnView().addEventListeners();
-        listenOnClickHashKeyBtn();
+        //listenOnClickHashKeyBtn();
     };
     
     function listenOnClickCreateTableBtn() {
@@ -66,38 +66,13 @@ function CreateTableView() {
     }
     
     function listenOnClickHashKeyBtn() {
-        const hashKeyBtn = document.getElementById("hash-key-btn");
-        hashKeyBtn.addEventListener("click", () => showOrHideHashKeyList());
-    }
-    
-    function showOrHideHashKeyList() {
-        const attrs = getAttrs();
-        setHashKeyListDoc(attrs);
-        
-        /*const hashKeyList = document.getElementById("hash-key-list");
-        const display = hashKeyList.style.display;
-        if(display == "block") {
-            hashKeyList.style.display = "none";
-        }
-        else {
-            hashKeyList.style.display = "block";
-        }*/
     }
     
     function getAttrs() {
-        const elems = document.getElementsByClassName("attribute-name-input");
-        console.log("elems # = " + elems.length);
-        const attrs = Array.from(document.getElementsByClassName("attribute-name-input")).forEach(elem => elem.value);
+        const attrNameInputs = document.getElementsByClassName("attribute-name-input");
+        const attrs = Array.from(attrNameInputs).map(input => input.value);
         
         return attrs;
-    }
-    
-    function setHashKeyListDoc(attrs) {
-        const dropdown = new DropdownView();
-        dropdown.setList(attrs);
-        const listDoc = dropdown.getList();
-        document.getElementById("hash-key-list").innerHTML = listDoc.innerHTML;
-        console.log(`document.getElementById("hash-key-list").innerHTML`);
     }
 }
 
