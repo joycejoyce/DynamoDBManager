@@ -1,28 +1,50 @@
 "use strict";
 
-System.register([], function (_export, _context) {
+System.register(["../common-components/common-functions.js"], function (_export, _context) {
   "use strict";
 
+  var CommonFunctions;
+
   function DropdownView() {
-    var _this = this;
+    this.createElements = function () {
+      createHashKeyDropdownElem();
+      createRangeKeyDropdownElem();
+    };
 
-    var dropdown;
-    var dropdownBtn;
-    var dropdownList;
+    function createHashKeyDropdownElem() {
+      var parent = document.querySelectorAll("#hash-key-row>td")[1];
+      var id = "hash-key-dropdown";
+      createDropdownInDoc(parent, id);
+    }
 
-    (function () {
-      dropdown = document.createElement("div");
+    function createDropdownInDoc(parent, id) {
+      var dropdownDoc = new DropdownView().getDropdownDoc();
+      dropdownDoc.id = id;
+      parent.appendChild(dropdownDoc);
+    }
+
+    this.getDropdownDoc = function () {
+      var dropdown = document.createElement("div");
       dropdown.className = "dropdown";
-      dropdownBtn = getDropdownBtn();
+      var dropdownBtn = getDropdownBtn();
       dropdown.appendChild(dropdownBtn);
-      dropdownList = getDropdownList();
+      var dropdownList = getDropdownList();
       dropdown.appendChild(dropdownList);
-    })();
+      return dropdown;
+    };
 
     function getDropdownBtn() {
       var dropdownBtn = document.createElement("button");
       dropdownBtn.className = "dropdown-btn";
+      var iElem = getFaCaretDownIElem();
+      dropdownBtn.appendChild(iElem);
       return dropdownBtn;
+    }
+
+    function getFaCaretDownIElem() {
+      var elem = document.createElement("i");
+      elem.className = "fa fa-caret-down";
+      return elem;
     }
 
     function getDropdownList() {
@@ -31,84 +53,43 @@ System.register([], function (_export, _context) {
       return dropdownList;
     }
 
-    this.getDoc = function () {
-      return dropdown;
-    };
-
-    this.getBtn = function () {
-      return dropdownBtn;
-    };
-
-    this.getList = function () {
-      return dropdownList;
-    };
-
-    this.setBtnText = function (text) {
-      dropdownBtn.textContent = text;
-    };
-
-    this.setListItems = function (items) {
-      if (items == null || items.length == 0) {
-        return;
-      }
-
-      items.forEach(function (item) {
+    this.createListItemElems = function (dropdownListElem, listItems) {
+      dropdownListElem.innerHTML = "";
+      listItems.forEach(function (item) {
         var elem = document.createElement("a");
         elem.textContent = item;
-        dropdownList.appendChild(elem);
+        dropdownListElem.appendChild(elem);
       });
     };
 
-    this.createDropdownInDoc = function (parent, id) {
-      dropdown.id = id;
-      parent.appendChild(dropdown);
-
-      _this.listenOnClickBtn(id);
+    this.changeBtnTextAndHideList = function (text, dropdownElem) {
+      changeBtnText(text, dropdownElem);
+      hideList(dropdownElem);
     };
 
-    this.listenOnClickBtn = function (id) {
-      var btnInDoc = document.querySelector("#" + id + ">.dropdown-btn");
-      btnInDoc.addEventListener("click", function (e) {
-        showOrHideDropdownList(e);
-      });
-    };
-
-    function showOrHideDropdownList(event) {
-      var siblings = Array.from(event.target.parentNode.childNodes);
-      var dropdownList = siblings.filter(function (sibling) {
-        return sibling.classList.contains("dropdown-list");
-      })[0];
-      var display = window.getComputedStyle(dropdownList).getPropertyValue("display");
-
-      if (display == "block") {
-        dropdownList.style.display = "none";
-      } else {
-        dropdownList.style.display = "block";
-      }
+    function changeBtnText(text, dropdownElem) {
+      var btnElem = dropdownElem.querySelector(".dropdown-btn");
+      btnElem.textContent = text;
     }
-    /*function listenOnClickListItems() {
-        const listItems = Array.from(dropdownList.querySelectorAll("a"));
-        listItems.forEach(item => item.addEventListener("click", (e) => {
-            changeBtnText(e);
-            hideList();
-        }));
-    }
-    
-    function changeBtnText(event) {
-        const text = event.target.textContent;
-        document.querySelector("#hash-key-btn").textContent = text;
-    }
-    
-    function hideList() {
-        dropdownList.style.display = "none";
-    }*/
 
+    function hideList(dropdownElem) {
+      var listElem = dropdownElem.querySelector(".dropdown-list");
+      listElem.style.display = "none";
+    }
+
+    function createRangeKeyDropdownElem() {
+      var parent = document.querySelectorAll("#range-key-row>td")[1];
+      var id = "range-key-dropdown";
+      createDropdownInDoc(parent, id);
+    }
   }
 
   _export("DropdownView", DropdownView);
 
   return {
-    setters: [],
+    setters: [function (_commonComponentsCommonFunctionsJs) {
+      CommonFunctions = _commonComponentsCommonFunctionsJs.CommonFunctions;
+    }],
     execute: function () {}
   };
 });

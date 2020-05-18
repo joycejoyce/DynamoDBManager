@@ -16,7 +16,7 @@ describe(`(CreateTableView) Entry Point`, () => {
         
         before(async () => {
             await refreshDom();
-            createTableBtn = document.getElementById("create-table-btn");
+            createTableBtn = document.getElementById("create-table-page-btn");
         });
         
         describe(`#click`, () => {

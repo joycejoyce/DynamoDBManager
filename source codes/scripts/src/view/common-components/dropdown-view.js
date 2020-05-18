@@ -1,23 +1,50 @@
+import {CommonFunctions} from "../common-components/common-functions.js";
+
 function DropdownView() {
-    let dropdown;
-    let dropdownBtn;
-    let dropdownList;
-    (() => {
-        dropdown = document.createElement("div");
+    this.createElements = () => {
+        createHashKeyDropdownElem();
+        createRangeKeyDropdownElem();
+    };
+    
+    function createHashKeyDropdownElem() {
+        const parent = document.querySelectorAll("#hash-key-row>td")[1];
+        const id = "hash-key-dropdown";
+        createDropdownInDoc(parent, id);
+    }
+    
+    function createDropdownInDoc(parent, id) {
+        const dropdownDoc = new DropdownView().getDropdownDoc();
+        dropdownDoc.id = id;
+        parent.appendChild(dropdownDoc);
+    }
+    
+    this.getDropdownDoc = () => {
+        const dropdown = document.createElement("div");
         dropdown.className = "dropdown";
         
-        dropdownBtn = getDropdownBtn();
+        const dropdownBtn = getDropdownBtn();
         dropdown.appendChild(dropdownBtn);
         
-        dropdownList = getDropdownList();
+        const dropdownList = getDropdownList();
         dropdown.appendChild(dropdownList);
-    })();
+        
+        return dropdown;
+    };
     
     function getDropdownBtn() {
         const dropdownBtn = document.createElement("button");
         dropdownBtn.className = "dropdown-btn";
         
+        const iElem = getFaCaretDownIElem();
+        dropdownBtn.appendChild(iElem);
+        
         return dropdownBtn;
+    }
+    
+    function getFaCaretDownIElem() {
+        const elem = document.createElement("i");
+        elem.className = "fa fa-caret-down";
+        return elem;
     }
     
     function getDropdownList() {
@@ -27,76 +54,35 @@ function DropdownView() {
         return dropdownList;
     }
     
-    this.getDoc = () => {
-        return dropdown;
-    };
-    
-    this.getBtn = () => {
-        return dropdownBtn;
-    };
-    
-    this.getList = () => {
-        return dropdownList;
-    };
-    
-    this.setBtnText = (text) => {
-        dropdownBtn.textContent = text;
-    };
-    
-    this.setListItems = (items) => {
-        if(items == null || items.length == 0) {
-            return;
-        }
-        items.forEach(item => {
+    this.createListItemElems = (dropdownListElem, listItems) => {
+        dropdownListElem.innerHTML = "";
+        listItems.forEach(item => {
             const elem = document.createElement("a");
             elem.textContent = item;
-            dropdownList.appendChild(elem);
-        });
-    }
-    
-    this.createDropdownInDoc = (parent, id) => {
-        dropdown.id = id;
-        parent.appendChild(dropdown);
-        this.listenOnClickBtn(id);
-    }
-    
-    this.listenOnClickBtn = (id) => {
-        const btnInDoc = document.querySelector("#"+id+">.dropdown-btn");
-        btnInDoc.addEventListener("click", (e) => {
-            showOrHideDropdownList(e);
+            dropdownListElem.appendChild(elem);
         });
     };
-
-    function showOrHideDropdownList(event) {
-        const siblings = Array.from(event.target.parentNode.childNodes);
-        
-        const dropdownList = siblings.filter(sibling => sibling.classList.contains("dropdown-list"))[0];
-        
-        const display = window.getComputedStyle(dropdownList).getPropertyValue("display");
-        if(display == "block") {
-            dropdownList.style.display = "none";
-        }
-        else {
-            dropdownList.style.display = "block";
-        }
+    
+    this.changeBtnTextAndHideList = (text, dropdownElem) => {
+        changeBtnText(text, dropdownElem);
+        hideList(dropdownElem);
+    };
+    
+    function changeBtnText(text, dropdownElem) {
+        const btnElem = dropdownElem.querySelector(".dropdown-btn");
+        btnElem.textContent = text;
     }
     
-    /*function listenOnClickListItems() {
-        const listItems = Array.from(dropdownList.querySelectorAll("a"));
-        listItems.forEach(item => item.addEventListener("click", (e) => {
-            changeBtnText(e);
-            hideList();
-        }));
+    function hideList(dropdownElem) {
+        const listElem = dropdownElem.querySelector(".dropdown-list");
+        listElem.style.display = "none";
     }
     
-    function changeBtnText(event) {
-        const text = event.target.textContent;
-        document.querySelector("#hash-key-btn").textContent = text;
+    function createRangeKeyDropdownElem() {
+        const parent = document.querySelectorAll("#range-key-row>td")[1];
+        const id = "range-key-dropdown";
+        createDropdownInDoc(parent, id);
     }
-    
-    function hideList() {
-        dropdownList.style.display = "none";
-    }*/
 }
 
 export {

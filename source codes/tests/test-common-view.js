@@ -10,7 +10,7 @@ async function refreshDom() {
     $ = jsdom.$;
 }
 
-describe(`CommonView`, () => {
+describe(`OthersView`, () => {
     describe(`Main tabs`, () => {
         describe(`#click`, () => {
             beforeEach(async () => {

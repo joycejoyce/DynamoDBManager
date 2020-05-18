@@ -1,6 +1,6 @@
 import {ConfirmView} from "./confirm-view.js";
 
-function CommonView() {
+function OthersView() {
     this.addEventListeners = () => {
         listenOnClickMainTabs();
         listenOnClickWindow();
@@ -26,9 +26,9 @@ function CommonView() {
                 ConfirmView.reset();
             }
         });
-    }
+    }    
 }
 
 export {
-    CommonView
+    OthersView
 };

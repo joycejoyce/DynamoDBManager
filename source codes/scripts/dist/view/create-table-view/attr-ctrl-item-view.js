@@ -1,21 +1,34 @@
 "use strict";
 
-System.register([], function (_export, _context) {
+System.register(["../common-components/dropdown-view.js", "../common-components/common-functions.js"], function (_export, _context) {
   "use strict";
 
+  var DropdownView, CommonFunctions, DEFAULT_TYPE_TEXT, ATTR_TYPES;
+
   function AttrCtrlItemView() {
-    this.getDoc = function () {
-      var attrCtrlItem = document.createElement("div");
-      attrCtrlItem.className = "attribute-control-item";
-      var deleteBtn = getDeleteAttributeControlItemBtn();
-      attrCtrlItem.appendChild(deleteBtn);
-      var typeDropdown = getAttributeTypeDropdown();
-      attrCtrlItem.appendChild(typeDropdown);
-      var attrNameInputElem = getAttributeNameInputElem();
-      attrCtrlItem.appendChild(attrNameInputElem);
-      addEventListeners(attrCtrlItem);
-      return attrCtrlItem;
+    this.createAnItem = function () {
+      var itemDoc = getDoc();
+      var itemTbl = document.querySelector("#attr-ctrl-item-tbl>tbody");
+      itemTbl.appendChild(itemDoc);
+      addEventListeners(itemTbl.lastChild);
     };
+
+    function getDoc() {
+      var tblRow = document.createElement("tr");
+      var deleteBtn = getDeleteAttributeControlItemBtn();
+      var td1 = document.createElement("td");
+      td1.appendChild(deleteBtn);
+      tblRow.appendChild(td1);
+      var typeDropdown = getAttributeTypeDropdown();
+      var td2 = document.createElement("td");
+      td2.appendChild(typeDropdown);
+      tblRow.appendChild(td2);
+      var attrNameInputElem = getAttributeNameInputElem();
+      var td3 = document.createElement("td");
+      td3.appendChild(attrNameInputElem);
+      tblRow.appendChild(td3);
+      return tblRow;
+    }
 
     function getDeleteAttributeControlItemBtn(attrCtrlItem) {
       var btn = document.createElement("img");
@@ -25,38 +38,24 @@ System.register([], function (_export, _context) {
     }
 
     function getAttributeTypeDropdown() {
-      var dropdown = document.createElement("div");
-      dropdown.className = "attribute-type-dropdown";
-      var btn = getAttributeTypeBtn();
-      dropdown.appendChild(btn);
-      var contents = getAttributeTypeContents();
-      dropdown.appendChild(contents);
+      var dropdownView = new DropdownView();
+      var dropdown = dropdownView.getDropdownDoc();
+      dropdown.classList.add("attribute-type-dropdown");
+      dropdownView.createListItemElems(dropdown.querySelector(".dropdown-list"), Object.values(ATTR_TYPES));
+      /*const input = getAttributeTypeInput();
+      dropdown.appendChild(input);
+      
+      const contents = getAttributeTypeContents();
+      dropdown.appendChild(contents);*/
+
       return dropdown;
     }
 
-    function getAttributeTypeBtn() {
-      var btn = document.createElement("button");
-      btn.textContent = "Type";
-      btn.classList = "attribute-type-btn";
-      return btn;
-    }
-
-    function getAttributeTypeContents() {
-      var contents = document.createElement("div");
-      contents.className = "attribute-type-list";
-      var typeString = document.createElement("a");
-      typeString.href = "#string";
-      typeString.textContent = "string";
-      contents.appendChild(typeString);
-      var typeNumber = document.createElement("a");
-      typeNumber.href = "#number";
-      typeNumber.textContent = "number";
-      contents.appendChild(typeNumber);
-      var typeBoolean = document.createElement("a");
-      typeBoolean.href = "#boolean";
-      typeBoolean.textContent = "boolean";
-      contents.appendChild(typeBoolean);
-      return contents;
+    function getAttributeTypeInput() {
+      var input = document.createElement("input");
+      input.placeholder = "Choose a type";
+      input.classList = "attribute-type-btn";
+      return input;
     }
 
     function getAttributeNameInputElem() {
@@ -70,7 +69,7 @@ System.register([], function (_export, _context) {
 
     function addEventListeners(item) {
       listenOnClickDeleteBtn(item);
-      listenOnClickAttrTypeBtn(item);
+      listenOnClickAttrTypeInput(item);
       listenOnClickTypeListItems(item);
     }
 
@@ -96,25 +95,27 @@ System.register([], function (_export, _context) {
       }
     }
 
-    function listenOnClickAttrTypeBtn(parent) {
-      var attributeTypeButtons = Array.from(parent.getElementsByClassName("attribute-type-btn"));
-      attributeTypeButtons.forEach(function (btn) {
-        return btn.addEventListener("click", function (e) {
-          return showOrHideTypeList(e);
-        });
+    function listenOnClickAttrTypeInput(parent) {
+      console.log("Enter listenOnClickAttrTypeInput()");
+      var attributeTypeBtn = parent.querySelector(".dropdown-btn");
+      console.log("attributeTypeBtn", attributeTypeBtn.outerHTML);
+      attributeTypeBtn.addEventListener("click", function (e) {
+        return showOrHideTypeList(e);
       });
     }
 
     function showOrHideTypeList(event) {
       var dropdown = event.target.parentElement;
-      var contents = dropdown.querySelector(".attribute-type-list");
-      var display = window.getComputedStyle(contents).getPropertyValue("display");
-
-      if (display === "none") {
-        contents.style.display = "block";
-      } else {
-        contents.style.display = "none";
+      console.log("dropdown", dropdown.outerHTML);
+      var listElem = dropdown.querySelector(".dropdown-list");
+      new CommonFunctions().showOrHideElement(listElem);
+      /*const display = window.getComputedStyle(list).getPropertyValue("display");
+      if(display === "none") {
+          contents.style.display = "block";
       }
+      else {
+          contents.style.display = "none";
+      }*/
     }
 
     function listenOnClickTypeListItems(item) {
@@ -129,8 +130,9 @@ System.register([], function (_export, _context) {
 
     function replaceTypeBtnText(event, attrCtrlItem) {
       var text = event.target.textContent;
-      var typeBtn = attrCtrlItem.querySelector(".attribute-type-btn");
-      typeBtn.textContent = text;
+      var typeBtn = attrCtrlItem.querySelector(".attribute-type-btn"); //typeBtn.textContent = text;
+
+      typeBtn.value = text;
     }
 
     function hideTypeList(attrCtrlItem) {
@@ -142,7 +144,19 @@ System.register([], function (_export, _context) {
   _export("AttrCtrlItemView", AttrCtrlItemView);
 
   return {
-    setters: [],
-    execute: function () {}
+    setters: [function (_commonComponentsDropdownViewJs) {
+      DropdownView = _commonComponentsDropdownViewJs.DropdownView;
+    }, function (_commonComponentsCommonFunctionsJs) {
+      CommonFunctions = _commonComponentsCommonFunctionsJs.CommonFunctions;
+    }],
+    execute: function () {
+      _export("DEFAULT_TYPE_TEXT", DEFAULT_TYPE_TEXT = "Type");
+
+      _export("ATTR_TYPES", ATTR_TYPES = {
+        string: "string",
+        number: "number",
+        "boolean": "boolean"
+      });
+    }
   };
 });

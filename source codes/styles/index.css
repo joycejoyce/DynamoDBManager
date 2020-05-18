@@ -10,7 +10,7 @@
     display: none;
 }
 
-#create-table-btn {
+#create-table-page-btn {
     width: 600px;
     cursor: pointer;
     text-align: left;
@@ -112,4 +112,9 @@
 
 .dropdown-list {
     display: none;
+}
+
+#create-tbl-btn {
+    display: block;
+    margin-left: auto;
 }

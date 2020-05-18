@@ -1,22 +1,36 @@
+import {DropdownView} from "../common-components/dropdown-view.js";
+import {CommonFunctions} from "../common-components/common-functions.js";
+
 function AttrCtrlItemView() {
-    this.getDoc = () => {
-        const attrCtrlItem = document.createElement("div");
-        attrCtrlItem.className = "attribute-control-item";
+    this.createAnItem = () => {
+        const itemDoc = getDoc();
+        const itemTbl = document.querySelector("#attr-ctrl-item-tbl>tbody");
+        itemTbl.appendChild(itemDoc);
         
-        const deleteBtn = getDeleteAttributeControlItemBtn();
-        attrCtrlItem.appendChild(deleteBtn);
-        
-        const typeDropdown = getAttributeTypeDropdown();
-        attrCtrlItem.appendChild(typeDropdown);
-        
-        const attrNameInputElem = getAttributeNameInputElem();
-        attrCtrlItem.appendChild(attrNameInputElem);
-        
-        addEventListeners(attrCtrlItem);
-        
-        return attrCtrlItem;
+        addEventListeners(itemTbl.lastChild);
     };
     
+    function getDoc() {
+        const tblRow = document.createElement("tr");
+        
+        const deleteBtn = getDeleteAttributeControlItemBtn();
+        const td1 = document.createElement("td");
+        td1.appendChild(deleteBtn);
+        tblRow.appendChild(td1);
+        
+        const typeDropdown = getAttributeTypeDropdown();
+        const td2 = document.createElement("td");
+        td2.appendChild(typeDropdown);
+        tblRow.appendChild(td2);
+        
+        const attrNameInputElem = getAttributeNameInputElem();
+        const td3 = document.createElement("td");
+        td3.appendChild(attrNameInputElem);
+        tblRow.appendChild(td3);
+        
+        return tblRow;
+    }
+
     function getDeleteAttributeControlItemBtn(attrCtrlItem) {
         const btn = document.createElement("img");
         btn.src = "../../../resources/create-table-page/delete-attribute-btn.png";
@@ -25,45 +39,27 @@ function AttrCtrlItemView() {
     }
     
     function getAttributeTypeDropdown() {
-        const dropdown = document.createElement("div");
-        dropdown.className = "attribute-type-dropdown";
+        const dropdownView = new DropdownView();
         
-        const btn = getAttributeTypeBtn();
-        dropdown.appendChild(btn);
+        const dropdown = dropdownView.getDropdownDoc();
+        dropdown.classList.add("attribute-type-dropdown");
+        
+        dropdownView.createListItemElems(dropdown.querySelector(".dropdown-list"), Object.values(ATTR_TYPES));
+        
+        /*const input = getAttributeTypeInput();
+        dropdown.appendChild(input);
         
         const contents = getAttributeTypeContents();
-        dropdown.appendChild(contents);
+        dropdown.appendChild(contents);*/
         
         return dropdown;
     }
     
-    function getAttributeTypeBtn() {
-        const btn = document.createElement("button");
-        btn.textContent = "Type";
-        btn.classList = "attribute-type-btn";
-        return btn;
-    }
-    
-    function getAttributeTypeContents() {
-        const contents = document.createElement("div");
-        contents.className = "attribute-type-list";
-        
-        const typeString = document.createElement("a");
-        typeString.href = "#string";
-        typeString.textContent = "string";
-        contents.appendChild(typeString);
-        
-        const typeNumber = document.createElement("a");
-        typeNumber.href = "#number";
-        typeNumber.textContent = "number";
-        contents.appendChild(typeNumber);
-        
-        const typeBoolean = document.createElement("a");
-        typeBoolean.href = "#boolean";
-        typeBoolean.textContent = "boolean";
-        contents.appendChild(typeBoolean);
-        
-        return contents;
+    function getAttributeTypeInput() {
+        const input = document.createElement("input");
+        input.placeholder = "Choose a type";
+        input.classList = "attribute-type-btn";
+        return input;
     }
     
     function getAttributeNameInputElem() {
@@ -77,7 +73,7 @@ function AttrCtrlItemView() {
     
     function addEventListeners(item) {
         listenOnClickDeleteBtn(item);
-        listenOnClickAttrTypeBtn(item);
+        listenOnClickAttrTypeInput(item);
         listenOnClickTypeListItems(item);
     }
     
@@ -100,22 +96,26 @@ function AttrCtrlItemView() {
         }
     }
     
-    function listenOnClickAttrTypeBtn(parent) {
-        const attributeTypeButtons = Array.from(parent.getElementsByClassName("attribute-type-btn"));
+    function listenOnClickAttrTypeInput(parent) {
+        console.log("Enter listenOnClickAttrTypeInput()");
+        const attributeTypeBtn = parent.querySelector(".dropdown-btn");
+        console.log("attributeTypeBtn", attributeTypeBtn.outerHTML);
         
-        attributeTypeButtons.forEach(btn => btn.addEventListener("click", (e) => showOrHideTypeList(e)));
+        attributeTypeBtn.addEventListener("click", (e) => showOrHideTypeList(e));
     }
     
     function showOrHideTypeList(event) {
         const dropdown = event.target.parentElement;
-        const contents = dropdown.querySelector(".attribute-type-list");
-        const display = window.getComputedStyle(contents).getPropertyValue("display");
+        console.log("dropdown", dropdown.outerHTML);
+        const listElem = dropdown.querySelector(".dropdown-list");
+        new CommonFunctions().showOrHideElement(listElem);
+        /*const display = window.getComputedStyle(list).getPropertyValue("display");
         if(display === "none") {
             contents.style.display = "block";
         }
         else {
             contents.style.display = "none";
-        }
+        }*/
     }
     
     function listenOnClickTypeListItems(item) {
@@ -129,7 +129,8 @@ function AttrCtrlItemView() {
     function replaceTypeBtnText(event, attrCtrlItem) {
         const text = event.target.textContent;
         const typeBtn = attrCtrlItem.querySelector(".attribute-type-btn");
-        typeBtn.textContent = text;
+        //typeBtn.textContent = text;
+        typeBtn.value = text;
     }
     
     function hideTypeList(attrCtrlItem) {
@@ -138,6 +139,15 @@ function AttrCtrlItemView() {
     }
 }
 
+const DEFAULT_TYPE_TEXT = "Type";
+const ATTR_TYPES = {
+    string: "string",
+    number: "number",
+    boolean: "boolean"
+};
+
 export {
-    AttrCtrlItemView
+    AttrCtrlItemView,
+    DEFAULT_TYPE_TEXT,
+    ATTR_TYPES
 };

@@ -1,17 +1,20 @@
 import {DeleteAllAttrBtnView} from "./delete-all-attr-ctrl-item-btn-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";
 import {DropdownView} from "../common-components/dropdown-view.js";
+import {CommonFunctions} from "../common-components/common-functions.js";
+import {CreateTableController} from "../../controller/create-table-controller.js";
 
 function CreateTableView() {
     this.addEventListeners = () => {
-        listenOnClickCreateTableBtn();
+        listenOnClickCreateTablePageBtn();
         listenOnClickAddAttributeBtn();
         new DeleteAllAttrBtnView().addEventListeners();
-        //listenOnClickHashKeyBtn();
+        listenOnDropdownBtn();
+        listenOnCreateTblBtn();
     };
     
-    function listenOnClickCreateTableBtn() {
-        const elem = document.getElementById("create-table-btn");
+    function listenOnClickCreateTablePageBtn() {
+        const elem = document.getElementById("create-table-page-btn");
         elem.addEventListener("click", () => toggleCreateTablePage(elem));
     }
     
@@ -48,7 +51,7 @@ function CreateTableView() {
         const elem = document.getElementById("add-attr-ctrl-item-btn");
         elem.addEventListener("click", () => {
             enableDeleteAllAttributesBtn();
-            addAnAttributeControlItem(elem);
+            new AttrCtrlItemView().createAnItem();
         });
     }
     
@@ -59,20 +62,87 @@ function CreateTableView() {
         }
     }
     
-    function addAnAttributeControlItem() {
-        const attrDefElem = document.getElementById("attribute-definitions");
-        const attrCtrlItem = new AttrCtrlItemView().getDoc();
-        attrDefElem.appendChild(attrCtrlItem);
+    function listenOnDropdownBtn() {
+        listenOnClickHashKeyBtn();
+        listenOnClickRangeKeyBtn();
     }
     
     function listenOnClickHashKeyBtn() {
+        const hashKeyBtn = document.querySelector("#hash-key-dropdown>.dropdown-btn");
+        hashKeyBtn.addEventListener("click", () => {
+            const id = "hash-key-dropdown";
+            showOrHideAttrNameList(id);
+            listenOnClickAttrNameListItems(id);
+        });
     }
     
-    function getAttrs() {
+    function showOrHideAttrNameList(id) {
+        createAttrNameDropdownList(id);
+        const dropdownListElem = getDropdownListElem(id);
+        new CommonFunctions().showOrHideElement(dropdownListElem);
+    }
+    
+    function createAttrNameDropdownList(id) {
+        const dropdownListElem = getDropdownListElem(id);
+        try {
+            const attrNames = getAttrNames();
+            new DropdownView().createListItemElems(dropdownListElem, attrNames);
+        } catch(e) {
+            alert(e);
+        }
+    }
+    
+    function getDropdownListElem(id) {
+        return document.querySelector("#" + id + ">.dropdown-list");
+    }
+    
+    function getAttrNames() {
         const attrNameInputs = document.getElementsByClassName("attribute-name-input");
-        const attrs = Array.from(attrNameInputs).map(input => input.value);
         
-        return attrs;
+        let attrNames = Array.from(attrNameInputs)
+            .map(input => input.value)
+            .filter(name => name.length > 0);
+        attrNames = new CommonFunctions().getDistinctValues(attrNames);
+        
+        if(attrNames.length == 0) {
+            throw "No attributes. Please add attribute definitions first.";
+        }
+        
+        return attrNames;
+    }
+    
+    function listenOnClickAttrNameListItems(id) {
+        const itemElems = Array.from(getDropdownListElem(id).querySelectorAll("a"));
+        
+        itemElems.forEach(elem => {
+            elem.addEventListener("click", (e) => {
+                const dropdownView = new DropdownView();
+                const dropdownElem = getDropdownElem(id);
+                dropdownView.changeBtnTextAndHideList(e.target.textContent, dropdownElem);
+            });
+        });
+    }
+    
+    function getDropdownElem(id) {
+        return document.getElementById(id);
+    }
+    
+    function listenOnClickRangeKeyBtn() {
+        const rangeKeyBtn = document.querySelector("#range-key-dropdown>.dropdown-btn");
+        rangeKeyBtn.addEventListener("click", () => {
+            const id = "range-key-dropdown";
+            showOrHideAttrNameList(id);
+            listenOnClickAttrNameListItems(id);
+        });
+    }
+    
+    function listenOnCreateTblBtn() {
+        const createTblBtn = document.getElementById("create-tbl-btn");
+        createTblBtn.addEventListener("click", createTbl);
+    }
+    
+    function createTbl() {
+        new CreateTableController().transformViewInputForModel();
     }
 }
 
