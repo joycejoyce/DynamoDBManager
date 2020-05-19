@@ -1,15 +1,16 @@
 "use strict";
 
-System.register(["./others-view.js", "./create-table-view/create-table-view.js", "./confirm-view.js"], function (_export, _context) {
+System.register(["./others-view.js", "./create-table-view/create-table-view.js", "./confirm-view.js", "./common-components/dropdown-view.js"], function (_export, _context) {
   "use strict";
 
-  var OthersView, CreateTableView, ConfirmView;
+  var OthersView, CreateTableView, ConfirmView, DropdownView;
 
   function EventListener() {
     this.addEventListeners = function () {
       new OthersView().addEventListeners();
       new CreateTableView().addEventListeners();
       new ConfirmView().addEventListeners();
+      DropdownView.addEventListeners();
     };
   }
 
@@ -22,6 +23,8 @@ System.register(["./others-view.js", "./create-table-view/create-table-view.js",
       CreateTableView = _createTableViewCreateTableViewJs.CreateTableView;
     }, function (_confirmViewJs) {
       ConfirmView = _confirmViewJs.ConfirmView;
+    }, function (_commonComponentsDropdownViewJs) {
+      DropdownView = _commonComponentsDropdownViewJs.DropdownView;
     }],
     execute: function () {}
   };

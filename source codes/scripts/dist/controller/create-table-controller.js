@@ -36,7 +36,7 @@ System.register(["../view/create-table-view/attr-ctrl-item-view.js"], function (
     function getAttrDefs() {
       var elems = getAttrCtrlItemElems();
       var inputs = elems.reduce(function (result, elem) {
-        var attrName = elem.querySelector(".attribute-name-input").value;
+        var attrName = elem.querySelector(".attr-name-input").value;
         var attrType = elem.querySelector(".attribute-type-btn").textContent;
         result.push({
           AttributeName: attrName,

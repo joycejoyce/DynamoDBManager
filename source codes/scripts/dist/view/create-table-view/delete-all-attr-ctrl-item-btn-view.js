@@ -1,12 +1,15 @@
 "use strict";
 
-System.register(["../confirm-view.js"], function (_export, _context) {
+System.register(["../confirm-view.js", "./attr-ctrl-item-view.js"], function (_export, _context) {
   "use strict";
 
-  var ConfirmView;
+  var ConfirmView, AttrCtrlItemView;
 
   function DeleteAllAttrBtnView() {
-    var confirmPage = ConfirmView.get();
+    var CONFIRM_PAGE_CONTENTS = {
+      id: "delete-all-attr-ctrl-items",
+      msg: "Are you sure you want to delete all attributes?"
+    };
 
     this.addEventListeners = function () {
       listenOnClick();
@@ -15,35 +18,37 @@ System.register(["../confirm-view.js"], function (_export, _context) {
     function listenOnClick() {
       var btn = document.getElementById("delete-all-attr-ctrl-item-btn");
       btn.addEventListener("click", function () {
-        showConfirmPage();
+        ConfirmView.create(CONFIRM_PAGE_CONTENTS.id, CONFIRM_PAGE_CONTENTS.msg);
         listenOnClickYesBtn();
       });
     }
 
-    function showConfirmPage() {
-      confirmPage.id = "delete-all-attr-ctrl-items";
-      confirmPage.querySelector(".confirm-msg").textContent = DeleteAllAttrBtnView.confirmMessage;
-      confirmPage.style.display = "block";
+    function listenOnClickYesBtn() {
+      var yesBtn = document.querySelector("#" + CONFIRM_PAGE_CONTENTS.id + " .yes");
+      yesBtn.addEventListener("click", function () {
+        removeAllAttrCtrlItemElems();
+        ConfirmView.reset();
+        DeleteAllAttrBtnView.disableBtn();
+        AttrCtrlItemView.createAnItem();
+      });
     }
 
-    function listenOnClickYesBtn() {
-      var yesBtn = document.querySelector("#delete-all-attr-ctrl-items .yes");
-      yesBtn.addEventListener("click", function () {
-        clickAllDeleteAttrBtn();
-        ConfirmView.reset();
+    function removeAllAttrCtrlItemElems() {
+      var elems = Array.from(document.querySelectorAll(".attr-ctrl-item"));
+      elems.forEach(function (elem) {
+        return elem.remove();
       });
     }
 
     function clickAllDeleteAttrBtn() {
-      while (1) {
-        var deleteAttrBtn = document.querySelector(".delete-attr-ctrl-item-btn");
+      var deleteBtnNum = document.querySelectorAll(".delete-attr-ctrl-item-btn");
 
-        if (null == deleteAttrBtn) {
-          break;
-        }
-
-        deleteAttrBtn.click();
+      for (var i = 0; i < deleteBtnNum; i++) {
+        var deleteBtn = document.querySelector(".delete-attr-ctrl-item-btn");
+        deleteBtn.click();
       }
+
+      AttrCtrlItemView.createAnItem();
     }
   }
 
@@ -52,9 +57,14 @@ System.register(["../confirm-view.js"], function (_export, _context) {
   return {
     setters: [function (_confirmViewJs) {
       ConfirmView = _confirmViewJs.ConfirmView;
+    }, function (_attrCtrlItemViewJs) {
+      AttrCtrlItemView = _attrCtrlItemViewJs.AttrCtrlItemView;
     }],
     execute: function () {
-      DeleteAllAttrBtnView.confirmMessage = "Are you sure you want to delete all attributes?";
+      DeleteAllAttrBtnView.disableBtn = function () {
+        var btn = document.getElementById("delete-all-attr-ctrl-item-btn");
+        btn.disabled = true;
+      };
     }
   };
 });

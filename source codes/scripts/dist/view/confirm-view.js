@@ -8,12 +8,21 @@ System.register([], function (_export, _context) {
 
     this.addEventListeners = function () {
       listenOnNoBtn();
+      listenOnClickWindow();
     };
 
     function listenOnNoBtn() {
       var noBtn = confirmPage.querySelector("button.no");
       noBtn.addEventListener("click", function () {
         ConfirmView.reset();
+      });
+    }
+
+    function listenOnClickWindow() {
+      window.addEventListener("click", function (e) {
+        if (e.target == confirmPage) {
+          ConfirmView.reset();
+        }
       });
     }
   }
@@ -31,6 +40,14 @@ System.register([], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
+      ConfirmView.create = function (id, confirmMsg) {
+        console.log("Enter ConfirmView.create()");
+        var confirmPage = ConfirmView.get();
+        confirmPage.id = id;
+        confirmPage.querySelector(".confirm-msg").textContent = confirmMsg;
+        confirmPage.style.display = "block";
+      };
+
       ConfirmView.get = function () {
         return document.querySelector(".confirm-container");
       };

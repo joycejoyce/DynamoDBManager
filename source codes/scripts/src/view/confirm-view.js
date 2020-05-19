@@ -3,6 +3,7 @@ function ConfirmView() {
     
     this.addEventListeners = () => {
         listenOnNoBtn();
+        listenOnClickWindow();
     };
     
     function listenOnNoBtn() {
@@ -11,7 +12,23 @@ function ConfirmView() {
             ConfirmView.reset();
         });
     }
+    
+    function listenOnClickWindow() {
+        window.addEventListener("click", (e) => {
+            if(e.target == confirmPage) {
+                ConfirmView.reset();
+            }
+        });
+    }
 }
+
+ConfirmView.create = (id, confirmMsg) => {
+    console.log("Enter ConfirmView.create()");
+    const confirmPage = ConfirmView.get();
+    confirmPage.id = id;
+    confirmPage.querySelector(".confirm-msg").textContent = confirmMsg;
+    confirmPage.style.display = "block";
+};
 
 ConfirmView.get = () => {
     return document.querySelector(".confirm-container");

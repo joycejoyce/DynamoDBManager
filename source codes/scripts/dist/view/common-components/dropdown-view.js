@@ -1,95 +1,124 @@
 "use strict";
 
-System.register(["../common-components/common-functions.js"], function (_export, _context) {
+System.register(["../common-components/util.js"], function (_export, _context) {
   "use strict";
 
-  var CommonFunctions;
+  var Util;
 
-  function DropdownView() {
-    this.createElements = function () {
-      createHashKeyDropdownElem();
-      createRangeKeyDropdownElem();
-    };
+  function DropdownView() {}
 
-    function createHashKeyDropdownElem() {
-      var parent = document.querySelectorAll("#hash-key-row>td")[1];
-      var id = "hash-key-dropdown";
-      createDropdownInDoc(parent, id);
-    }
+  function listenOnClickWindow() {
+    window.addEventListener("click", function (e) {
+      var dropdownElems = document.querySelectorAll(".dropdown>*");
 
-    function createDropdownInDoc(parent, id) {
-      var dropdownDoc = new DropdownView().getDropdownDoc();
-      dropdownDoc.id = id;
-      parent.appendChild(dropdownDoc);
-    }
+      if (e.target == dropdownElems) {
+        e.target.style.display = "none";
+      }
+    });
+  }
 
-    this.getDropdownDoc = function () {
-      var dropdown = document.createElement("div");
-      dropdown.className = "dropdown";
-      var dropdownBtn = getDropdownBtn();
-      dropdown.appendChild(dropdownBtn);
-      var dropdownList = getDropdownList();
-      dropdown.appendChild(dropdownList);
-      return dropdown;
-    };
+  function getDropdownBtn() {
+    var dropdownBtn = document.createElement("button");
+    dropdownBtn.className = "dropdown-btn";
+    dropdownBtn.type = "button";
+    var iElem = getFaCaretIElem("down");
+    dropdownBtn.appendChild(iElem);
+    return dropdownBtn;
+  }
 
-    function getDropdownBtn() {
-      var dropdownBtn = document.createElement("button");
-      dropdownBtn.className = "dropdown-btn";
-      var iElem = getFaCaretDownIElem();
-      dropdownBtn.appendChild(iElem);
-      return dropdownBtn;
-    }
+  function getDropdownList() {
+    var dropdownList = document.createElement("div");
+    dropdownList.className = "dropdown-list";
+    return dropdownList;
+  }
 
-    function getFaCaretDownIElem() {
-      var elem = document.createElement("i");
-      elem.className = "fa fa-caret-down";
-      return elem;
-    }
+  function showOrHideDropdownList(dropdownElem, listItems) {
+    var dropdownList = dropdownElem.querySelector(".dropdown-list");
+    createListItemElems(dropdownList, listItems);
+    listenOnClickListItems(dropdownList);
+    Util.showOrHideElement(dropdownList);
+    var dropdownBtn = dropdownElem.querySelector(".dropdown-btn");
+    Util.changeIElem(dropdownBtn);
+  }
 
-    function getDropdownList() {
-      var dropdownList = document.createElement("div");
-      dropdownList.className = "dropdown-list";
-      return dropdownList;
-    }
+  function createListItemElems(dropdownListElem, listItems) {
+    dropdownListElem.innerHTML = "";
+    listItems.forEach(function (item) {
+      var elem = document.createElement("a");
+      elem.textContent = item;
+      dropdownListElem.appendChild(elem);
+    });
+  }
 
-    this.createListItemElems = function (dropdownListElem, listItems) {
-      dropdownListElem.innerHTML = "";
-      listItems.forEach(function (item) {
-        var elem = document.createElement("a");
-        elem.textContent = item;
-        dropdownListElem.appendChild(elem);
+  function listenOnClickListItems(dropdownListElem) {
+    var itemElems = Array.from(dropdownListElem.querySelectorAll("a"));
+    itemElems.forEach(function (elem) {
+      return elem.addEventListener("click", function (e) {
+        changeBtnTextAndHideList(e.target.textContent, dropdownListElem.parentElement);
       });
-    };
+    });
+  }
 
-    this.changeBtnTextAndHideList = function (text, dropdownElem) {
-      changeBtnText(text, dropdownElem);
-      hideList(dropdownElem);
-    };
+  function changeBtnTextAndHideList(text, dropdownElem) {
+    changeBtnText(text, dropdownElem);
+    hideList(dropdownElem);
+  }
 
-    function changeBtnText(text, dropdownElem) {
-      var btnElem = dropdownElem.querySelector(".dropdown-btn");
-      btnElem.textContent = text;
-    }
+  function changeBtnText(text, dropdownElem) {
+    var btnElem = dropdownElem.querySelector(".dropdown-btn");
+    btnElem.innerHTML = text;
+    var iElem = getFaCaretIElem("down");
+    btnElem.appendChild(iElem);
+  }
 
-    function hideList(dropdownElem) {
-      var listElem = dropdownElem.querySelector(".dropdown-list");
-      listElem.style.display = "none";
-    }
+  function getFaCaretIElem(upOrDown) {
+    var elem = document.createElement("i");
+    elem.className = "fa fa-caret-" + upOrDown;
+    return elem;
+  }
 
-    function createRangeKeyDropdownElem() {
-      var parent = document.querySelectorAll("#range-key-row>td")[1];
-      var id = "range-key-dropdown";
-      createDropdownInDoc(parent, id);
-    }
+  function hideList(dropdownElem) {
+    var listElem = dropdownElem.querySelector(".dropdown-list");
+    listElem.style.display = "none";
   }
 
   _export("DropdownView", DropdownView);
 
   return {
-    setters: [function (_commonComponentsCommonFunctionsJs) {
-      CommonFunctions = _commonComponentsCommonFunctionsJs.CommonFunctions;
+    setters: [function (_commonComponentsUtilJs) {
+      Util = _commonComponentsUtilJs.Util;
     }],
-    execute: function () {}
+    execute: function () {
+      DropdownView.addEventListeners = function () {
+        listenOnClickWindow();
+      };
+
+      DropdownView.getDropdownDoc = function () {
+        var dropdown = document.createElement("div");
+        dropdown.className = "dropdown";
+        var dropdownBtn = getDropdownBtn();
+        dropdown.appendChild(dropdownBtn);
+        var dropdownList = getDropdownList();
+        dropdown.appendChild(dropdownList);
+        return dropdown;
+      };
+
+      DropdownView.listenOnClickDropdownBtn = function (dropdownElem, getListItemsFunc, noItemMsg) {
+        var btn = dropdownElem.querySelector(".dropdown-btn");
+        btn.addEventListener("click", function () {
+          var listItems = getListItemsFunc();
+          listItems = Util.getDistinctValues(listItems);
+
+          if (listItems.length == 0) {
+            alert(noItemMsg);
+            return;
+          }
+
+          showOrHideDropdownList(dropdownElem, listItems);
+          var dropdownList = dropdownElem.querySelector(".dropdown-list");
+          listenOnClickListItems(dropdownList);
+        });
+      };
+    }
   };
 });

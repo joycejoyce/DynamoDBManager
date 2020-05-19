@@ -8,7 +8,6 @@ System.register(["./confirm-view.js"], function (_export, _context) {
   function OthersView() {
     this.addEventListeners = function () {
       listenOnClickMainTabs();
-      listenOnClickWindow();
     };
 
     function listenOnClickMainTabs() {
@@ -25,14 +24,6 @@ System.register(["./confirm-view.js"], function (_export, _context) {
       var num = elem.id.split("-").pop();
       var targetId = "main-page-".concat(num);
       document.getElementById(targetId).classList.add("active");
-    }
-
-    function listenOnClickWindow() {
-      window.addEventListener("click", function (e) {
-        if (e.target == ConfirmView.get()) {
-          ConfirmView.reset();
-        }
-      });
     }
   }
 

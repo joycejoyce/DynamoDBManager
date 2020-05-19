@@ -30,11 +30,11 @@ describe(`AttrCtrlItemView`, () => {
         });
         
         it(`Contains a type dropdown`, () => {
-            expect(attrCtrlItem.getElementsByClassName("attribute-type-dropdown").length).to.eql(1);
+            expect(attrCtrlItem.getElementsByClassName("attr-type-dropdown").length).to.eql(1);
         });
         
         it(`Contains a attribute name input`, () => {
-            expect(attrCtrlItem.getElementsByClassName("attribute-name-input").length).to.eql(1);
+            expect(attrCtrlItem.getElementsByClassName("attr-name-input").length).to.eql(1);
         })
     });
 });
@@ -86,7 +86,7 @@ describe(`(AttrCtrlItemView) Type dropdown`, () => {
             await refreshDom();
             const addAttrBtn = document.getElementById("add-attr-ctrl-item-btn");
             addAttrBtn.click();
-            typeDropdown = document.querySelector(".attribute-type-dropdown");
+            typeDropdown = document.querySelector(".attr-type-dropdown");
         });
         
         it(`Has 2 components`, () => {

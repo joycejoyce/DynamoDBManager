@@ -22,7 +22,7 @@
     right: 3px;
 }
 
-#create-table-contents {
+#create-table-form {
     border: solid 1px grey;
     padding: 5px;
 }
@@ -78,12 +78,12 @@
 }
 
 @-webkit-keyframes animatezoom {
-	from {-webkit-transform: scale(0)} 
+	from {-webkit-transform: scale(0)}
 	to {-webkit-transform: scale(1)}
 }
 	
 @keyframes animatezoom {
-	from {transform: scale(0)} 
+	from {transform: scale(0)}
 	to {transform: scale(1)}
 }
 
@@ -98,20 +98,26 @@
     cursor: pointer;
 }
 
-.dropdown-btn>.fa-caret-down {
+.dropdown-btn>.fa {
     position: absolute;
     right: 3px;
     top: 0;
     bottom: 0;
 }
 
-.dropdown-list>* {
-    display: block;
-    cursor: pointer;
+.dropdown {
+    position: relative;
 }
 
 .dropdown-list {
     display: none;
+    position: absolute;
+    z-index: 1;
+}
+
+.dropdown-list>* {
+    display: block;
+    cursor: pointer;
 }
 
 #create-tbl-btn {

@@ -3,7 +3,6 @@ import {ConfirmView} from "./confirm-view.js";
 function OthersView() {
     this.addEventListeners = () => {
         listenOnClickMainTabs();
-        listenOnClickWindow();
     };
     
     function listenOnClickMainTabs() {
@@ -19,14 +18,6 @@ function OthersView() {
         const targetId = `main-page-${num}`;
         document.getElementById(targetId).classList.add("active");
     }
-    
-    function listenOnClickWindow() {
-        window.addEventListener("click", (e) => {
-            if(e.target == ConfirmView.get()) {
-                ConfirmView.reset();
-            }
-        });
-    }    
 }
 
 export {

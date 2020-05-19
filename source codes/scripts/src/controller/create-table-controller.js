@@ -31,7 +31,7 @@ function CreateTableController() {
     function getAttrDefs() {
         const elems = getAttrCtrlItemElems();　
         let inputs = elems.reduce((result, elem) => {
-            const attrName = elem.querySelector(".attribute-name-input").value;
+            const attrName = elem.querySelector(".attr-name-input").value;
             const attrType = elem.querySelector(".attribute-type-btn").textContent;
             result.push({AttributeName: attrName, AttributeType: attrType});
             return result;

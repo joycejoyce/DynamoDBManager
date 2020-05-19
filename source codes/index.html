@@ -33,7 +33,7 @@
                     Create a table <i class="fa fa-caret-down"></i>
                 </button>
                 <div id="create-table-page">
-                    <form id="create-table-contents">
+                    <form id="create-table-form">
                         <section id="table-name-section">
                             <h1>Table Name</h1>
                             <input type="text" id="table-name-input" placeholder="Enter a table name" required>
@@ -44,11 +44,13 @@
                             <button id="add-attr-ctrl-item-btn">Add</button>
                             <button id="delete-all-attr-ctrl-item-btn" disabled>Delete All</button>
                             <table id="attr-ctrl-item-tbl">
-                                <tr>
-                                    <th>Delete</th>
-                                    <th>Type</th>
-                                    <th>Attribute Name</th>
-                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <th>Delete</th>
+                                        <th>Type</th>
+                                        <th>Attribute Name</th>
+                                    </tr>
+                                </tbody>
                             </table>
                         </section>
                         
@@ -100,19 +102,21 @@
         
         <script>
             if(!window.isTesting) {
-                window.addEventListener("load", executeEventListener);
-                window.addEventListener("load", buildElements);
-            }
-            
-            function executeEventListener() {
-                System.import("event-listener").then((module) => {
-                    new module.EventListener().addEventListeners();
+                window.addEventListener("load", async () => {
+                    await buildElements();
+                    await executeEventListener();
                 });
             }
             
             function buildElements() {
-                System.import("element-builder").then((module) => {
-                    new module.ElementBuilder().init();
+                return System.import("element-builder").then((module) => {
+                    module.ElementBuilder.init();
+                });
+            }
+            
+            function executeEventListener() {
+                return System.import("event-listener").then((module) => {
+                    new module.EventListener().addEventListeners();
                 });
             }
         </script>
