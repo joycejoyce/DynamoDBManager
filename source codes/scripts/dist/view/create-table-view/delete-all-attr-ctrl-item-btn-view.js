@@ -1,6 +1,6 @@
 "use strict";
 
-System.register(["../confirm-view.js", "./attr-ctrl-item-view.js"], function (_export, _context) {
+System.register(["../common-components/confirm-view.js", "./attr-ctrl-item-view.js"], function (_export, _context) {
   "use strict";
 
   var ConfirmView, AttrCtrlItemView;
@@ -29,7 +29,7 @@ System.register(["../confirm-view.js", "./attr-ctrl-item-view.js"], function (_e
         removeAllAttrCtrlItemElems();
         ConfirmView.reset();
         DeleteAllAttrBtnView.disableBtn();
-        AttrCtrlItemView.createAnItem();
+        new AttrCtrlItemView().createAnItem();
       });
     }
 
@@ -39,24 +39,13 @@ System.register(["../confirm-view.js", "./attr-ctrl-item-view.js"], function (_e
         return elem.remove();
       });
     }
-
-    function clickAllDeleteAttrBtn() {
-      var deleteBtnNum = document.querySelectorAll(".delete-attr-ctrl-item-btn");
-
-      for (var i = 0; i < deleteBtnNum; i++) {
-        var deleteBtn = document.querySelector(".delete-attr-ctrl-item-btn");
-        deleteBtn.click();
-      }
-
-      AttrCtrlItemView.createAnItem();
-    }
   }
 
   _export("DeleteAllAttrBtnView", DeleteAllAttrBtnView);
 
   return {
-    setters: [function (_confirmViewJs) {
-      ConfirmView = _confirmViewJs.ConfirmView;
+    setters: [function (_commonComponentsConfirmViewJs) {
+      ConfirmView = _commonComponentsConfirmViewJs.ConfirmView;
     }, function (_attrCtrlItemViewJs) {
       AttrCtrlItemView = _attrCtrlItemViewJs.AttrCtrlItemView;
     }],

@@ -5,15 +5,7 @@ System.register(["./create-table-view/create-table-view.js", "./create-table-vie
 
   var CreateTableView, AttrCtrlItemView;
 
-  function ElementBuilder() {
-    this.init = function () {
-      return new Promise(function (resolve) {
-        CreateTableView.createKeySchemaElements();
-        AttrCtrlItemView.createAnItem();
-        resolve();
-      });
-    };
-  }
+  function ElementBuilder() {}
 
   _export("ElementBuilder", ElementBuilder);
 
@@ -25,11 +17,7 @@ System.register(["./create-table-view/create-table-view.js", "./create-table-vie
     }],
     execute: function () {
       ElementBuilder.init = function () {
-        return new Promise(function (resolve) {
-          CreateTableView.createKeySchemaElements();
-          AttrCtrlItemView.createAnItem();
-          resolve();
-        });
+        new CreateTableView().createElements();
       };
     }
   };

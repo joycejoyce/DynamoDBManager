@@ -1,4 +1,4 @@
-import {ConfirmView} from "../confirm-view.js";
+import {ConfirmView} from "../common-components/confirm-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";
 
 function DeleteAllAttrBtnView() {
@@ -25,22 +25,13 @@ function DeleteAllAttrBtnView() {
             removeAllAttrCtrlItemElems();
             ConfirmView.reset();
             DeleteAllAttrBtnView.disableBtn();
-            AttrCtrlItemView.createAnItem();
+            new AttrCtrlItemView().createAnItem();
         });
     }
     
     function removeAllAttrCtrlItemElems() {
         const elems = Array.from(document.querySelectorAll(".attr-ctrl-item"));
         elems.forEach(elem => elem.remove());
-    }
-    
-    function clickAllDeleteAttrBtn() {
-        const deleteBtnNum = document.querySelectorAll(".delete-attr-ctrl-item-btn");
-        for(let i=0; i<deleteBtnNum; i++) {
-            const deleteBtn = document.querySelector(".delete-attr-ctrl-item-btn");
-            deleteBtn.click();
-        }
-        AttrCtrlItemView.createAnItem();
     }
 }
 

@@ -1,34 +1,41 @@
+import {Util} from "../common-components/util.js";
 import {DeleteAllAttrBtnView} from "./delete-all-attr-ctrl-item-btn-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";
-import {DropdownView} from "../common-components/dropdown-view.js";
+import {KeySchemaView} from "./key-schema-view.js";
 import {CreateTableController} from "../../controller/create-table-controller.js";
 
 function CreateTableView() {
+    this.createElements = () => {
+        new KeySchemaView().createElements();
+        new AttrCtrlItemView().createAnItem();
+    };
+    
     this.addEventListeners = () => {
         listenOnClickCreateTablePageBtn();
         listenOnClickAddAttributeBtn();
         new DeleteAllAttrBtnView().addEventListeners();
-        listenOnDropdownButtons();
+        new KeySchemaView().addEventListeners();
         listenOnCreateTblBtn();
     };
     
     function listenOnClickCreateTablePageBtn() {
         const elem = document.getElementById("create-table-page-btn");
-        elem.addEventListener("click", () => toggleCreateTablePage(elem));
+        elem.addEventListener("click", (e) => {
+            showOrHideCreateTableForm(e.target);
+            toggleFaCaretUpAndDown(e.target.querySelector("i"));
+        });
     }
     
-    function toggleCreateTablePage(elem) {
-        const faCaretElem = elem.querySelector("i");
-        toggleFaCaretUpAndDown(faCaretElem);
-        
-        const page = elem.nextElementSibling;
-        if(page.style.maxHeight) { //not zero, not empty string, not null
-            page.style.maxHeight = null;
-            page.style.overflow = "hidden";
-        }
-        else {
+    function showOrHideCreateTableForm(elem) {
+        const page = document.querySelector("#create-table-page");
+        const overflow = Util.getComputedPropertyValue(page, "overflow");
+        if(overflow == "hidden") {
             page.style.maxHeight = page.scrollHeight + "px";
             page.style.overflow = "visible";
+        }
+        else {
+            page.style.maxHeight = null;
+            page.style.overflow = "hidden";
         }
     }
     
@@ -50,7 +57,7 @@ function CreateTableView() {
         const elem = document.getElementById("add-attr-ctrl-item-btn");
         elem.addEventListener("click", () => {
             enableDeleteAllAttributesBtn();
-            AttrCtrlItemView.createAnItem();
+            new AttrCtrlItemView().createAnItem();
         });
     }
     
@@ -59,29 +66,6 @@ function CreateTableView() {
         if(btn.disabled) {
             btn.disabled = false;
         }
-    }
-    
-    function listenOnDropdownButtons() {
-        console.log("Enter listenOnDropdownButtons()");
-        listenOnClickDropdownBtn("hash-key-row");
-        listenOnClickDropdownBtn("range-key-row");
-    }
-    
-    function listenOnClickDropdownBtn(id) {
-        console.log("Enter listenOnClickDropdownBtn()");
-        const dropdownElem = document.querySelector("#" + id + " .dropdown");
-        DropdownView.listenOnClickDropdownBtn(dropdownElem, getAttrNames, "No attributes defined. Please add attributes first.");
-        console.log("Exit listenOnClickDropdownBtn()");
-    }
-    
-    function getAttrNames() {
-        const attrNameInputs = document.getElementsByClassName("attr-name-input");
-        
-        const attrNames = Array.from(attrNameInputs)
-            .map(input => input.value)
-            .filter(name => name.length > 0);
-        
-        return attrNames;
     }
     
     function listenOnCreateTblBtn() {
@@ -96,24 +80,22 @@ function CreateTableView() {
     }
 }
 
-CreateTableView.createKeySchemaElements = () => {
+/*CreateTableView.createKeySchemaElements = () => {
     createHashKeyDropdownElem();
     createRangeKeyDropdownElem();
 };
 
 function createHashKeyDropdownElem() {
-    console.log("Enter createHashKeyDropdownElem()");
     const dropdownDoc = DropdownView.getDropdownDoc();
     const elem = document.querySelectorAll("#hash-key-row>td")[1];
     elem.append(dropdownDoc);
-    console.log("Exit createHashKeyDropdownElem()");
 }
 
 function createRangeKeyDropdownElem() {
     const dropdownDoc = DropdownView.getDropdownDoc();
     const elem = document.querySelectorAll("#range-key-row>td")[1];
-    elem.append(dropdownDoc);
-}
+    .append(dropdownDoc);
+}*/
 
 export {
     CreateTableView

@@ -23,7 +23,6 @@ function ConfirmView() {
 }
 
 ConfirmView.create = (id, confirmMsg) => {
-    console.log("Enter ConfirmView.create()");
     const confirmPage = ConfirmView.get();
     confirmPage.id = id;
     confirmPage.querySelector(".confirm-msg").textContent = confirmMsg;

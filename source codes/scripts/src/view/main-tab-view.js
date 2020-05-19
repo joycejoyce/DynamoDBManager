@@ -1,6 +1,4 @@
-import {ConfirmView} from "./confirm-view.js";
-
-function OthersView() {
+function MainTabView() {
     this.addEventListeners = () => {
         listenOnClickMainTabs();
     };
@@ -8,7 +6,7 @@ function OthersView() {
     function listenOnClickMainTabs() {
         const mainTabElements = Array.from(document.querySelectorAll("#main-tabs>button"));
         mainTabElements.forEach((elem) => {
-            elem.addEventListener("click", () => changeActivePage(elem));
+            elem.addEventListener("click", (e) => changeActivePage(e.target));
         });
     }
     
@@ -21,5 +19,5 @@ function OthersView() {
 }
 
 export {
-    OthersView
+    MainTabView
 };

@@ -30,7 +30,7 @@
 #create-table-page {
     width: 600px;
     max-height: 0;
-    /*overflow: hidden;*/
+    overflow: hidden;
     transition: max-height 0.2s ease-out;
 }
 
@@ -73,8 +73,8 @@
 }
 
 .confirm-page-animate {
-	-webkit-animation: animatezoom 0.6s;
-	animation: animatezoom 0.6s
+	-webkit-animation: animatezoom 0.3s;
+	animation: animatezoom 0.3s
 }
 
 @-webkit-keyframes animatezoom {

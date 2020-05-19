@@ -1,38 +1,42 @@
 "use strict";
 
-System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-view.js", "../common-components/dropdown-view.js", "../../controller/create-table-controller.js"], function (_export, _context) {
+System.register(["../common-components/util.js", "./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-view.js", "./key-schema-view.js", "../../controller/create-table-controller.js"], function (_export, _context) {
   "use strict";
 
-  var DeleteAllAttrBtnView, AttrCtrlItemView, DropdownView, CreateTableController;
+  var Util, DeleteAllAttrBtnView, AttrCtrlItemView, KeySchemaView, CreateTableController;
 
   function CreateTableView() {
+    this.createElements = function () {
+      new KeySchemaView().createElements();
+      new AttrCtrlItemView().createAnItem();
+    };
+
     this.addEventListeners = function () {
       listenOnClickCreateTablePageBtn();
       listenOnClickAddAttributeBtn();
       new DeleteAllAttrBtnView().addEventListeners();
-      listenOnDropdownButtons();
+      new KeySchemaView().addEventListeners();
       listenOnCreateTblBtn();
     };
 
     function listenOnClickCreateTablePageBtn() {
       var elem = document.getElementById("create-table-page-btn");
-      elem.addEventListener("click", function () {
-        return toggleCreateTablePage(elem);
+      elem.addEventListener("click", function (e) {
+        showOrHideCreateTableForm(e.target);
+        toggleFaCaretUpAndDown(e.target.querySelector("i"));
       });
     }
 
-    function toggleCreateTablePage(elem) {
-      var faCaretElem = elem.querySelector("i");
-      toggleFaCaretUpAndDown(faCaretElem);
-      var page = elem.nextElementSibling;
+    function showOrHideCreateTableForm(elem) {
+      var page = document.querySelector("#create-table-page");
+      var overflow = Util.getComputedPropertyValue(page, "overflow");
 
-      if (page.style.maxHeight) {
-        //not zero, not empty string, not null
-        page.style.maxHeight = null;
-        page.style.overflow = "hidden";
-      } else {
+      if (overflow == "hidden") {
         page.style.maxHeight = page.scrollHeight + "px";
         page.style.overflow = "visible";
+      } else {
+        page.style.maxHeight = null;
+        page.style.overflow = "hidden";
       }
     }
 
@@ -54,7 +58,7 @@ System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-vi
       var elem = document.getElementById("add-attr-ctrl-item-btn");
       elem.addEventListener("click", function () {
         enableDeleteAllAttributesBtn();
-        AttrCtrlItemView.createAnItem();
+        new AttrCtrlItemView().createAnItem();
       });
     }
 
@@ -64,29 +68,6 @@ System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-vi
       if (btn.disabled) {
         btn.disabled = false;
       }
-    }
-
-    function listenOnDropdownButtons() {
-      console.log("Enter listenOnDropdownButtons()");
-      listenOnClickDropdownBtn("hash-key-row");
-      listenOnClickDropdownBtn("range-key-row");
-    }
-
-    function listenOnClickDropdownBtn(id) {
-      console.log("Enter listenOnClickDropdownBtn()");
-      var dropdownElem = document.querySelector("#" + id + " .dropdown");
-      DropdownView.listenOnClickDropdownBtn(dropdownElem, getAttrNames, "No attributes defined. Please add attributes first.");
-      console.log("Exit listenOnClickDropdownBtn()");
-    }
-
-    function getAttrNames() {
-      var attrNameInputs = document.getElementsByClassName("attr-name-input");
-      var attrNames = Array.from(attrNameInputs).map(function (input) {
-        return input.value;
-      }).filter(function (name) {
-        return name.length > 0;
-      });
-      return attrNames;
     }
 
     function listenOnCreateTblBtn() {
@@ -100,38 +81,38 @@ System.register(["./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-vi
       new CreateTableController().transformViewInputForModel();
     }
   }
-
+  /*CreateTableView.createKeySchemaElements = () => {
+      createHashKeyDropdownElem();
+      createRangeKeyDropdownElem();
+  };
+  
   function createHashKeyDropdownElem() {
-    console.log("Enter createHashKeyDropdownElem()");
-    var dropdownDoc = DropdownView.getDropdownDoc();
-    var elem = document.querySelectorAll("#hash-key-row>td")[1];
-    elem.append(dropdownDoc);
-    console.log("Exit createHashKeyDropdownElem()");
+      const dropdownDoc = DropdownView.getDropdownDoc();
+      const elem = document.querySelectorAll("#hash-key-row>td")[1];
+      elem.append(dropdownDoc);
   }
-
+  
   function createRangeKeyDropdownElem() {
-    var dropdownDoc = DropdownView.getDropdownDoc();
-    var elem = document.querySelectorAll("#range-key-row>td")[1];
-    elem.append(dropdownDoc);
-  }
+      const dropdownDoc = DropdownView.getDropdownDoc();
+      const elem = document.querySelectorAll("#range-key-row>td")[1];
+      .append(dropdownDoc);
+  }*/
+
 
   _export("CreateTableView", CreateTableView);
 
   return {
-    setters: [function (_deleteAllAttrCtrlItemBtnViewJs) {
+    setters: [function (_commonComponentsUtilJs) {
+      Util = _commonComponentsUtilJs.Util;
+    }, function (_deleteAllAttrCtrlItemBtnViewJs) {
       DeleteAllAttrBtnView = _deleteAllAttrCtrlItemBtnViewJs.DeleteAllAttrBtnView;
     }, function (_attrCtrlItemViewJs) {
       AttrCtrlItemView = _attrCtrlItemViewJs.AttrCtrlItemView;
-    }, function (_commonComponentsDropdownViewJs) {
-      DropdownView = _commonComponentsDropdownViewJs.DropdownView;
+    }, function (_keySchemaViewJs) {
+      KeySchemaView = _keySchemaViewJs.KeySchemaView;
     }, function (_controllerCreateTableControllerJs) {
       CreateTableController = _controllerCreateTableControllerJs.CreateTableController;
     }],
-    execute: function () {
-      CreateTableView.createKeySchemaElements = function () {
-        createHashKeyDropdownElem();
-        createRangeKeyDropdownElem();
-      };
-    }
+    execute: function () {}
   };
 });
