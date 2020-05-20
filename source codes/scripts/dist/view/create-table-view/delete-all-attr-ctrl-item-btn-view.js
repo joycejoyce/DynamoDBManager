@@ -18,7 +18,7 @@ System.register(["../common-components/confirm-view.js", "./attr-ctrl-item-view.
     function listenOnClick() {
       var btn = document.getElementById("delete-all-attr-ctrl-item-btn");
       btn.addEventListener("click", function () {
-        ConfirmView.create(CONFIRM_PAGE_CONTENTS.id, CONFIRM_PAGE_CONTENTS.msg);
+        ConfirmView.createWithYesAndNoBtn(CONFIRM_PAGE_CONTENTS.id, CONFIRM_PAGE_CONTENTS.msg);
         listenOnClickYesBtn();
       });
     }

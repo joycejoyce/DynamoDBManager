@@ -15,8 +15,7 @@ Util.getComputedPropertyValue = (elem, property) => {
     return window.getComputedStyle(elem).getPropertyValue(property);
 };
 
-Util.changeIElem = (parentElem) => {
-    const iElem = parentElem.querySelector("i");
+Util.changeIElem = (iElem) => {
     const classDown = "fa-caret-down";
     const classUp = "fa-caret-up";
     if(iElem.classList.contains(classDown)) {

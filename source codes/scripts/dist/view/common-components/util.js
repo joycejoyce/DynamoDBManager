@@ -24,8 +24,7 @@ System.register([], function (_export, _context) {
         return window.getComputedStyle(elem).getPropertyValue(property);
       };
 
-      Util.changeIElem = function (parentElem) {
-        var iElem = parentElem.querySelector("i");
+      Util.changeIElem = function (iElem) {
         var classDown = "fa-caret-down";
         var classUp = "fa-caret-up";
 

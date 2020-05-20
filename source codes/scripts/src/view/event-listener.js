@@ -7,7 +7,7 @@ function EventListener() {
     this.addEventListeners = () => {
         new MainTabView().addEventListeners();
         new CreateTableView().addEventListeners();
-        new ConfirmView().addEventListeners();
+        ConfirmView.addEventListeners();
         DropdownView.addEventListeners();
     };
 }

@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["../view/create-table-view/attr-ctrl-item-view.js"], function (_export, _context) {
+System.register(["../model/create-table-model.js"], function (_export, _context) {
   "use strict";
 
-  var DEFAULT_TYPE_TEXT, ATTR_TYPES;
+  var CreateTableModel;
 
   function CreateTableController() {
     var tableName;
@@ -12,19 +12,23 @@ System.register(["../view/create-table-view/attr-ctrl-item-view.js"], function (
     var provisionedThroughput;
 
     this.transformViewInputForModel = function () {
-      checkInputs();
-      getInputs();
+      var input = getInputs();
+      new CreateTableModel().createTable(input);
     };
 
     function getInputs() {
       tableName = getTableNameInput();
-      attrDefs = getAttrDefs();
       keySchema = getKeySchema();
+      attrDefs = getAttrDefs();
       provisionedThroughput = getProvisionedThroughput();
-      console.log("tableName", tableName);
-      console.log("attrDefs", attrDefs);
-      console.log("keySchema", keySchema);
-      console.log("provisionedThroughput", provisionedThroughput);
+      var input = {
+        TableName: tableName,
+        KeySchema: keySchema,
+        AttributeDefinitions: attrDefs,
+        ProvisionedThroughput: provisionedThroughput
+      };
+      console.log("input", input);
+      return input;
     }
 
     function getTableNameInput() {
@@ -37,7 +41,7 @@ System.register(["../view/create-table-view/attr-ctrl-item-view.js"], function (
       var elems = getAttrCtrlItemElems();
       var inputs = elems.reduce(function (result, elem) {
         var attrName = elem.querySelector(".attr-name-input").value;
-        var attrType = elem.querySelector(".attribute-type-btn").textContent;
+        var attrType = elem.querySelector(".attribute-type-btn").value;
         result.push({
           AttributeName: attrName,
           AttributeType: attrType
@@ -53,10 +57,10 @@ System.register(["../view/create-table-view/attr-ctrl-item-view.js"], function (
 
     function getKeySchema() {
       var keySchema = [{
-        AttributeName: document.querySelector("#hash-key-dropdown>.dropdown-btn").textContent,
+        AttributeName: document.querySelector("#hash-key-row .dropdown-btn").value,
         KeyType: "HASH"
       }, {
-        AttributeName: document.querySelector("#range-key-dropdown>.dropdown-btn").textContent,
+        AttributeName: document.querySelector("#range-key-row .dropdown-btn").value,
         KeyType: "RANGE"
       }];
       return keySchema;
@@ -69,39 +73,13 @@ System.register(["../view/create-table-view/attr-ctrl-item-view.js"], function (
       };
       return provisionedThroughput;
     }
-
-    function checkInputs() {
-      checkAttrDefs();
-    }
-
-    function checkAttrDefs() {
-      var elems = getAttrTypeBtnElems();
-      elems.forEach(function (elem) {
-        var pattern = Object.values(ATTR_TYPES).reduce(function (result, type, i) {
-          if (i > 0) {
-            result += "|";
-          }
-
-          result += type;
-          return result;
-        }, "");
-        var title = "Choose a type";
-        elem.pattern = pattern;
-        elem.title = title;
-      });
-    }
-
-    function getAttrTypeBtnElems() {
-      return document.querySelectorAll(".attribute-type-btn");
-    }
   }
 
   _export("CreateTableController", CreateTableController);
 
   return {
-    setters: [function (_viewCreateTableViewAttrCtrlItemViewJs) {
-      DEFAULT_TYPE_TEXT = _viewCreateTableViewAttrCtrlItemViewJs.DEFAULT_TYPE_TEXT;
-      ATTR_TYPES = _viewCreateTableViewAttrCtrlItemViewJs.ATTR_TYPES;
+    setters: [function (_modelCreateTableModelJs) {
+      CreateTableModel = _modelCreateTableModelJs.CreateTableModel;
     }],
     execute: function () {}
   };

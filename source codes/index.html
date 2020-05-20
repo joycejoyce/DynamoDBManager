@@ -14,6 +14,7 @@
         <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/system.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/extras/named-exports.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
 	</head>
 	<body>
         <h1>DB Data Manager</h1>
@@ -29,14 +30,12 @@
             </div>
 
             <div id="main-page-2" class="active">
-                <button id="create-table-page-btn">
-                    Create a table <i class="fa fa-caret-down"></i>
-                </button>
+                <button id="create-table-page-btn">Create a table</button>
                 <div id="create-table-page">
                     <form id="create-table-form">
                         <section id="table-name-section">
                             <h1>Table Name</h1>
-                            <input type="text" id="table-name-input" placeholder="Enter a table name" required>
+                            <input type="text" id="table-name-input" placeholder="Enter the table name" required>
                         </section>
 
                         <section id="attribute-definitions">
@@ -73,16 +72,16 @@
                             <table id="provisioned-throughput-tbl">
                                 <tr>
                                     <td>Read capacity units:</td>
-                                    <td><input id="read-capacity-units" value="5" required></td>
+                                    <td><input id="read-capacity-units" value="5" placeholder="Enter the unit number" required></td>
                                 </tr>
                                 <tr>
                                     <td>Write capacity units:</td>
-                                    <td><input id="write-capacity-units" value="5" required></td>
+                                    <td><input id="write-capacity-units" value="5" placeholder="Enter the unit number" required></td>
                                 </tr>
                             </table>
                         </section>
                         
-                        <button id="create-tbl-btn">Create</button>
+                        <input type="submit" id="create-tbl-btn" value="Create">
                     </form>
                 </div>
             </div>
@@ -94,19 +93,16 @@
             <div class="confirm-container">
                 <div class="confirm-page confirm-page-animate">
                     <div class="confirm-msg"></div>
-                    <button class="yes">Yes</button>
-                    <button class="no">No</button>
                 </div>
             </div>
         </div>
         
         <script>
-            if(!window.isTesting) {
-                window.addEventListener("load", async () => {
-                    await buildElements();
-                    await executeEventListener();
-                });
-            }
+            window.addEventListener("load", async () => {
+                await buildElements();
+                await executeEventListener();
+                fillInputs();
+            });
             
             function buildElements() {
                 return System.import("element-builder").then((module) => {
@@ -118,6 +114,14 @@
                 return System.import("event-listener").then((module) => {
                     new module.EventListener().addEventListeners();
                 });
+            }
+            
+            function fillInputs() {
+                document.querySelector("#table-name-input").value = "TestTable";
+                document.querySelector(".attr-ctrl-item .dropdown-btn").value = "string";
+                document.querySelector(".attr-ctrl-item .attr-name-input").value = "field1";
+                document.querySelector("#hash-key-row .dropdown-btn").value = "field1";
+                document.querySelector("#range-key-row .dropdown-btn").value = "field1";
             }
         </script>
     </body>

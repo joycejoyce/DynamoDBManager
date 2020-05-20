@@ -1,4 +1,5 @@
 import {Util} from "../common-components/util.js";
+import {DropdownView} from "../common-components/dropdown-view.js";
 import {DeleteAllAttrBtnView} from "./delete-all-attr-ctrl-item-btn-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";
 import {KeySchemaView} from "./key-schema-view.js";
@@ -8,14 +9,30 @@ function CreateTableView() {
     this.createElements = () => {
         new KeySchemaView().createElements();
         new AttrCtrlItemView().createAnItem();
+        createIElemForCreateTablePageBtn();
     };
+    
+    function createIElemForCreateTablePageBtn() {
+        const createTablePageElem = document.querySelector("#create-table-page");
+        const overflow = Util.getComputedPropertyValue(createTablePageElem, "overflow");
+        
+        let iElem;
+        if(overflow == "hidden") {
+            iElem = DropdownView.getFaCaretIElem("down");
+        }
+        else {
+            iElem = DropdownView.getFaCaretIElem("up");
+        }
+        const createTablePageBtn = document.querySelector("#create-table-page-btn");
+        createTablePageBtn.appendChild(iElem);
+    }
     
     this.addEventListeners = () => {
         listenOnClickCreateTablePageBtn();
         listenOnClickAddAttributeBtn();
         new DeleteAllAttrBtnView().addEventListeners();
-        new KeySchemaView().addEventListeners();
-        listenOnCreateTblBtn();
+        new KeySchemaView().addEventListeners
+        listenOnSubmitCreateTableForm();
     };
     
     function listenOnClickCreateTablePageBtn() {
@@ -68,9 +85,10 @@ function CreateTableView() {
         }
     }
     
-    function listenOnCreateTblBtn() {
-        const createTblBtn = document.getElementById("create-tbl-btn");
-        createTblBtn.addEventListener("click", () => {
+    function listenOnSubmitCreateTableForm() {
+        const createTblForm = document.getElementById("create-table-form");
+        createTblForm.addEventListener("submit", (e) => {
+            e.preventDefault();
             createTbl();
         });
     }
@@ -79,23 +97,6 @@ function CreateTableView() {
         new CreateTableController().transformViewInputForModel();
     }
 }
-
-/*CreateTableView.createKeySchemaElements = () => {
-    createHashKeyDropdownElem();
-    createRangeKeyDropdownElem();
-};
-
-function createHashKeyDropdownElem() {
-    const dropdownDoc = DropdownView.getDropdownDoc();
-    const elem = document.querySelectorAll("#hash-key-row>td")[1];
-    elem.append(dropdownDoc);
-}
-
-function createRangeKeyDropdownElem() {
-    const dropdownDoc = DropdownView.getDropdownDoc();
-    const elem = document.querySelectorAll("#range-key-row>td")[1];
-    .append(dropdownDoc);
-}*/
 
 export {
     CreateTableView

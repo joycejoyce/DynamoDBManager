@@ -7,11 +7,24 @@ DropdownView.addEventListeners = () => {
 };
 
 function listenOnClickWindow() {
-    window.addEventListener("click", (e) => {
-        const dropdownElems = document.querySelectorAll(".dropdown>*");
-        if(e.target == dropdownElems) {
-            e.target.style.display = "none";
+    window.addEventListener("click", e => {
+        const $dropdown = $(".dropdown");
+        if(!$dropdown.is(event.target) && $dropdown.has(event.target).length == 0) {
+            hideDropdownWhenClickOutside(e);
+            changeFaCaretToDown();
         }
+    });
+}
+
+function hideDropdownWhenClickOutside(event) {
+    const lists = Array.from(document.querySelectorAll(".dropdown-list"));
+    lists.forEach(list => list.style.display = "none");
+}
+
+function changeFaCaretToDown() {
+    const iElems = Array.from(document.querySelectorAll(".dropdown-btn-container>.fa"));
+    iElems.forEach(elem => {
+        elem.className = "fa fa-caret-down";
     });
 }
 
@@ -29,14 +42,18 @@ DropdownView.getDropdownDoc = () => {
 };
 
 function getDropdownBtn() {
-    const dropdownBtn = document.createElement("button");
+    const dropdownBtn = document.createElement("input");
     dropdownBtn.className = "dropdown-btn";
-    dropdownBtn.type = "button";
+    dropdownBtn.type = "text";
 
-    const iElem = getFaCaretIElem("down");
-    dropdownBtn.appendChild(iElem);
+    const iElem = DropdownView.getFaCaretIElem("down");
+    
+    const container = document.createElement("div");
+    container.className = "dropdown-btn-container";
+    container.appendChild(dropdownBtn);
+    container.appendChild(iElem);
 
-    return dropdownBtn;
+    return container;
 }
 
 function getDropdownList() {
@@ -56,9 +73,6 @@ DropdownView.listenOnClickDropdownBtn = (dropdownElem, getListItemsFunc, noItemM
             return;
         }
         showOrHideDropdownList(dropdownElem, listItems);
-        
-        const dropdownList = dropdownElem.querySelector(".dropdown-list");
-        listenOnClickListItems(dropdownList);
     });
 };
 
@@ -69,8 +83,8 @@ function showOrHideDropdownList(dropdownElem, listItems) {
 
     Util.showOrHideElement(dropdownList);
 
-    const dropdownBtn = dropdownElem.querySelector(".dropdown-btn");
-    Util.changeIElem(dropdownBtn);
+    const iElem = dropdownElem.querySelector("i");
+    toggleFaCaretUpAndDownElem(iElem);
 }
 
 function createListItemElems(dropdownListElem, listItems) {
@@ -84,29 +98,42 @@ function createListItemElems(dropdownListElem, listItems) {
 
 function listenOnClickListItems(dropdownListElem) {
     const itemElems = Array.from(dropdownListElem.querySelectorAll("a"));
+    
     itemElems.forEach(elem => elem.addEventListener("click", (e) => {
-        changeBtnTextAndHideList(e.target.textContent, dropdownListElem.parentElement);
+        const dropdownElem = dropdownListElem.parentElement;
+        const text = e.target.textContent;
+        changeBtnText(text, dropdownElem);
+        
+        const iElem = dropdownElem.querySelector(".dropdown-btn-container>.fa");
+        toggleFaCaretUpAndDownElem(iElem);
+        
+        hideList(dropdownElem);
     }));
-}
-
-function changeBtnTextAndHideList(text, dropdownElem) {
-    changeBtnText(text, dropdownElem);
-    hideList(dropdownElem);
 }
 
 function changeBtnText(text, dropdownElem) {
     const btnElem = dropdownElem.querySelector(".dropdown-btn");
-    btnElem.innerHTML = text;
-
-    const iElem = getFaCaretIElem("down");
-    btnElem.appendChild(iElem);
+    btnElem.value = text;
 }
 
-function getFaCaretIElem(upOrDown) {
+function toggleFaCaretUpAndDownElem(iElem) {
+    const classDown = "fa-caret-down";
+    const classUp = "fa-caret-up";
+    if(iElem.classList.contains(classDown)) {
+        iElem.classList.remove(classDown);
+        iElem.classList.add(classUp);
+    }
+    else if(iElem.classList.contains(classUp)) {
+        iElem.classList.remove(classUp);
+        iElem.classList.add(classDown);
+    }
+}
+
+DropdownView.getFaCaretIElem = (upOrDown) => {
     const elem = document.createElement("i");
     elem.className = "fa fa-caret-" + upOrDown;
     return elem;
-}
+};
 
 function hideList(dropdownElem) {
     const listElem = dropdownElem.querySelector(".dropdown-list");

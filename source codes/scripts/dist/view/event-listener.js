@@ -9,7 +9,7 @@ System.register(["./main-tab-view.js", "./create-table-view/create-table-view.js
     this.addEventListeners = function () {
       new MainTabView().addEventListeners();
       new CreateTableView().addEventListeners();
-      new ConfirmView().addEventListeners();
+      ConfirmView.addEventListeners();
       DropdownView.addEventListeners();
     };
   }

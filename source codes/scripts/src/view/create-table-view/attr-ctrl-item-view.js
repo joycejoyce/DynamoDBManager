@@ -44,8 +44,16 @@ function AttrCtrlItemView() {
 
     function getAttrTypeDropdown() {
         const dropdown = DropdownView.getDropdownDoc();
+        setInputPatternForDropdownBtn(dropdown);
 
         return dropdown;
+    }
+    
+    function setInputPatternForDropdownBtn(dropdown) {
+        const dropdownBtn = dropdown.querySelector(".dropdown-btn");
+        dropdownBtn.pattern = new AttrCtrlItemView().getAttrTypeRegExp();
+        dropdownBtn.title = "Choose an attribute type";
+        dropdownBtn.value = " ";
     }
 
     function getAttrNameInput() {
@@ -53,6 +61,7 @@ function AttrCtrlItemView() {
         input.setAttribute("type", "text");
         input.required = true;
         input.className = "attr-name-input";
+        input.placeholder = "Enter the attribute name";
         return input;
     }
 
@@ -68,7 +77,7 @@ function AttrCtrlItemView() {
             const num = document.querySelectorAll(".attr-ctrl-item").length;
             if(num == 0) {
                 DeleteAllAttrBtnView.disableBtn();
-                AttrCtrlItemView.createAnItem();
+                new AttrCtrlItemView().createAnItem();
             }
         });
     }
@@ -76,6 +85,11 @@ function AttrCtrlItemView() {
     function listenOnClickAttrTypeBtn(attrCtrlItemElem) {
         DropdownView.listenOnClickDropdownBtn(attrCtrlItemElem, () => Object.values(ATTR_TYPES), "Attribute types are not defined");
     }
+    
+    this.getAttrTypeRegExp = () => {
+        const regExp = Object.values(ATTR_TYPES).join("|");
+        return regExp;
+    };
 }
 
 const ATTR_TYPES = {

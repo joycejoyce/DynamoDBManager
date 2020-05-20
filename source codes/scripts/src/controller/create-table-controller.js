@@ -1,4 +1,4 @@
-import {DEFAULT_TYPE_TEXT, ATTR_TYPES} from "../view/create-table-view/attr-ctrl-item-view.js";
+import {CreateTableModel} from "../model/create-table-model.js";
 
 function CreateTableController() {
     let tableName;
@@ -7,19 +7,25 @@ function CreateTableController() {
     let provisionedThroughput;
     
     this.transformViewInputForModel = () => {
-        checkInputs();
-        getInputs();
+        const input = getInputs();
+        new CreateTableModel().createTable(input);
     };
     
     function getInputs() {
         tableName = getTableNameInput();
-        attrDefs = getAttrDefs();
         keySchema = getKeySchema();
+        attrDefs = getAttrDefs();
         provisionedThroughput = getProvisionedThroughput();
-        console.log("tableName", tableName);
-        console.log("attrDefs", attrDefs);
-        console.log("keySchema", keySchema);
-        console.log("provisionedThroughput", provisionedThroughput);
+        
+        const input = {
+            TableName: tableName,
+            KeySchema: keySchema,
+            AttributeDefinitions: attrDefs,
+            ProvisionedThroughput: provisionedThroughput
+        };
+        console.log("input", input);
+        
+        return input;
     }
     
     function getTableNameInput() {
@@ -32,7 +38,7 @@ function CreateTableController() {
         const elems = getAttrCtrlItemElems();　
         let inputs = elems.reduce((result, elem) => {
             const attrName = elem.querySelector(".attr-name-input").value;
-            const attrType = elem.querySelector(".attribute-type-btn").textContent;
+            const attrType = elem.querySelector(".attribute-type-btn").value;
             result.push({AttributeName: attrName, AttributeType: attrType});
             return result;
         }, []);
@@ -47,11 +53,11 @@ function CreateTableController() {
     function getKeySchema() {
         const keySchema = [
             {
-                AttributeName: document.querySelector("#hash-key-dropdown>.dropdown-btn").textContent,
+                AttributeName: document.querySelector("#hash-key-row .dropdown-btn").value,
                 KeyType: "HASH"
             },
             {
-                AttributeName: document.querySelector("#range-key-dropdown>.dropdown-btn").textContent,
+                AttributeName: document.querySelector("#range-key-row .dropdown-btn").value,
                 KeyType: "RANGE"
             }
         ];
@@ -66,32 +72,6 @@ function CreateTableController() {
         };
         
         return provisionedThroughput;
-    }
-    
-    function checkInputs() {
-        checkAttrDefs();
-    }
-    
-    function checkAttrDefs() {
-        const elems = getAttrTypeBtnElems();
-        elems.forEach((elem) => {
-            const pattern = Object.values(ATTR_TYPES).reduce((result, type, i) => {
-                if(i > 0) {
-                    result += "|";
-                }
-                result += type;
-                return result;
-            }, "");
-            
-            const title = "Choose a type";
-            
-            elem.pattern = pattern;
-            elem.title = title;
-        });
-    }
-    
-    function getAttrTypeBtnElems() {
-        return document.querySelectorAll(".attribute-type-btn");
     }
 }
 

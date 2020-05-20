@@ -1,22 +1,38 @@
 "use strict";
 
-System.register(["../common-components/util.js", "./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-view.js", "./key-schema-view.js", "../../controller/create-table-controller.js"], function (_export, _context) {
+System.register(["../common-components/util.js", "../common-components/dropdown-view.js", "./delete-all-attr-ctrl-item-btn-view.js", "./attr-ctrl-item-view.js", "./key-schema-view.js", "../../controller/create-table-controller.js"], function (_export, _context) {
   "use strict";
 
-  var Util, DeleteAllAttrBtnView, AttrCtrlItemView, KeySchemaView, CreateTableController;
+  var Util, DropdownView, DeleteAllAttrBtnView, AttrCtrlItemView, KeySchemaView, CreateTableController;
 
   function CreateTableView() {
     this.createElements = function () {
       new KeySchemaView().createElements();
       new AttrCtrlItemView().createAnItem();
+      createIElemForCreateTablePageBtn();
     };
+
+    function createIElemForCreateTablePageBtn() {
+      var createTablePageElem = document.querySelector("#create-table-page");
+      var overflow = Util.getComputedPropertyValue(createTablePageElem, "overflow");
+      var iElem;
+
+      if (overflow == "hidden") {
+        iElem = DropdownView.getFaCaretIElem("down");
+      } else {
+        iElem = DropdownView.getFaCaretIElem("up");
+      }
+
+      var createTablePageBtn = document.querySelector("#create-table-page-btn");
+      createTablePageBtn.appendChild(iElem);
+    }
 
     this.addEventListeners = function () {
       listenOnClickCreateTablePageBtn();
       listenOnClickAddAttributeBtn();
       new DeleteAllAttrBtnView().addEventListeners();
-      new KeySchemaView().addEventListeners();
-      listenOnCreateTblBtn();
+      new KeySchemaView().addEventListeners;
+      listenOnSubmitCreateTableForm();
     };
 
     function listenOnClickCreateTablePageBtn() {
@@ -70,9 +86,10 @@ System.register(["../common-components/util.js", "./delete-all-attr-ctrl-item-bt
       }
     }
 
-    function listenOnCreateTblBtn() {
-      var createTblBtn = document.getElementById("create-tbl-btn");
-      createTblBtn.addEventListener("click", function () {
+    function listenOnSubmitCreateTableForm() {
+      var createTblForm = document.getElementById("create-table-form");
+      createTblForm.addEventListener("submit", function (e) {
+        e.preventDefault();
         createTbl();
       });
     }
@@ -81,29 +98,14 @@ System.register(["../common-components/util.js", "./delete-all-attr-ctrl-item-bt
       new CreateTableController().transformViewInputForModel();
     }
   }
-  /*CreateTableView.createKeySchemaElements = () => {
-      createHashKeyDropdownElem();
-      createRangeKeyDropdownElem();
-  };
-  
-  function createHashKeyDropdownElem() {
-      const dropdownDoc = DropdownView.getDropdownDoc();
-      const elem = document.querySelectorAll("#hash-key-row>td")[1];
-      elem.append(dropdownDoc);
-  }
-  
-  function createRangeKeyDropdownElem() {
-      const dropdownDoc = DropdownView.getDropdownDoc();
-      const elem = document.querySelectorAll("#range-key-row>td")[1];
-      .append(dropdownDoc);
-  }*/
-
 
   _export("CreateTableView", CreateTableView);
 
   return {
     setters: [function (_commonComponentsUtilJs) {
       Util = _commonComponentsUtilJs.Util;
+    }, function (_commonComponentsDropdownViewJs) {
+      DropdownView = _commonComponentsDropdownViewJs.DropdownView;
     }, function (_deleteAllAttrCtrlItemBtnViewJs) {
       DeleteAllAttrBtnView = _deleteAllAttrCtrlItemBtnViewJs.DeleteAllAttrBtnView;
     }, function (_attrCtrlItemViewJs) {

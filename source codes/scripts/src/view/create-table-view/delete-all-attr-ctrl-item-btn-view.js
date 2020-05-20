@@ -14,7 +14,7 @@ function DeleteAllAttrBtnView() {
     function listenOnClick() {
         const btn = document.getElementById("delete-all-attr-ctrl-item-btn");
         btn.addEventListener("click", () => {
-            ConfirmView.create(CONFIRM_PAGE_CONTENTS.id, CONFIRM_PAGE_CONTENTS.msg);
+            ConfirmView.createWithYesAndNoBtn(CONFIRM_PAGE_CONTENTS.id, CONFIRM_PAGE_CONTENTS.msg);
             listenOnClickYesBtn();
         });
     }

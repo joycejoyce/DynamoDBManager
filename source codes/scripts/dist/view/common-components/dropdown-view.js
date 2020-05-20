@@ -9,21 +9,39 @@ System.register(["../common-components/util.js"], function (_export, _context) {
 
   function listenOnClickWindow() {
     window.addEventListener("click", function (e) {
-      var dropdownElems = document.querySelectorAll(".dropdown>*");
+      var $dropdown = $(".dropdown");
 
-      if (e.target == dropdownElems) {
-        e.target.style.display = "none";
+      if (!$dropdown.is(event.target) && $dropdown.has(event.target).length == 0) {
+        hideDropdownWhenClickOutside(e);
+        changeFaCaretToDown();
       }
     });
   }
 
+  function hideDropdownWhenClickOutside(event) {
+    var lists = Array.from(document.querySelectorAll(".dropdown-list"));
+    lists.forEach(function (list) {
+      return list.style.display = "none";
+    });
+  }
+
+  function changeFaCaretToDown() {
+    var iElems = Array.from(document.querySelectorAll(".dropdown-btn-container>.fa"));
+    iElems.forEach(function (elem) {
+      elem.className = "fa fa-caret-down";
+    });
+  }
+
   function getDropdownBtn() {
-    var dropdownBtn = document.createElement("button");
+    var dropdownBtn = document.createElement("input");
     dropdownBtn.className = "dropdown-btn";
-    dropdownBtn.type = "button";
-    var iElem = getFaCaretIElem("down");
-    dropdownBtn.appendChild(iElem);
-    return dropdownBtn;
+    dropdownBtn.type = "text";
+    var iElem = DropdownView.getFaCaretIElem("down");
+    var container = document.createElement("div");
+    container.className = "dropdown-btn-container";
+    container.appendChild(dropdownBtn);
+    container.appendChild(iElem);
+    return container;
   }
 
   function getDropdownList() {
@@ -37,8 +55,8 @@ System.register(["../common-components/util.js"], function (_export, _context) {
     createListItemElems(dropdownList, listItems);
     listenOnClickListItems(dropdownList);
     Util.showOrHideElement(dropdownList);
-    var dropdownBtn = dropdownElem.querySelector(".dropdown-btn");
-    Util.changeIElem(dropdownBtn);
+    var iElem = dropdownElem.querySelector("i");
+    toggleFaCaretUpAndDownElem(iElem);
   }
 
   function createListItemElems(dropdownListElem, listItems) {
@@ -54,27 +72,32 @@ System.register(["../common-components/util.js"], function (_export, _context) {
     var itemElems = Array.from(dropdownListElem.querySelectorAll("a"));
     itemElems.forEach(function (elem) {
       return elem.addEventListener("click", function (e) {
-        changeBtnTextAndHideList(e.target.textContent, dropdownListElem.parentElement);
+        var dropdownElem = dropdownListElem.parentElement;
+        var text = e.target.textContent;
+        changeBtnText(text, dropdownElem);
+        var iElem = dropdownElem.querySelector(".dropdown-btn-container>.fa");
+        toggleFaCaretUpAndDownElem(iElem);
+        hideList(dropdownElem);
       });
     });
   }
 
-  function changeBtnTextAndHideList(text, dropdownElem) {
-    changeBtnText(text, dropdownElem);
-    hideList(dropdownElem);
-  }
-
   function changeBtnText(text, dropdownElem) {
     var btnElem = dropdownElem.querySelector(".dropdown-btn");
-    btnElem.innerHTML = text;
-    var iElem = getFaCaretIElem("down");
-    btnElem.appendChild(iElem);
+    btnElem.value = text;
   }
 
-  function getFaCaretIElem(upOrDown) {
-    var elem = document.createElement("i");
-    elem.className = "fa fa-caret-" + upOrDown;
-    return elem;
+  function toggleFaCaretUpAndDownElem(iElem) {
+    var classDown = "fa-caret-down";
+    var classUp = "fa-caret-up";
+
+    if (iElem.classList.contains(classDown)) {
+      iElem.classList.remove(classDown);
+      iElem.classList.add(classUp);
+    } else if (iElem.classList.contains(classUp)) {
+      iElem.classList.remove(classUp);
+      iElem.classList.add(classDown);
+    }
   }
 
   function hideList(dropdownElem) {
@@ -115,9 +138,13 @@ System.register(["../common-components/util.js"], function (_export, _context) {
           }
 
           showOrHideDropdownList(dropdownElem, listItems);
-          var dropdownList = dropdownElem.querySelector(".dropdown-list");
-          listenOnClickListItems(dropdownList);
         });
+      };
+
+      DropdownView.getFaCaretIElem = function (upOrDown) {
+        var elem = document.createElement("i");
+        elem.className = "fa fa-caret-" + upOrDown;
+        return elem;
       };
     }
   };

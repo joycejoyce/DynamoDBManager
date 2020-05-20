@@ -42,7 +42,15 @@ System.register(["../common-components/dropdown-view.js", "./delete-all-attr-ctr
 
     function getAttrTypeDropdown() {
       var dropdown = DropdownView.getDropdownDoc();
+      setInputPatternForDropdownBtn(dropdown);
       return dropdown;
+    }
+
+    function setInputPatternForDropdownBtn(dropdown) {
+      var dropdownBtn = dropdown.querySelector(".dropdown-btn");
+      dropdownBtn.pattern = new AttrCtrlItemView().getAttrTypeRegExp();
+      dropdownBtn.title = "Choose an attribute type";
+      dropdownBtn.value = " ";
     }
 
     function getAttrNameInput() {
@@ -50,6 +58,7 @@ System.register(["../common-components/dropdown-view.js", "./delete-all-attr-ctr
       input.setAttribute("type", "text");
       input.required = true;
       input.className = "attr-name-input";
+      input.placeholder = "Enter the attribute name";
       return input;
     }
 
@@ -66,7 +75,7 @@ System.register(["../common-components/dropdown-view.js", "./delete-all-attr-ctr
 
         if (num == 0) {
           DeleteAllAttrBtnView.disableBtn();
-          AttrCtrlItemView.createAnItem();
+          new AttrCtrlItemView().createAnItem();
         }
       });
     }
@@ -76,6 +85,11 @@ System.register(["../common-components/dropdown-view.js", "./delete-all-attr-ctr
         return Object.values(ATTR_TYPES);
       }, "Attribute types are not defined");
     }
+
+    this.getAttrTypeRegExp = function () {
+      var regExp = Object.values(ATTR_TYPES).join("|");
+      return regExp;
+    };
   }
 
   _export("AttrCtrlItemView", AttrCtrlItemView);
