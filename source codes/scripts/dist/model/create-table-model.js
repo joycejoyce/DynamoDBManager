@@ -12,11 +12,9 @@ System.register(["./db-connection.js", "../view/common-components/action-result-
       var action = "create-table";
       dbApi.createTable(params, function (err, data) {
         if (err) {
-          console.log("has err");
           ActionResultView.showErrMsg(action, err);
           /*document.getElementById('textarea').innerHTML = "Unable to create table: " + "\n" + JSON.stringify(err, undefined, 2);*/
         } else {
-          console.log("no err");
           ActionResultView.showSuccessMsg(action, data);
           /*document.getElementById('textarea').innerHTML = "Created table: " + "\n" + JSON.stringify(data, undefined, 2);*/
         }

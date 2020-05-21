@@ -31,7 +31,7 @@ System.register(["../common-components/util.js", "../common-components/dropdown-
       listenOnClickCreateTablePageBtn();
       listenOnClickAddAttributeBtn();
       new DeleteAllAttrBtnView().addEventListeners();
-      new KeySchemaView().addEventListeners;
+      new KeySchemaView().addEventListeners();
       listenOnSubmitCreateTableForm();
     };
 

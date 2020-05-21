@@ -5,8 +5,6 @@ System.register([], function (_export, _context) {
 
   var confirmView, confirmPage;
 
-  function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
   function ConfirmView() {}
 
   function getConfirmView() {
@@ -26,18 +24,15 @@ System.register([], function (_export, _context) {
   }
 
   function removeAllChildsExceptConfirmMsg() {
-    console.log("Enter removeAllChildsExceptConfirmMsg()");
-    var childs = Array.from(confirmPage.childNodes);
-    console.log("child #:", childs.length);
-    childs.filter(function (child) {
-      return typeof child !== "undefined";
-    }).forEach(function (child) {
-      console.log("typeof child:", _typeof(child));
-      console.log("child:", child.outerHTML);
+    removeElemByTagName("button");
+    removeElemByTagName("textarea");
+  }
+
+  function removeElemByTagName(tagName) {
+    var elems = Array.from(confirmPage.querySelectorAll(tagName));
+    elems.forEach(function (elem) {
+      return elem.remove();
     });
-    /*childs
-        .filter(child => !child.classList.contains("confirm-msg"))
-        .forEach(child => child.remove());*/
   }
 
   function hide(elem) {
@@ -56,7 +51,6 @@ System.register([], function (_export, _context) {
   }
 
   function create(id, confirmMsg) {
-    console.log("Enter create()");
     ConfirmView.reset();
     confirmView.id = id;
     confirmView.querySelector(".confirm-msg").textContent = confirmMsg;
@@ -88,7 +82,9 @@ System.register([], function (_export, _context) {
   function createInfoTextArea(infoText) {
     var textArea = document.createElement("textarea");
     textArea.textContent = infoText;
-    textArea.readonly = "true";
+    textArea.readOnly = true;
+    textArea.rows = "20";
+    textArea.cols = "60";
     confirmPage.appendChild(textArea);
   }
 

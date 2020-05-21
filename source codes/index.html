@@ -17,82 +17,84 @@
         <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
 	</head>
 	<body>
-        <h1>DB Data Manager</h1>
-        <div id="main-tabs">
-            <button id="main-tab-1" class="active">DB Overview</button>
-            <button id="main-tab-2">Manage Tables</button>
-            <button id="main-tab-3">Manage Table Items</button>
-        </div>
-        
-        <div id="main-pages">
-            <div id="main-page-1">
-                <p>db-overview page</p>
+        <div id="container">
+            <h1>DB Data Manager</h1>
+            <div id="main-tabs">
+                <button id="main-tab-1">DB Overview</button>
+                <button id="main-tab-2" class="active">Manage Tables</button>
+                <button id="main-tab-3">Manage Table Items</button>
             </div>
 
-            <div id="main-page-2" class="active">
-                <button id="create-table-page-btn">Create a table</button>
-                <div id="create-table-page">
-                    <form id="create-table-form">
-                        <section id="table-name-section">
-                            <h1>Table Name</h1>
-                            <input type="text" id="table-name-input" placeholder="Enter the table name" required>
-                        </section>
-
-                        <section id="attribute-definitions">
-                            <h1>Attribute Definitions</h1>
-                            <button id="add-attr-ctrl-item-btn" type="button">Add</button>
-                            <button id="delete-all-attr-ctrl-item-btn" type="button" disabled>Delete All</button>
-                            <table id="attr-ctrl-item-tbl">
-                                <tbody>
-                                    <tr>
-                                        <th>Delete</th>
-                                        <th>Type</th>
-                                        <th>Attribute Name</th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </section>
-                        
-                        <section id="key-schema-section">
-                            <h1>Key Schema</h1>
-                            <table id="key-schema-tbl">
-                                <tr id="hash-key-row">
-                                    <td>Hash key: </td>
-                                    <td></td>
-                                </tr>
-                                <tr id="range-key-row">
-                                    <td>Range key: </td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </section>
-                        
-                        <section id="provisioned-throughput-section">
-                            <h1>Provisioned Throughput</h1>
-                            <table id="provisioned-throughput-tbl">
-                                <tr>
-                                    <td>Read capacity units:</td>
-                                    <td><input id="read-capacity-units" value="5" placeholder="Enter the unit number" required></td>
-                                </tr>
-                                <tr>
-                                    <td>Write capacity units:</td>
-                                    <td><input id="write-capacity-units" value="5" placeholder="Enter the unit number" required></td>
-                                </tr>
-                            </table>
-                        </section>
-                        
-                        <input type="submit" id="create-tbl-btn" value="Create">
-                    </form>
+            <div id="main-pages">
+                <div id="main-page-1">
+                    <p>db-overview page</p>
                 </div>
-            </div>
 
-            <div id="main-page-3">
-                <p>manage-table-items page</p>
-            </div>
-            
-            <div class="confirm-container">
-                <div class="confirm-page confirm-page-animate">
-                    <div class="confirm-msg"></div>
+                <div id="main-page-2" class="active">
+                    <button id="create-table-page-btn">Create a table</button>
+                    <div id="create-table-page">
+                        <form id="create-table-form">
+                            <section id="table-name-section">
+                                <h1>Table Name</h1>
+                                <input type="text" id="table-name-input" placeholder="Enter the table name" required>
+                            </section>
+
+                            <section id="attribute-definitions">
+                                <h1>Attribute Definitions</h1>
+                                <button id="add-attr-ctrl-item-btn" type="button">Add</button>
+                                <button id="delete-all-attr-ctrl-item-btn" type="button" disabled>Delete All</button>
+                                <table id="attr-ctrl-item-tbl">
+                                    <tbody>
+                                        <tr>
+                                            <th>Delete</th>
+                                            <th>Type</th>
+                                            <th>Attribute Name</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+
+                            <section id="key-schema-section">
+                                <h1>Key Schema</h1>
+                                <table id="key-schema-tbl">
+                                    <tr id="hash-key-row">
+                                        <td>Hash key: </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr id="range-key-row">
+                                        <td>Range key: </td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </section>
+
+                            <section id="provisioned-throughput-section">
+                                <h1>Provisioned Throughput</h1>
+                                <table id="provisioned-throughput-tbl">
+                                    <tr>
+                                        <td>Read capacity units:</td>
+                                        <td><input id="read-capacity-units" value="5" placeholder="Enter the unit number" required></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Write capacity units:</td>
+                                        <td><input id="write-capacity-units" value="5" placeholder="Enter the unit number" required></td>
+                                    </tr>
+                                </table>
+                            </section>
+
+                            <input type="submit" id="create-tbl-btn" value="Create">
+                        </form>
+                    </div>
+                </div>
+
+                <div id="main-page-3">
+                    <p>manage-table-items page</p>
+                </div>
+
+                <div class="confirm-container">
+                    <div class="confirm-page confirm-page-animate">
+                        <div class="confirm-msg"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,7 +103,7 @@
             window.addEventListener("load", async () => {
                 await buildElements();
                 await executeEventListener();
-                fillInputs();
+                //fillInputs();
             });
             
             function buildElements() {
@@ -121,7 +123,13 @@
                 document.querySelector(".attr-ctrl-item .dropdown-btn").value = "string";
                 document.querySelector(".attr-ctrl-item .attr-name-input").value = "field1";
                 document.querySelector("#hash-key-row .dropdown-btn").value = "field1";
-                document.querySelector("#range-key-row .dropdown-btn").value = "field1";
+                
+                const addAttrBtn = document.querySelector("#add-attr-ctrl-item-btn");
+                addAttrBtn.click();
+                
+                document.querySelectorAll(".attr-ctrl-item .dropdown-btn")[1].value = "string";
+                document.querySelectorAll(".attr-ctrl-item .attr-name-input")[1].value = "field2";
+                document.querySelector("#range-key-row .dropdown-btn").value = "field2";
             }
         </script>
     </body>

@@ -29,7 +29,7 @@ function KeySchemaView() {
     }
     
     function getAttrNames() {
-        const attrNameInputs = document.getElementsByClassName("attr-name-input");
+        const attrNameInputs = document.querySelectorAll(".attr-name-input");
         
         const attrNames = Array.from(attrNameInputs)
             .map(input => input.value)

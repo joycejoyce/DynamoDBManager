@@ -23,7 +23,6 @@ function CreateTableController() {
             AttributeDefinitions: attrDefs,
             ProvisionedThroughput: provisionedThroughput
         };
-        console.log("input", input);
         
         return input;
     }
@@ -38,7 +37,7 @@ function CreateTableController() {
         const elems = getAttrCtrlItemElems();　
         let inputs = elems.reduce((result, elem) => {
             const attrName = elem.querySelector(".attr-name-input").value;
-            const attrType = elem.querySelector(".attribute-type-btn").value;
+            const attrType = getAttrTypes(elem);
             result.push({AttributeName: attrName, AttributeType: attrType});
             return result;
         }, []);
@@ -47,7 +46,21 @@ function CreateTableController() {
     }
     
     function getAttrCtrlItemElems() {
-        return Array.from(document.getElementsByClassName("attribute-control-item"));
+        return Array.from(document.getElementsByClassName("attr-ctrl-item"));
+    }
+    
+    function getAttrTypes(attrCtrlItemElem) {
+        const type = attrCtrlItemElem.querySelector(".dropdown-btn").value;
+        switch(type) {
+            case "string":
+                return "S";
+            case "number":
+                return "N";
+            case "boolean":
+                return "B"
+            default:
+                throw `Unkown type: [${type}]`;
+        }
     }
     
     function getKeySchema() {

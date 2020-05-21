@@ -27,7 +27,6 @@ System.register(["../model/create-table-model.js"], function (_export, _context)
         AttributeDefinitions: attrDefs,
         ProvisionedThroughput: provisionedThroughput
       };
-      console.log("input", input);
       return input;
     }
 
@@ -41,7 +40,7 @@ System.register(["../model/create-table-model.js"], function (_export, _context)
       var elems = getAttrCtrlItemElems();
       var inputs = elems.reduce(function (result, elem) {
         var attrName = elem.querySelector(".attr-name-input").value;
-        var attrType = elem.querySelector(".attribute-type-btn").value;
+        var attrType = getAttrTypes(elem);
         result.push({
           AttributeName: attrName,
           AttributeType: attrType
@@ -52,7 +51,25 @@ System.register(["../model/create-table-model.js"], function (_export, _context)
     }
 
     function getAttrCtrlItemElems() {
-      return Array.from(document.getElementsByClassName("attribute-control-item"));
+      return Array.from(document.getElementsByClassName("attr-ctrl-item"));
+    }
+
+    function getAttrTypes(attrCtrlItemElem) {
+      var type = attrCtrlItemElem.querySelector(".dropdown-btn").value;
+
+      switch (type) {
+        case "string":
+          return "S";
+
+        case "number":
+          return "N";
+
+        case "boolean":
+          return "B";
+
+        default:
+          throw "Unkown type: [".concat(type, "]");
+      }
     }
 
     function getKeySchema() {

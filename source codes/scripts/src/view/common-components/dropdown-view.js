@@ -64,8 +64,8 @@ function getDropdownList() {
 }
 
 DropdownView.listenOnClickDropdownBtn = (dropdownElem, getListItemsFunc, noItemMsg) => {
-    const btn = dropdownElem.querySelector(".dropdown-btn");
-    btn.addEventListener("click", () => {
+    const btnElem = dropdownElem.querySelector(".dropdown-btn");
+    btnElem.addEventListener("click", () => {
         let listItems = getListItemsFunc();
         listItems = Util.getDistinctValues(listItems);
         if(listItems.length == 0) {
@@ -78,7 +78,9 @@ DropdownView.listenOnClickDropdownBtn = (dropdownElem, getListItemsFunc, noItemM
 
 function showOrHideDropdownList(dropdownElem, listItems) {
     const dropdownList = dropdownElem.querySelector(".dropdown-list");
+    
     createListItemElems(dropdownList, listItems);
+    
     listenOnClickListItems(dropdownList);
 
     Util.showOrHideElement(dropdownList);

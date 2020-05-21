@@ -31,7 +31,7 @@ function CreateTableView() {
         listenOnClickCreateTablePageBtn();
         listenOnClickAddAttributeBtn();
         new DeleteAllAttrBtnView().addEventListeners();
-        new KeySchemaView().addEventListeners
+        new KeySchemaView().addEventListeners();
         listenOnSubmitCreateTableForm();
     };
     

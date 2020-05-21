@@ -12,16 +12,30 @@ System.register([], function (_export, _context) {
       var mainTabElements = Array.from(document.querySelectorAll("#main-tabs>button"));
       mainTabElements.forEach(function (elem) {
         elem.addEventListener("click", function (e) {
-          return changeActivePage(e.target);
+          changeActivePage(e.target);
+          changeActiveTab(e.target);
         });
       });
     }
 
-    function changeActivePage(elem) {
-      document.querySelector("#main-pages>.active").classList.remove("active");
-      var num = elem.id.split("-").pop();
+    function changeActivePage(clickedTab) {
+      var activePage = document.querySelector("#main-pages>.active");
+      activePage.classList.remove("active");
+      var newActivePage = getNewActivePage(clickedTab);
+      newActivePage.classList.add("active");
+    }
+
+    function getNewActivePage(clickedTab) {
+      var num = clickedTab.id.split("-").pop();
       var targetId = "main-page-".concat(num);
-      document.getElementById(targetId).classList.add("active");
+      var newActivePage = document.getElementById(targetId);
+      return newActivePage;
+    }
+
+    function changeActiveTab(clickedTab) {
+      var activeTab = document.querySelector("#main-tabs>.active");
+      activeTab.classList.remove("active");
+      clickedTab.classList.add("active");
     }
   }
 

@@ -127,8 +127,8 @@ System.register(["../common-components/util.js"], function (_export, _context) {
       };
 
       DropdownView.listenOnClickDropdownBtn = function (dropdownElem, getListItemsFunc, noItemMsg) {
-        var btn = dropdownElem.querySelector(".dropdown-btn");
-        btn.addEventListener("click", function () {
+        var btnElem = dropdownElem.querySelector(".dropdown-btn");
+        btnElem.addEventListener("click", function () {
           var listItems = getListItemsFunc();
           listItems = Util.getDistinctValues(listItems);
 

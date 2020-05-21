@@ -3,11 +3,9 @@ import {ConfirmView} from "./confirm-view.js";
 function ActionResultView() {}
 
 ActionResultView.showErrMsg = (action, err) => {
-    console.log("Enter showErrMsg()");
     const id = action;
     const confirmMsg = "Error:";
     const info = getErrMsg(action, err);
-    console.log("info", info);
     ConfirmView.createWithInfo(id, confirmMsg, info);
 }
 

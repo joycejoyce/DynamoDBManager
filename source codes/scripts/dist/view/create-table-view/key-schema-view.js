@@ -34,7 +34,7 @@ System.register(["../common-components/dropdown-view.js"], function (_export, _c
     }
 
     function getAttrNames() {
-      var attrNameInputs = document.getElementsByClassName("attr-name-input");
+      var attrNameInputs = document.querySelectorAll(".attr-name-input");
       var attrNames = Array.from(attrNameInputs).map(function (input) {
         return input.value;
       }).filter(function (name) {

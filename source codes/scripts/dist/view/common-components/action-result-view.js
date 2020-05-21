@@ -27,11 +27,9 @@ System.register(["./confirm-view.js"], function (_export, _context) {
     }],
     execute: function () {
       ActionResultView.showErrMsg = function (action, err) {
-        console.log("Enter showErrMsg()");
         var id = action;
         var confirmMsg = "Error:";
         var info = getErrMsg(action, err);
-        console.log("info", info);
         ConfirmView.createWithInfo(id, confirmMsg, info);
       };
 

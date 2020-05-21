@@ -30,18 +30,13 @@ ConfirmView.reset = () => {
 };
 
 function removeAllChildsExceptConfirmMsg() {
-    console.log("Enter removeAllChildsExceptConfirmMsg()");
-    const childs = Array.from(confirmPage.childNodes);
-    console.log("child #:", childs.length);
-    childs
-        .filter(child => typeof child !== "undefined")
-        .forEach(child => {
-        console.log("typeof child:", typeof child);
-        console.log("child:", child.outerHTML);
-    })
-    /*childs
-        .filter(child => !child.classList.contains("confirm-msg"))
-        .forEach(child => child.remove());*/
+    removeElemByTagName("button");
+    removeElemByTagName("textarea");
+}
+
+function removeElemByTagName(tagName) {
+    const elems = Array.from(confirmPage.querySelectorAll(tagName));
+    elems.forEach(elem => elem.remove());
 }
 
 function hide(elem) {
@@ -63,7 +58,6 @@ function removeAllBtn() {
 }
 
 function create(id, confirmMsg) {
-    console.log("Enter create()");
     ConfirmView.reset();
     confirmView.id = id;
     confirmView.querySelector(".confirm-msg").textContent = confirmMsg;
@@ -103,7 +97,9 @@ ConfirmView.createWithInfo = (id, confirmMsg, infoText) => {
 function createInfoTextArea(infoText) {
     const textArea = document.createElement("textarea");
     textArea.textContent = infoText;
-    textArea.readonly = "true";
+    textArea.readOnly = true;
+    textArea.rows = "20";
+    textArea.cols = "60";
     confirmPage.appendChild(textArea);
 }
 

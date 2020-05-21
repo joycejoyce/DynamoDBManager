@@ -6,15 +6,33 @@ function MainTabView() {
     function listenOnClickMainTabs() {
         const mainTabElements = Array.from(document.querySelectorAll("#main-tabs>button"));
         mainTabElements.forEach((elem) => {
-            elem.addEventListener("click", (e) => changeActivePage(e.target));
+            elem.addEventListener("click", (e) => {
+                changeActivePage(e.target);
+                changeActiveTab(e.target);
+            });
         });
     }
     
-    function changeActivePage(elem) {
-        document.querySelector("#main-pages>.active").classList.remove("active");
-        const num = elem.id.split("-").pop();
+    function changeActivePage(clickedTab) {
+        const activePage = document.querySelector("#main-pages>.active");
+        activePage.classList.remove("active");
+        
+        const newActivePage = getNewActivePage(clickedTab);
+        newActivePage.classList.add("active");
+    }
+    
+    function getNewActivePage(clickedTab) {
+        const num = clickedTab.id.split("-").pop();
         const targetId = `main-page-${num}`;
-        document.getElementById(targetId).classList.add("active");
+        const newActivePage = document.getElementById(targetId);
+        return newActivePage;
+    }
+    
+    function changeActiveTab(clickedTab) {
+        const activeTab = document.querySelector("#main-tabs>.active");
+        activeTab.classList.remove("active");
+        
+        clickedTab.classList.add("active");
     }
 }
 

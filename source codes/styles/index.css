@@ -1,124 +1,175 @@
-#main-pages>* {
-    display: none;
+#container {
+  margin: 0 auto;
+  width: 600px;
 }
 
-#main-pages>.active {
-    display: block;
+h1 {
+  text-align: center;
 }
 
-#main-page-2>.collapsible-content {
-    display: none;
+#main-tabs {
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+#main-tabs > button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+#main-tabs > button.active, #main-tabs > button:hover {
+  background-color: #ddd;
+}
+
+#main-pages > * {
+  display: none;
+  height: 80vh;
+  overflow: auto;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+}
+
+#main-pages > .active {
+  display: block;
+}
+
+#main-page-2 > .collapsible-content {
+  display: none;
 }
 
 #create-table-page-btn {
-    width: 600px;
-    cursor: pointer;
-    text-align: left;
-    position: relative;
+  width: 540px;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
 }
 
-.fa-caret-down,.fa-caret-up {
-    position: absolute;
-    right: 3px;
+.fa-caret-down, .fa-caret-up {
+  position: absolute;
+  right: 3px;
 }
 
 #create-table-form {
-    border: solid 1px grey;
-    padding: 5px;
+  border: solid 1px grey;
+  padding: 5px;
 }
 
 #create-table-page {
-    width: 600px;
-    max-height: 0;
-    /*overflow: hidden;*/
-    transition: max-height 0.2s ease-out;
+  width: 600px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
 }
 
 .delete-attr-ctrl-item-btn {
-    width: 20px;
+  width: 20px;
 }
 
-.attribute-control-item>* {
-    display: inline-block;
+.attribute-control-item > * {
+  display: inline-block;
 }
 
 .attribute-type-list {
-    display: none;
-    position: absolute;
+  display: none;
+  position: absolute;
 }
 
-.attribute-type-list>a {
-    display: block;
+.attribute-type-list > a {
+  display: block;
 }
 
 .confirm-container {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    padding-top: 60px;
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: black;
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+  padding-top: 60px;
 }
 
 .confirm-page {
-    background-color: #fefefe;
-    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+  background-color: #fefefe;
+  margin: 5% auto 15% auto;
+  /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%;
+  /* Could be more or less, depending on screen size */
 }
 
 .confirm-page-animate {
-	-webkit-animation: animatezoom 0.3s;
-	animation: animatezoom 0.3s
+  -webkit-animation: animatezoom 0.3s;
+  animation: animatezoom 0.3s;
 }
 
 @-webkit-keyframes animatezoom {
-	from {-webkit-transform: scale(0)}
-	to {-webkit-transform: scale(1)}
+  from {
+    -webkit-transform: scale(0);
+  }
+  to {
+    -webkit-transform: scale(1);
+  }
 }
-	
 @keyframes animatezoom {
-	from {transform: scale(0)}
-	to {transform: scale(1)}
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
-
 #key-schema-tbl td {
-    vertical-align: top;
+  vertical-align: top;
 }
 
 .dropdown-btn {
-    position: relative;
-    width: 200px;
-    cursor: pointer;
+  position: relative;
+  width: 200px;
+  cursor: pointer;
 }
 
-.dropdown-btn>.fa {
-    position: absolute;
-    right: 3px;
-    top: 0;
-    bottom: 0;
+.dropdown-btn > .fa {
+  position: absolute;
+  right: 3px;
+  top: 0;
+  bottom: 0;
 }
 
 .dropdown {
-    position: relative;
+  position: relative;
 }
 
 .dropdown-list {
-    display: none;
-    position: absolute;
+  display: none;
+  position: absolute;
+  z-index: 1;
 }
 
-.dropdown-list>* {
-    display: block;
-    cursor: pointer;
+.dropdown-list > * {
+  display: block;
+  cursor: pointer;
 }
 
 #create-tbl-btn {
-    display: block;
-    margin-left: auto;
+  display: block;
+  margin-left: auto;
 }
+
+/*# sourceMappingURL=index.css.map */
