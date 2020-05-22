@@ -43,6 +43,7 @@ System.register(["../common-components/dropdown-view.js", "./delete-all-attr-ctr
     function getAttrTypeDropdown() {
       var dropdown = DropdownView.getDropdownDoc();
       setInputPatternForDropdownBtn(dropdown);
+      dropdown.classList.add("attr-type");
       return dropdown;
     }
 
@@ -58,7 +59,6 @@ System.register(["../common-components/dropdown-view.js", "./delete-all-attr-ctr
       input.setAttribute("type", "text");
       input.required = true;
       input.className = "attr-name-input";
-      input.placeholder = "Enter the attribute name";
       return input;
     }
 

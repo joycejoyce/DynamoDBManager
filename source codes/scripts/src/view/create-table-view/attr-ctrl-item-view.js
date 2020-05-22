@@ -45,6 +45,8 @@ function AttrCtrlItemView() {
     function getAttrTypeDropdown() {
         const dropdown = DropdownView.getDropdownDoc();
         setInputPatternForDropdownBtn(dropdown);
+        
+        dropdown.classList.add("attr-type");
 
         return dropdown;
     }
@@ -61,7 +63,6 @@ function AttrCtrlItemView() {
         input.setAttribute("type", "text");
         input.required = true;
         input.className = "attr-name-input";
-        input.placeholder = "Enter the attribute name";
         return input;
     }
 

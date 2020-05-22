@@ -36,6 +36,7 @@ System.register(["../common-components/util.js"], function (_export, _context) {
     var dropdownBtn = document.createElement("input");
     dropdownBtn.className = "dropdown-btn";
     dropdownBtn.type = "text";
+    dropdownBtn.readOnly = true;
     var iElem = DropdownView.getFaCaretIElem("down");
     var container = document.createElement("div");
     container.className = "dropdown-btn-container";
@@ -127,7 +128,7 @@ System.register(["../common-components/util.js"], function (_export, _context) {
       };
 
       DropdownView.listenOnClickDropdownBtn = function (dropdownElem, getListItemsFunc, noItemMsg) {
-        var btnElem = dropdownElem.querySelector(".dropdown-btn");
+        var btnElem = dropdownElem.querySelector(".dropdown-btn-container");
         btnElem.addEventListener("click", function () {
           var listItems = getListItemsFunc();
           listItems = Util.getDistinctValues(listItems);

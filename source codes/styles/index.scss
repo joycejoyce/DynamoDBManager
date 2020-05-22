@@ -1,43 +1,178 @@
-$thin-grey-border: 1px solid #ccc;
+/* colors */
+$light-grey: #f1f1f1;
+$normal-grey: #ddd;
+$dark-grey: #ccc;
+$darker-grey: #6d6d6d;
+$light-purple-transparent: rgba(201, 0, 255, 0.1);
+$bright-purple: rgba(201, 0, 255, 1);
+$light-purple: hsla(287, 100%, 90%, 1);
+$green: hsla(118, 100%, 40%, 1);
+$light-green: hsla(118, 100%, 60%, 1);
+$bright-pink: #ff1654;
+$bright-blue: #0496ff;
+
+/* font-size */
+$header-font-size: 3rem;
+$h3-font-size: 1.2rem;
+$collapsible-btn-font-size: 1.1rem;
+
+/* font-family */
+$serif: 'Arvo', serif;
+$sans-serif: 'Lato', sans-serif;
+
+/* border */
+$thin-grey-border: 1px solid $normal-grey;
+
+/* width / height */
 $outer-width: 600px;
 $outer-height: 80vh;
-$light-grey: #f1f1f1;
-$dark-grey: #ddd;
+$inner-width: $outer-width * 0.9;
+
+/* animation */
 $normal-trainsition-speed: 0.3s;
-$h3-font-size: 17px;
-$page-padding: 6px 12px;;
+
+/* padding */
+$page-padding: 12px 12px;
+$main-tab-btn-padding: 14px 16px;
+$dropdown-btn-padding: 10px 12px;
+$form-padding: 0 10px;
+
+body {
+    font-size: 16px;
+    font-family: $sans-serif;
+}
+
+header {
+    text-align: center;
+    font-size: $header-font-size;
+    font-family: $serif;
+    font-weight: bold;
+    margin: 5vh;
+}
+
+h1 {
+    font-weight: normal;
+}
+
+input[type=text] {
+    width: 200px;
+    font-size: 1rem;
+    outline: none;
+    padding-top: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: $light-grey;
+    transition: $normal-trainsition-speed;
+    font-family: $sans-serif;
+    
+    &:hover {
+        border: 1px solid $dark-grey;
+        box-shadow: 0 0 0 4px $light-purple-transparent;
+        background-color: white;
+    }
+    
+    &:focus {
+        @extend :hover;
+        border: 1px solid $bright-purple;
+    }
+}
+
+table {
+    border-spacing: 5px;
+    
+    th {
+        font-weight: normal;
+    }
+    
+    td {
+        vertical-align: middle;
+    }
+}
+
+button {
+    font-family: $sans-serif;
+    font-size: 1rem;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    
+    &#add-attr-ctrl-item-btn {
+        color: white;
+        background-color: $bright-blue;
+    }
+    
+    &:disabled {
+        cursor: no-drop;
+        color: $darker-grey !important;
+        background-color: $light-grey !important;
+    }
+    
+    &#delete-all-attr-ctrl-item-btn {
+        color: white;
+        background-color: $bright-pink;
+    }
+}
+
+.collapsible-btn {
+    font-size: $collapsible-btn-font-size;
+    border-radius: 0;
+    width: $inner-width;
+    padding: $dropdown-btn-padding;
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    
+    &#create-table-page-btn {
+        outline: none;
+        color: white;
+        background-color: $green;
+        transition: $normal-trainsition-speed;
+        
+        &:hover {
+            background-color: $light-green;
+        }
+    }
+}
 
 #container {
     margin: 0 auto;
     width: $outer-width;
 }
 
-h1 {
-    text-align: center;
-}
-
 #main-tabs {
     border: $thin-grey-border;
     background-color: $light-grey;
+    overflow: hidden;
 }
 
 #main-tabs>button {
     background-color: inherit;
     border: none;
+    border-radius: 0;
     outline: none;
     cursor: pointer;
-    padding: 14px 16px;
+    padding: $main-tab-btn-padding;
     transition: $normal-trainsition-speed;
     font-size: $h3-font-size;
+    float: left;
 }
 
-#main-tabs>button.active,#main-tabs>button:hover {
+#main-tabs>button:hover {
+    background-color: $normal-grey;
+}
+
+#main-tabs>button.active {
     background-color: $dark-grey;
 }
 
 #main-pages>* {
     display: none;
-    height: $outer-height;
     overflow: auto;
     border: $thin-grey-border;
     padding: $page-padding;
@@ -47,31 +182,22 @@ h1 {
     display: block;
 }
 
-#main-page-2>.collapsible-content {
-    display: none;
-}
-
-#create-table-page-btn {
-    width: $outer-width * 0.9;
-    cursor: pointer;
-    text-align: left;
-    position: relative;
-}
-
 .fa-caret-down,.fa-caret-up {
     position: absolute;
-    right: 3px;
+    right: 8px;
 }
 
 #create-table-form {
-    border: solid 1px grey;
-    padding: 5px;
+    border: $thin-grey-border;
+    padding: $form-padding;
 }
 
 #create-table-page {
-    width: $outer-width;
-    max-height: 0;
-    overflow: hidden;
+    width: $inner-width;
+    margin: 0 auto;
+    /*max-height: 0;
+    overflow: hidden;*/
+    overflow: visible;
     transition: max-height 0.2s ease-out;
 }
 
@@ -128,36 +254,54 @@ h1 {
 	to {transform: scale(1)}
 }
 
-#key-schema-tbl td {
-    vertical-align: top;
-}
-
-.dropdown-btn {
-    position: relative;
-    width: 200px;
-    cursor: pointer;
-}
-
-.dropdown-btn>.fa {
-    position: absolute;
-    right: 3px;
-    top: 0;
-    bottom: 0;
-}
-
 .dropdown {
     position: relative;
+    
+    .dropdown-btn-container {
+        position: relative;
+
+        .dropdown-btn {
+            cursor: default;
+        }
+
+        .fa {
+            display: inline-block;
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            margin: auto;
+            transform: translateY(-60%);
+        }
+    }
+    
+    .dropdown-list {
+        display: none;
+        position: absolute;
+        z-index: 1;
+        transform: translateY(5px);
+        width: 200px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        background-color: white;
+    }
+    
+    .dropdown-list>* {
+        display: block;
+        cursor: pointer;
+        background-color: $light-purple;
+        padding: 10px 10px;
+        /*border-bottom: 1px solid white;*/
+        margin-top: 1px;
+    }
 }
 
-.dropdown-list {
-    display: none;
-    position: absolute;
-    z-index: 1;
+.dropdown.attr-type {
+    .dropdown-btn,.dropdown-list {
+        width: 150px;
+    }
 }
 
-.dropdown-list>* {
-    display: block;
-    cursor: pointer;
+#provisioned-throughput-tbl input {
+    width: 100px;
 }
 
 #create-tbl-btn {

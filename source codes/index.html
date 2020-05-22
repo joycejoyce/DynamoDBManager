@@ -2,6 +2,7 @@
 	<head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Arvo&family=Lato&display=swap" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="./styles/index.css">
         <script type="systemjs-importmap">
             {
@@ -18,7 +19,7 @@
 	</head>
 	<body>
         <div id="container">
-            <h1>DB Data Manager</h1>
+            <header>DB Data Manager</header>
             <div id="main-tabs">
                 <button id="main-tab-1">DB Overview</button>
                 <button id="main-tab-2" class="active">Manage Tables</button>
@@ -31,12 +32,12 @@
                 </div>
 
                 <div id="main-page-2" class="active">
-                    <button id="create-table-page-btn">Create a table</button>
+                    <button id="create-table-page-btn" class="collapsible-btn">Create a table</button>
                     <div id="create-table-page">
                         <form id="create-table-form">
                             <section id="table-name-section">
                                 <h1>Table Name</h1>
-                                <input type="text" id="table-name-input" placeholder="Enter the table name" required>
+                                <input type="text" id="table-name-input" required>
                             </section>
 
                             <section id="attribute-definitions">
@@ -46,7 +47,7 @@
                                 <table id="attr-ctrl-item-tbl">
                                     <tbody>
                                         <tr>
-                                            <th>Delete</th>
+                                            <th></th>
                                             <th>Type</th>
                                             <th>Attribute Name</th>
                                         </tr>
@@ -73,11 +74,11 @@
                                 <table id="provisioned-throughput-tbl">
                                     <tr>
                                         <td>Read capacity units:</td>
-                                        <td><input id="read-capacity-units" value="5" placeholder="Enter the unit number" required></td>
+                                        <td><input type="text" id="read-capacity-units" value="5" required></td>
                                     </tr>
                                     <tr>
                                         <td>Write capacity units:</td>
-                                        <td><input id="write-capacity-units" value="5" placeholder="Enter the unit number" required></td>
+                                        <td><input type="text" id="write-capacity-units" value="5" required></td>
                                     </tr>
                                 </table>
                             </section>

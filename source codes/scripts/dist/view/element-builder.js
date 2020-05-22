@@ -1,9 +1,9 @@
 "use strict";
 
-System.register(["./create-table-view/create-table-view.js", "./create-table-view/attr-ctrl-item-view.js"], function (_export, _context) {
+System.register(["./create-table-view/create-table-view.js"], function (_export, _context) {
   "use strict";
 
-  var CreateTableView, AttrCtrlItemView;
+  var CreateTableView;
 
   function ElementBuilder() {}
 
@@ -12,8 +12,6 @@ System.register(["./create-table-view/create-table-view.js", "./create-table-vie
   return {
     setters: [function (_createTableViewCreateTableViewJs) {
       CreateTableView = _createTableViewCreateTableViewJs.CreateTableView;
-    }, function (_createTableViewAttrCtrlItemViewJs) {
-      AttrCtrlItemView = _createTableViewAttrCtrlItemViewJs.AttrCtrlItemView;
     }],
     execute: function () {
       ElementBuilder.init = function () {

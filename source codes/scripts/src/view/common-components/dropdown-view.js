@@ -45,6 +45,7 @@ function getDropdownBtn() {
     const dropdownBtn = document.createElement("input");
     dropdownBtn.className = "dropdown-btn";
     dropdownBtn.type = "text";
+    dropdownBtn.readOnly = true;
 
     const iElem = DropdownView.getFaCaretIElem("down");
     
@@ -64,7 +65,7 @@ function getDropdownList() {
 }
 
 DropdownView.listenOnClickDropdownBtn = (dropdownElem, getListItemsFunc, noItemMsg) => {
-    const btnElem = dropdownElem.querySelector(".dropdown-btn");
+    const btnElem = dropdownElem.querySelector(".dropdown-btn-container");
     btnElem.addEventListener("click", () => {
         let listItems = getListItemsFunc();
         listItems = Util.getDistinctValues(listItems);
