@@ -28,6 +28,19 @@ Util.changeIElem = (iElem) => {
     }
 };
 
+Util.toggleClasses = (elem, twoClasses) => {
+    const class1 = twoClasses[0];
+    const class2 = twoClasses[1];
+    if(elem.classList.contains(class1)) {
+        elem.classList.remove(class1);
+        elem.classList.add(class2);
+    }
+    else if(elem.classList.contains(class2)) {
+        elem.classList.remove(class2);
+        elem.classList.add(class1);
+    }
+}
+
 Util.getDistinctValues = (ary) => {
     const distinctValues = ary.reduce((result, item) => {
         if(!result.includes(item)) {

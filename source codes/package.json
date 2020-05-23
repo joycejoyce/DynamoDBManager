@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha --timeout 10000 --require @babel/register",
     "build": "babel scripts/src --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs",
-    "start": "babel scripts/src --watch --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs",
-    "sass-watch": "sass --watch styles/index.scss styles/index.css"
+    "watch-babel": "title babel && babel scripts/src --watch --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs",
+    "watch-sass": "title sass && sass --watch styles/index.scss styles/index.css"
   },
   "repository": {
     "type": "git",
