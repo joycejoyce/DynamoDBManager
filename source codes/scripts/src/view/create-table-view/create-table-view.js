@@ -1,30 +1,46 @@
 import {Util} from "../common-components/util.js";
+import {CollapsibleView} from "../common-components/collapsible-view.js";
 import {DropdownView} from "../common-components/dropdown-view.js";
 import {DeleteAllAttrBtnView} from "./delete-all-attr-ctrl-item-btn-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";
 import {KeySchemaView} from "./key-schema-view.js";
 import {CreateTableController} from "../../controller/create-table-controller.js";
 
+CreateTableView.id = {
+    createTable: "create-table",
+    createTablePage: "create-table-page",
+    createTablePageBtn: "create-table-page-btn"
+};
+
 function CreateTableView() {
     this.createElements = () => {
         new KeySchemaView().createElements();
         new AttrCtrlItemView().createAnItem();
-        createIElemForCreateTablePageBtn();
+        createCreateTablePageCollapsible();
     };
     
-    function createIElemForCreateTablePageBtn() {
-        const createTablePageElem = document.querySelector("#create-table-page");
-        const overflow = Util.getComputedPropertyValue(createTablePageElem, "overflow");
+    function createCreateTablePageCollapsible() {
+        const collapsibleBtn = getCreateTablePageBtnDoc();
         
-        let iElem;
-        if(overflow == "hidden") {
-            iElem = DropdownView.getFaCaretIElem("down");
-        }
-        else {
-            iElem = DropdownView.getFaCaretIElem("up");
-        }
-        const createTablePageBtn = document.querySelector("#create-table-page-btn");
-        createTablePageBtn.appendChild(iElem);
+        const collapsibleContents = document.getElementById(CreateTableView.id.createTablePage);
+        collapsibleContents.classList.add(CollapsibleView.className.contents);
+        
+        const collapsible = document.createElement("div");
+        collapsible.id = CreateTableView.id.createTable;
+        collapsible.classList.add(CollapsibleView.className.collapsible);
+        
+        const manageTablePage = document.querySelector("#main-page-2");
+        manageTablePage.insertBefore(collapsible, manageTablePage.firstChild);
+        
+        collapsible.appendChild(collapsibleBtn);
+        collapsible.appendChild(collapsibleContents);
+    }
+    
+    function getCreateTablePageBtnDoc() {
+        const btn = CollapsibleView.getBtnDoc();
+        btn.id = CreateTableView.id.createTablePageBtn;
+        btn.innerHTML = "Create a table" + btn.innerHTML;
+        return btn;
     }
     
     this.addEventListeners = () => {
@@ -36,11 +52,8 @@ function CreateTableView() {
     };
     
     function listenOnClickCreateTablePageBtn() {
-        const elem = document.getElementById("create-table-page-btn");
-        elem.addEventListener("click", (e) => {
-            showOrHideCreateTableForm(e.target);
-            toggleFaCaretUpAndDown(e.target.querySelector("i"));
-        });
+        const id = CreateTableView.id.createTable;
+        CollapsibleView.listenOnClickBtn(document.getElementById(id));
     }
     
     function showOrHideCreateTableForm(elem) {

@@ -1,75 +1,74 @@
 import {Util} from "../common-components/util.js";
+import {IconElem} from "../common-components/icon-elem.js";
 
 function CollapsibleView() {}
 
-const CLASS_NAME = {
+CollapsibleView.className = {
     collapsible: "collapsible",
     btn: "collapsible-btn",
-    contents: "collapsible-btn"
+    contents: "collapsible-contents"
 };
 
-const I_ELEM_CLASS_NAME = {
-    up: "fas fa-plus",
-    down: "fas fa-minus"
-};
-
-CollapsibleView.createDoc = () => {
-    const btn = getCollapsibleBtn();
-    const contents = getCollapsibleContents();
-    const collapsible = getCollapsibleDoc();
+CollapsibleView.getCollapsibleDoc = () => {
+    const btn = CollapsibleView.getBtnDoc();
+    const contents = CollapsibleView.getContentsDoc();
+    const collapsible = document.createElement("div");
+    collapsible.className = CollapsibleView.className.collapsible;
     collapsible.appendChild(btn);
     collapsible.appendChild(contents);
     
     return collapsible;
 };
 
-function getBtnDoc() {
-    const iElem = getInitIElemDoc();
+CollapsibleView.getBtnDoc = () => {
+    const icon = getInitIconDoc();
     const btn = document.createElement("button");
-    btn.className = CLASS_NAME.btn;
-    btn.append(iElem);
+    btn.className = CollapsibleView.className.btn;
+    btn.append(icon);
     
     return btn;
 }
 
-function getInitIElemDoc() {
-    const iElem = document.createElement("i");
-    iElem.className = I_ELEM_CLASS_NAME.down;
-    
-    return iElem;
+function getInitIconDoc() {
+    const icon = IconElem.get(IconElem.elem.DOWN);
+    return icon;
 }
 
-function getContentsDoc() {
+CollapsibleView.getContentsDoc = () => {
     const contents = document.createElement("div");
-    contents.className = CLASS_NAME.contents;
+    contents.className = CollapsibleView.className.contents;
     
     return contents;
-}
-
-function getCollapsibleDoc() {
-    const collapsible = document.createElement("div");
-    collapsible.className = CLASS_NAME.collapsible;
-    
-    return collapsible;
-}
+};
 
 CollapsibleView.listenOnClickBtn = (collapsible) => {
-    const btn = collapsible.querySelector(CLASS_NAME.btn);
-    const contents = collapsible.querySelector(CLASS_NAME.contents);
+    const btn = collapsible.querySelector("."+CollapsibleView.className.btn);
+    const contents = collapsible.querySelector("."+CollapsibleView.className.contents);
     btn.addEventListener("click", () => {
-        showOrHideContents(collapsible);
-        Util.toggleClasses(contents);
+        toggleContentsMaxHeight(contents);
+        toggleIconByContentsMaxHeight(btn.querySelector("i"), contents.style.maxHeight);
     });
 };
 
-function showOrHideContents(collapsible) {
-    const contents = collapsible.querySelector(CLASS_NAME.contents);
-    const overflow = Util.getComputedPropertyValue(contents, "overflow");
-    
+function toggleContentsMaxHeight(contents) {
+    if(contents.style.maxHeight) {
+        contents.style.maxHeight = null;
+    }
+    else {
+        contents.style.maxHeight = contents.scrollHeight + "px";
+    }
 }
 
-function getIElem() {
+function toggleIconByContentsMaxHeight(icon, maxHeight) {
+    icon.className = IconElem.elem.BASIC;
+    if(maxHeight) {
+        icon.classList.add(IconElem.elem.UP);
+    }
+    else {
+        icon.classList.add(IconElem.elem.DOWN);
+    }
     
+    return icon.className;
 }
 
 export {

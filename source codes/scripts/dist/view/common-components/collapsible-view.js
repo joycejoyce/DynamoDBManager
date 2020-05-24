@@ -1,77 +1,82 @@
 "use strict";
 
-System.register(["../common-components/util.js"], function (_export, _context) {
+System.register(["../common-components/util.js", "../common-components/icon-elem.js"], function (_export, _context) {
   "use strict";
 
-  var Util, CLASS_NAME, I_ELEM_CLASS_NAME;
+  var Util, IconElem;
 
   function CollapsibleView() {}
 
-  function getBtnDoc() {
-    var iElem = getInitIElemDoc();
-    var btn = document.createElement("button");
-    btn.className = CLASS_NAME.btn;
-    btn.append(iElem);
-    return btn;
+  function getInitIconDoc() {
+    var icon = IconElem.get(IconElem.elem.DOWN);
+    return icon;
   }
 
-  function getInitIElemDoc() {
-    var iElem = document.createElement("i");
-    iElem.className = I_ELEM_CLASS_NAME.down;
-    return iElem;
+  function toggleContentsMaxHeight(contents) {
+    if (contents.style.maxHeight) {
+      contents.style.maxHeight = null;
+    } else {
+      contents.style.maxHeight = contents.scrollHeight + "px";
+    }
   }
 
-  function getContentsDoc() {
-    var contents = document.createElement("div");
-    contents.className = CLASS_NAME.contents;
-    return contents;
-  }
+  function toggleIconByContentsMaxHeight(icon, maxHeight) {
+    icon.className = IconElem.elem.BASIC;
 
-  function getCollapsibleDoc() {
-    var collapsible = document.createElement("div");
-    collapsible.className = CLASS_NAME.collapsible;
-    return collapsible;
-  }
+    if (maxHeight) {
+      icon.classList.add(IconElem.elem.UP);
+    } else {
+      icon.classList.add(IconElem.elem.DOWN);
+    }
 
-  function showOrHideContents(collapsible) {
-    var contents = collapsible.querySelector(CLASS_NAME.contents);
-    var overflow = Util.getComputedPropertyValue(contents, "overflow");
+    return icon.className;
   }
-
-  function getIElem() {}
 
   _export("CollapsibleView", CollapsibleView);
 
   return {
     setters: [function (_commonComponentsUtilJs) {
       Util = _commonComponentsUtilJs.Util;
+    }, function (_commonComponentsIconElemJs) {
+      IconElem = _commonComponentsIconElemJs.IconElem;
     }],
     execute: function () {
-      CLASS_NAME = {
+      CollapsibleView.className = {
         collapsible: "collapsible",
         btn: "collapsible-btn",
-        contents: "collapsible-btn"
-      };
-      I_ELEM_CLASS_NAME = {
-        up: "fas fa-plus",
-        down: "fas fa-minus"
+        contents: "collapsible-contents"
       };
 
-      CollapsibleView.createDoc = function () {
-        var btn = getCollapsibleBtn();
-        var contents = getCollapsibleContents();
-        var collapsible = getCollapsibleDoc();
+      CollapsibleView.getCollapsibleDoc = function () {
+        var btn = CollapsibleView.getBtnDoc();
+        var contents = CollapsibleView.getContentsDoc();
+        var collapsible = document.createElement("div");
+        collapsible.className = CollapsibleView.className.collapsible;
         collapsible.appendChild(btn);
         collapsible.appendChild(contents);
         return collapsible;
       };
 
+      CollapsibleView.getBtnDoc = function () {
+        var icon = getInitIconDoc();
+        var btn = document.createElement("button");
+        btn.className = CollapsibleView.className.btn;
+        btn.append(icon);
+        return btn;
+      };
+
+      CollapsibleView.getContentsDoc = function () {
+        var contents = document.createElement("div");
+        contents.className = CollapsibleView.className.contents;
+        return contents;
+      };
+
       CollapsibleView.listenOnClickBtn = function (collapsible) {
-        var btn = collapsible.querySelector(CLASS_NAME.btn);
-        var contents = collapsible.querySelector(CLASS_NAME.contents);
+        var btn = collapsible.querySelector("." + CollapsibleView.className.btn);
+        var contents = collapsible.querySelector("." + CollapsibleView.className.contents);
         btn.addEventListener("click", function () {
-          showOrHideContents(collapsible);
-          Util.toggleClasses(contents);
+          toggleContentsMaxHeight(contents);
+          toggleIconByContentsMaxHeight(btn.querySelector("i"), contents.style.maxHeight);
         });
       };
     }

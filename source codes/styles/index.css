@@ -55,47 +55,45 @@ table td {
   vertical-align: middle;
 }
 
-button {
+button, input[type=submit] {
   font-family: "Lato", sans-serif;
   font-size: 1rem;
   border: none;
   padding: 10px 16px;
   border-radius: 10px;
   cursor: pointer;
-}
-button#add-attr-ctrl-item-btn {
+  outline: none;
   color: white;
-  background-color: #0496ff;
+  transition: 0.3s;
 }
-button:disabled {
+button:disabled, input[type=submit]:disabled {
   cursor: no-drop;
   color: #6d6d6d !important;
   background-color: #f1f1f1 !important;
 }
-button#delete-all-attr-ctrl-item-btn {
-  color: white;
+button#add-attr-ctrl-item-btn, input[type=submit]#add-attr-ctrl-item-btn {
+  background-color: #0496ff;
+}
+button#add-attr-ctrl-item-btn:hover, input[type=submit]#add-attr-ctrl-item-btn:hover, input[type=submit]#add-attr-ctrl-item-btn[type=text]:focus {
+  background-color: #9dd6ff;
+}
+button#delete-all-attr-ctrl-item-btn, input[type=submit]#delete-all-attr-ctrl-item-btn {
   background-color: #ff1654;
 }
-
-.collapsible-btn {
-  font-size: 1.1rem;
-  border-radius: 0;
-  width: 540px;
-  padding: 10px 12px;
-  display: block;
-  margin: 0 auto;
-  cursor: pointer;
-  text-align: center;
-  position: relative;
+button#delete-all-attr-ctrl-item-btn:hover, input[type=submit]#delete-all-attr-ctrl-item-btn:hover, input[type=submit]#delete-all-attr-ctrl-item-btn[type=text]:focus {
+  background-color: #ffafc4;
 }
-.collapsible-btn#create-table-page-btn {
-  outline: none;
-  color: white;
+button#create-table-page-btn, input[type=submit]#create-table-page-btn {
   background-color: #07cc00;
-  transition: 0.3s;
 }
-.collapsible-btn#create-table-page-btn:hover, input.collapsible-btn#create-table-page-btn[type=text]:focus {
-  background-color: #3aff33;
+button#create-table-page-btn:hover, input[type=submit]#create-table-page-btn:hover, input[type=submit]#create-table-page-btn[type=text]:focus {
+  background-color: #6bff66;
+}
+button#create-tbl-btn, input[type=submit]#create-tbl-btn {
+  background-color: #07cc00;
+}
+button#create-tbl-btn:hover, input[type=submit]#create-tbl-btn:hover, input[type=submit]#create-tbl-btn[type=text]:focus {
+  background-color: #6bff66;
 }
 
 #container {
@@ -104,27 +102,20 @@ button#delete-all-attr-ctrl-item-btn {
 }
 
 #main-tabs {
-  border: 1px solid #ddd;
   background-color: #f1f1f1;
+  border: 1px solid #ddd;
   overflow: hidden;
 }
-
 #main-tabs > button {
-  background-color: inherit;
-  border: none;
+  color: black;
   border-radius: 0;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
   font-size: 1.2rem;
   float: left;
+  background-color: inherit;
 }
-
 #main-tabs > button:hover {
   background-color: #ddd;
 }
-
 #main-tabs > button.active {
   background-color: #ccc;
 }
@@ -146,17 +137,8 @@ button#delete-all-attr-ctrl-item-btn {
 }
 
 #create-table-form {
-  border: 1px solid #ddd;
-  padding: 0 10px;
-}
-
-#create-table-page {
-  width: 540px;
-  margin: 0 auto;
-  /*max-height: 0;
-  overflow: hidden;*/
-  overflow: visible;
-  transition: max-height 0.2s ease-out;
+  border: 1px solid #6bff66;
+  padding: 0px 10px 10px;
 }
 
 .delete-attr-ctrl-item-btn {
@@ -274,6 +256,30 @@ button#delete-all-attr-ctrl-item-btn {
 #create-tbl-btn {
   display: block;
   margin-left: auto;
+}
+
+.collapsible-btn {
+  font-size: 1.1rem;
+  border-radius: 0;
+  width: 540px;
+  padding: 10px 12px;
+  display: block;
+  margin: 0 auto;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+}
+.collapsible-btni {
+  position: absolute;
+  right: 6px;
+}
+
+.collapsible-contents {
+  width: 540px;
+  margin: 0 auto;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
 }
 
 /*# sourceMappingURL=index.css.map */

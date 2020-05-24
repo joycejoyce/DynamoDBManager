@@ -11,6 +11,22 @@ $light-green: hsla(118, 100%, 60%, 1);
 $bright-pink: #ff1654;
 $bright-blue: #0496ff;
 
+@mixin lightenOnHover($color) {
+    background-color: $color;
+    
+    &:hover {
+        background-color: lighten($color, 30%);
+    }
+}
+
+@mixin changeBkColorOnHover($color, $hover-color) {
+    background-color: $color;
+    
+    &:hover {
+        background-color: $hover-color;
+    }
+}
+
 /* font-size */
 $header-font-size: 3rem;
 $h3-font-size: 1.2rem;
@@ -35,7 +51,7 @@ $normal-trainsition-speed: 0.3s;
 $page-padding: 12px 12px;
 $main-tab-btn-padding: 14px 16px;
 $dropdown-btn-padding: 10px 12px;
-$form-padding: 0 10px;
+$form-padding: 0px 10px 10px;
 
 body {
     font-size: 16px;
@@ -92,18 +108,16 @@ table {
     }
 }
 
-button {
+button,input[type=submit] {
     font-family: $sans-serif;
     font-size: 1rem;
     border: none;
     padding: 10px 16px;
     border-radius: 10px;
     cursor: pointer;
-    
-    &#add-attr-ctrl-item-btn {
-        color: white;
-        background-color: $bright-blue;
-    }
+    outline: none;
+    color: white;
+    transition: $normal-trainsition-speed;
     
     &:disabled {
         cursor: no-drop;
@@ -111,32 +125,20 @@ button {
         background-color: $light-grey !important;
     }
     
-    &#delete-all-attr-ctrl-item-btn {
-        color: white;
-        background-color: $bright-pink;
+    &#add-attr-ctrl-item-btn {
+        @include lightenOnHover($bright-blue);
     }
-}
-
-.collapsible-btn {
-    font-size: $collapsible-btn-font-size;
-    border-radius: 0;
-    width: $inner-width;
-    padding: $dropdown-btn-padding;
-    display: block;
-    margin: 0 auto;
-    cursor: pointer;
-    text-align: center;
-    position: relative;
+    
+    &#delete-all-attr-ctrl-item-btn {
+        @include lightenOnHover($bright-pink);
+    }
     
     &#create-table-page-btn {
-        outline: none;
-        color: white;
-        background-color: $green;
-        transition: $normal-trainsition-speed;
-        
-        &:hover {
-            background-color: $light-green;
-        }
+        @include lightenOnHover($green);
+    }
+    
+    &#create-tbl-btn {
+        @include lightenOnHover($green);
     }
 }
 
@@ -146,29 +148,21 @@ button {
 }
 
 #main-tabs {
-    border: $thin-grey-border;
     background-color: $light-grey;
+    border: $thin-grey-border;
     overflow: hidden;
-}
-
-#main-tabs>button {
-    background-color: inherit;
-    border: none;
-    border-radius: 0;
-    outline: none;
-    cursor: pointer;
-    padding: $main-tab-btn-padding;
-    transition: $normal-trainsition-speed;
-    font-size: $h3-font-size;
-    float: left;
-}
-
-#main-tabs>button:hover {
-    background-color: $normal-grey;
-}
-
-#main-tabs>button.active {
-    background-color: $dark-grey;
+    
+    &>button {
+        color: black;
+        border-radius: 0;
+        font-size: $h3-font-size;
+        float: left;
+        @include changeBkColorOnHover(inherit, $normal-grey);
+        
+        &.active {
+            background-color: $dark-grey;
+        }
+    }
 }
 
 #main-pages>* {
@@ -188,17 +182,8 @@ button {
 }
 
 #create-table-form {
-    border: $thin-grey-border;
+    border: 1px solid lighten($green, 30%);
     padding: $form-padding;
-}
-
-#create-table-page {
-    width: $inner-width;
-    margin: 0 auto;
-    /*max-height: 0;
-    overflow: hidden;*/
-    overflow: visible;
-    transition: max-height 0.2s ease-out;
 }
 
 .delete-attr-ctrl-item-btn {
@@ -307,4 +292,29 @@ button {
 #create-tbl-btn {
     display: block;
     margin-left: auto;
+}
+
+.collapsible-btn {
+    font-size: $collapsible-btn-font-size;
+    border-radius: 0;
+    width: $inner-width;
+    padding: $dropdown-btn-padding;
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    
+    &i {
+        position: absolute;
+        right: 6px;
+    }
+}
+
+.collapsible-contents {
+    width: $inner-width;
+    margin: 0 auto;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
 }
