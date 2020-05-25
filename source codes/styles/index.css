@@ -7,18 +7,19 @@
 /* padding */
 body {
   font-size: 16px;
-  font-family: "Lato", sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
 header {
   text-align: center;
   font-size: 3rem;
-  font-family: "Arvo", serif;
-  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
   margin: 5vh;
 }
 
 h1 {
+  font-family: "Montserrat", sans-serif;
   font-weight: normal;
 }
 
@@ -32,17 +33,20 @@ input[type=text] {
   padding-left: 12px;
   border: none;
   border-radius: 5px;
-  background-color: #f1f1f1;
   transition: 0.3s;
-  font-family: "Lato", sans-serif;
+  font-family: "Nunito", sans-serif;
+  background-color: #f1f1f1;
+}
+input[type=text]:-internal-autofill-selected {
+  background-color: #f1f1f1 !important;
 }
 input[type=text]:hover, input[type=text]:focus {
   border: 1px solid #ccc;
-  box-shadow: 0 0 0 4px rgba(201, 0, 255, 0.1);
+  box-shadow: 0 0 0 4px #eaf6ff;
   background-color: white;
 }
 input[type=text]:focus {
-  border: 1px solid #c900ff;
+  border: 1px solid #0496ff;
 }
 
 table {
@@ -56,7 +60,7 @@ table td {
 }
 
 button, input[type=submit] {
-  font-family: "Lato", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: 1rem;
   border: none;
   padding: 10px 16px;
@@ -88,6 +92,12 @@ button#create-table-page-btn, input[type=submit]#create-table-page-btn {
 }
 button#create-table-page-btn:hover, input[type=submit]#create-table-page-btn:hover, input[type=submit]#create-table-page-btn[type=text]:focus {
   background-color: #6bff66;
+}
+button#delete-table-page-btn, input[type=submit]#delete-table-page-btn {
+  background-color: #ff1654;
+}
+button#delete-table-page-btn:hover, input[type=submit]#delete-table-page-btn:hover, input[type=submit]#delete-table-page-btn[type=text]:focus {
+  background-color: #ffafc4;
 }
 button#create-tbl-btn, input[type=submit]#create-tbl-btn {
   background-color: #07cc00;
@@ -171,22 +181,81 @@ button#create-tbl-btn:hover, input[type=submit]#create-tbl-btn:hover, input[type
   /* Full width */
   height: 100%;
   /* Full height */
-  overflow: auto;
-  /* Enable scroll if needed */
   background-color: black;
   /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4);
   /* Black w/ opacity */
   padding-top: 60px;
 }
+.confirm-container .confirm-page {
+  position: relative;
+  margin: auto;
+  padding: 10px 10px;
+  border-radius: 5px;
+  background-color: white;
+}
+.confirm-container .confirm-page .confirm-contents {
+  width: 90%;
+  position: absolute;
+  overflow: auto;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.confirm-container .confirm-page .confirm-contents .confirm-msg {
+  font-weight: normal;
+  text-align: center;
+}
+.confirm-container .confirm-page .confirm-contents button {
+  position: absolute;
+  width: 100px;
+}
+.confirm-container .confirm-page .confirm-contents button.yes {
+  background-color: #ff1654;
+  left: 20%;
+}
+.confirm-container .confirm-page .confirm-contents button.no {
+  background-color: #ddd;
+  right: 20%;
+}
+.confirm-container .confirm-page .confirm-contents button.copy {
+  background-color: #07cc00;
+  left: 20%;
+  bottom: 20px;
+}
+.confirm-container .confirm-page .confirm-contents button.ok {
+  background-color: #0496ff;
+  right: 20%;
+  bottom: 20px;
+}
 
-.confirm-page {
-  background-color: #fefefe;
-  margin: 5% auto 15% auto;
-  /* 5% from the top, 15% from the bottom and centered */
-  border: 1px solid #888;
-  width: 80%;
-  /* Could be more or less, depending on screen size */
+.confirm-container#delete-all-attr-ctrl-items .confirm-page {
+  width: 500px;
+  height: 100px;
+}
+
+.confirm-container#create-table .confirm-page {
+  width: 500px;
+  height: 500px;
+}
+.confirm-container#create-table .confirm-page .confirm-contents textarea {
+  resize: none;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  position: absolute;
+  font-family: "Nunito", sans-serif;
+  font-size: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  width: 90%;
+  height: 70%;
+}
+.confirm-container#create-table .confirm-page .confirm-contents textarea:focus {
+  outline: none;
 }
 
 .confirm-page-animate {
@@ -239,7 +308,7 @@ button#create-tbl-btn:hover, input[type=submit]#create-tbl-btn:hover, input[type
 .dropdown .dropdown-list > * {
   display: block;
   cursor: pointer;
-  background-color: #f4ccff;
+  background-color: #eaf6ff;
   padding: 10px 10px;
   /*border-bottom: 1px solid white;*/
   margin-top: 1px;
@@ -256,6 +325,10 @@ button#create-tbl-btn:hover, input[type=submit]#create-tbl-btn:hover, input[type
 #create-tbl-btn {
   display: block;
   margin-left: auto;
+}
+
+.collapsible {
+  margin: 10px auto 0px auto;
 }
 
 .collapsible-btn {

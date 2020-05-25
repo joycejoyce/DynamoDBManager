@@ -3,13 +3,13 @@ $light-grey: #f1f1f1;
 $normal-grey: #ddd;
 $dark-grey: #ccc;
 $darker-grey: #6d6d6d;
-$light-purple-transparent: rgba(201, 0, 255, 0.1);
-$bright-purple: rgba(201, 0, 255, 1);
-$light-purple: hsla(287, 100%, 90%, 1);
 $green: hsla(118, 100%, 40%, 1);
 $light-green: hsla(118, 100%, 60%, 1);
 $bright-pink: #ff1654;
 $bright-blue: #0496ff;
+$bright-blue: #0496ff;
+$light-blue: lighten($bright-blue, 45%);
+$delete-table-page-color: $bright-pink;
 
 @mixin lightenOnHover($color) {
     background-color: $color;
@@ -33,11 +33,12 @@ $h3-font-size: 1.2rem;
 $collapsible-btn-font-size: 1.1rem;
 
 /* font-family */
-$serif: 'Arvo', serif;
-$sans-serif: 'Lato', sans-serif;
+$title-font: 'Montserrat', sans-serif;
+$contents-font: 'Nunito', sans-serif;
 
 /* border */
 $thin-grey-border: 1px solid $normal-grey;
+$thin-dark-grey-border: 1px solid $dark-grey;
 
 /* width / height */
 $outer-width: 600px;
@@ -55,18 +56,19 @@ $form-padding: 0px 10px 10px;
 
 body {
     font-size: 16px;
-    font-family: $sans-serif;
+    font-family: $contents-font;
 }
 
 header {
     text-align: center;
     font-size: $header-font-size;
-    font-family: $serif;
-    font-weight: bold;
+    font-family: $title-font;
+    font-weight: normal;
     margin: 5vh;
 }
 
 h1 {
+    font-family: $title-font;
     font-weight: normal;
 }
 
@@ -80,19 +82,23 @@ input[type=text] {
     padding-left: 12px;
     border: none;
     border-radius: 5px;
-    background-color: $light-grey;
     transition: $normal-trainsition-speed;
-    font-family: $sans-serif;
+    font-family: $contents-font;
+    background-color: $light-grey;
+    
+    &:-internal-autofill-selected {
+        background-color: $light-grey !important;
+    }
     
     &:hover {
         border: 1px solid $dark-grey;
-        box-shadow: 0 0 0 4px $light-purple-transparent;
+        box-shadow: 0 0 0 4px $light-blue;
         background-color: white;
     }
     
     &:focus {
         @extend :hover;
-        border: 1px solid $bright-purple;
+        border: 1px solid $bright-blue;
     }
 }
 
@@ -109,7 +115,7 @@ table {
 }
 
 button,input[type=submit] {
-    font-family: $sans-serif;
+    font-family: $contents-font;
     font-size: 1rem;
     border: none;
     padding: 10px 16px;
@@ -135,6 +141,10 @@ button,input[type=submit] {
     
     &#create-table-page-btn {
         @include lightenOnHover($green);
+    }
+    
+    &#delete-table-page-btn {
+        @include lightenOnHover($delete-table-page-color);
     }
     
     &#create-tbl-btn {
@@ -211,17 +221,89 @@ button,input[type=submit] {
     top: 0;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     padding-top: 60px;
+    
+    .confirm-page {
+        position: relative;
+        margin: auto;
+        padding: 10px 10px;
+        border-radius: 5px;
+        background-color: white;
+        
+        .confirm-contents {
+            width: 90%;
+            position: absolute;
+            overflow: auto;
+            margin: auto;
+            top: 0; left: 0; bottom: 0; right: 0;
+            
+            .confirm-msg {
+                font-weight: normal;
+                text-align: center;
+            }
+            
+            button {
+                position: absolute;
+                width: 100px;
+                $space: 20%;
+                &.yes {
+                    background-color: $bright-pink;
+                    left: $space;
+                }
+                &.no {
+                    background-color: $normal-grey;
+                    right: $space;
+                }
+                &.copy {
+                    background-color: $green;
+                    left: $space;
+                    bottom: 20px;
+                }
+                &.ok {
+                    background-color: $bright-blue;
+                    right: $space;
+                    bottom: 20px;
+                }
+            }
+        }
+    }
 }
 
-.confirm-page {
-    background-color: #fefefe;
-    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+.confirm-container#delete-all-attr-ctrl-items {
+    .confirm-page {
+        width: 500px;
+        height: 100px;
+    }
+}
+
+.confirm-container#create-table {
+    .confirm-page {
+        width: 500px;
+        height: 500px;
+
+        .confirm-contents {
+            textarea {
+                resize: none;
+                padding: 10px;
+                border: $thin-dark-grey-border;
+                border-radius: 10px;
+                position: absolute;
+                font-family: $contents-font;
+                font-size: 1rem;
+                left: 50%;
+                transform: translateX(-50%);
+                display: block;
+                width: 90%;
+                height: 70%;
+                
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
 }
 
 .confirm-page-animate {
@@ -272,7 +354,7 @@ button,input[type=submit] {
     .dropdown-list>* {
         display: block;
         cursor: pointer;
-        background-color: $light-purple;
+        background-color: $light-blue;
         padding: 10px 10px;
         /*border-bottom: 1px solid white;*/
         margin-top: 1px;
@@ -292,6 +374,10 @@ button,input[type=submit] {
 #create-tbl-btn {
     display: block;
     margin-left: auto;
+}
+
+.collapsible {
+    margin: 10px auto 0px auto;
 }
 
 .collapsible-btn {

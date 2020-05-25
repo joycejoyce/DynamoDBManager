@@ -2,6 +2,7 @@ function ConfirmView() {}
 
 const confirmView = getConfirmView();
 const confirmPage = getConfirmPage();
+const confirmContents = getConfirmContents();
 
 function getConfirmView() {
     return document.querySelector(".confirm-container");
@@ -11,13 +12,17 @@ function getConfirmPage() {
     return getConfirmView().querySelector(".confirm-page");
 }
 
+function getConfirmContents() {
+    return getConfirmPage().querySelector(".confirm-contents");
+}
+
 ConfirmView.addEventListeners = () => {
     listenOnClickWindow();
 };
 
 function listenOnClickWindow() {
     window.addEventListener("click", (e) => {
-        if(e.target == confirmPage) {
+        if(e.target == confirmView) {
             ConfirmView.reset();
         }
     });
@@ -66,10 +71,10 @@ function create(id, confirmMsg) {
 
 function createYesAndNoBtn() {
     const yesBtn = getBtnWithClassName("Yes");
-    confirmPage.appendChild(yesBtn);
+    confirmContents.appendChild(yesBtn);
 
     const noBtn = getBtnWithClassName("No");
-    confirmPage.appendChild(noBtn);
+    confirmContents.appendChild(noBtn);
     listenOnNoBtn();
 }
 
@@ -100,12 +105,12 @@ function createInfoTextArea(infoText) {
     textArea.readOnly = true;
     textArea.rows = "20";
     textArea.cols = "60";
-    confirmPage.appendChild(textArea);
+    confirmContents.appendChild(textArea);
 }
 
 function createOkBtn() {
     const okBtn = getBtnWithClassName("OK");
-    confirmPage.appendChild(okBtn);
+    confirmContents.appendChild(okBtn);
     listenOnClickOkBtn();
 }
 
@@ -116,7 +121,7 @@ function listenOnClickOkBtn() {
 
 function createCopyBtn() {
     const copyBtn = getBtnWithClassName("Copy");
-    confirmPage.appendChild(copyBtn);
+    confirmContents.appendChild(copyBtn);
     listenOnClickCopyBtn();
 }
 

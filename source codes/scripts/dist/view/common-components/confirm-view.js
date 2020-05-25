@@ -3,7 +3,7 @@
 System.register([], function (_export, _context) {
   "use strict";
 
-  var confirmView, confirmPage;
+  var confirmView, confirmPage, confirmContents;
 
   function ConfirmView() {}
 
@@ -15,9 +15,13 @@ System.register([], function (_export, _context) {
     return getConfirmView().querySelector(".confirm-page");
   }
 
+  function getConfirmContents() {
+    return getConfirmPage().querySelector(".confirm-contents");
+  }
+
   function listenOnClickWindow() {
     window.addEventListener("click", function (e) {
-      if (e.target == confirmPage) {
+      if (e.target == confirmView) {
         ConfirmView.reset();
       }
     });
@@ -59,9 +63,9 @@ System.register([], function (_export, _context) {
 
   function createYesAndNoBtn() {
     var yesBtn = getBtnWithClassName("Yes");
-    confirmPage.appendChild(yesBtn);
+    confirmContents.appendChild(yesBtn);
     var noBtn = getBtnWithClassName("No");
-    confirmPage.appendChild(noBtn);
+    confirmContents.appendChild(noBtn);
     listenOnNoBtn();
   }
 
@@ -85,12 +89,12 @@ System.register([], function (_export, _context) {
     textArea.readOnly = true;
     textArea.rows = "20";
     textArea.cols = "60";
-    confirmPage.appendChild(textArea);
+    confirmContents.appendChild(textArea);
   }
 
   function createOkBtn() {
     var okBtn = getBtnWithClassName("OK");
-    confirmPage.appendChild(okBtn);
+    confirmContents.appendChild(okBtn);
     listenOnClickOkBtn();
   }
 
@@ -101,7 +105,7 @@ System.register([], function (_export, _context) {
 
   function createCopyBtn() {
     var copyBtn = getBtnWithClassName("Copy");
-    confirmPage.appendChild(copyBtn);
+    confirmContents.appendChild(copyBtn);
     listenOnClickCopyBtn();
   }
 
@@ -124,6 +128,7 @@ System.register([], function (_export, _context) {
     execute: function () {
       confirmView = getConfirmView();
       confirmPage = getConfirmPage();
+      confirmContents = getConfirmContents();
 
       ConfirmView.addEventListeners = function () {
         listenOnClickWindow();

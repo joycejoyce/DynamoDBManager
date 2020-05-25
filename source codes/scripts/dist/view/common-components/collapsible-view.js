@@ -16,7 +16,9 @@ System.register(["../common-components/util.js", "../common-components/icon-elem
     if (contents.style.maxHeight) {
       contents.style.maxHeight = null;
     } else {
-      contents.style.maxHeight = contents.scrollHeight + "px";
+      //contents.style.maxHeight = contents.scrollHeight + "px";
+      contents.style.maxHeight = "50vh";
+      contents.style.overflow = "auto";
     }
   }
 
