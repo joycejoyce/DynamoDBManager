@@ -5,15 +5,7 @@ System.register(["./main-tab-view.js", "./create-table-view/create-table-view.js
 
   var MainTabView, CreateTableView, DeleteTableView, ConfirmView, DropdownView;
 
-  function EventListener() {
-    this.addEventListeners = function () {
-      new MainTabView().addEventListeners();
-      new CreateTableView().addEventListeners();
-      new DeleteTableView().addEventListeners();
-      ConfirmView.addEventListeners();
-      DropdownView.addEventListeners();
-    };
-  }
+  function EventListener() {}
 
   _export("EventListener", EventListener);
 
@@ -29,6 +21,14 @@ System.register(["./main-tab-view.js", "./create-table-view/create-table-view.js
     }, function (_commonComponentsDropdownViewJs) {
       DropdownView = _commonComponentsDropdownViewJs.DropdownView;
     }],
-    execute: function () {}
+    execute: function () {
+      EventListener.init = function () {
+        new MainTabView().addEventListeners();
+        new CreateTableView().addEventListeners();
+        new DeleteTableView().addEventListeners();
+        ConfirmView.addEventListeners();
+        DropdownView.addEventListeners();
+      };
+    }
   };
 });

@@ -12,6 +12,7 @@ System.register(["./common-components/collapsible-view.js"], function (_export, 
     };
 
     function createPageCollapsible() {
+      console.log("Enter createPageCollapsible()");
       var collapsible = CollapsibleView.getCollapsibleDoc();
       collapsible.id = DeleteTableView.id.deleteTablePageCollapsible;
       var btn = collapsible.querySelector("." + CollapsibleView.className.btn);

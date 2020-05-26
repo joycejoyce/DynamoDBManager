@@ -7,7 +7,8 @@
     "test": "mocha --timeout 10000 --require @babel/register",
     "build": "babel scripts/src --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs",
     "watch-babel": "title babel && babel scripts/src --watch --out-dir scripts/dist --plugins=@babel/plugin-transform-modules-systemjs",
-    "watch-sass": "title sass && sass --watch styles/index.scss styles/index.css"
+    "watch-sass": "title sass && sass --watch styles/index.scss styles/index.css",
+    "watch": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -24,13 +25,20 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
     "@babel/register": "^7.9.0",
     "aws-sdk": "^2.668.0",
+    "babel-loader": "^8.1.0",
     "babel-watch": "^7.0.0",
     "chai": "^4.2.0",
     "jquery": "^3.5.0",
     "jsdom": "^16.2.2",
     "mocha": "^7.1.2",
-    "sass": "^1.26.5"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "sass": "^1.26.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
   }
 }

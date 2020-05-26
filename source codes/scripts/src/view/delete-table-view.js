@@ -13,6 +13,7 @@ function DeleteTableView() {
     };
     
     function createPageCollapsible() {
+        console.log("Enter createPageCollapsible()");
         const collapsible = CollapsibleView.getCollapsibleDoc();
         collapsible.id = DeleteTableView.id.deleteTablePageCollapsible;
         

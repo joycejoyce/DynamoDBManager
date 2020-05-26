@@ -3,16 +3,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Nunito&display=swap" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="./styles/index.css">
-        <script type="systemjs-importmap">
-            {
-              "imports": {
-                "event-listener": "./scripts/dist/view/event-listener.js",
-                "element-builder": "./scripts/dist/view/element-builder.js"
-              }
-            }
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/system.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/extras/named-exports.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
         <script src="https://kit.fontawesome.com/961d599dca.js" crossorigin="anonymous"></script>
@@ -100,38 +90,14 @@
                 </div>
             </div>
         </div>
-        <script>
+        <script type="module">
+            import {ElementBuilder} from "./scripts/src/view/element-builder.js";
+            import {EventListener} from "./scripts/src/view/event-listener.js";
+            
             window.addEventListener("load", async () => {
-                await buildElements();
-                await executeEventListener();
-                //fillInputs();
+                ElementBuilder.init();
+                EventListener.init();
             });
-            
-            function buildElements() {
-                return System.import("element-builder").then((module) => {
-                    module.ElementBuilder.init();
-                });
-            }
-            
-            function executeEventListener() {
-                return System.import("event-listener").then((module) => {
-                    new module.EventListener().addEventListeners();
-                });
-            }
-            
-            function fillInputs() {
-                document.querySelector("#table-name-input").value = "TestTable";
-                document.querySelector(".attr-ctrl-item .dropdown-btn").value = "string";
-                document.querySelector(".attr-ctrl-item .attr-name-input").value = "field1";
-                document.querySelector("#hash-key-row .dropdown-btn").value = "field1";
-                
-                const addAttrBtn = document.querySelector("#add-attr-ctrl-item-btn");
-                addAttrBtn.click();
-                
-                document.querySelectorAll(".attr-ctrl-item .dropdown-btn")[1].value = "string";
-                document.querySelectorAll(".attr-ctrl-item .attr-name-input")[1].value = "field2";
-                document.querySelector("#range-key-row .dropdown-btn").value = "field2";
-            }
         </script>
     </body>
 </html>

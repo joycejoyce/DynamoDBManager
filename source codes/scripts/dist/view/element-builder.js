@@ -17,6 +17,7 @@ System.register(["./create-table-view/create-table-view.js", "./delete-table-vie
     }],
     execute: function () {
       ElementBuilder.init = function () {
+        console.log("Enter init()");
         new CreateTableView().createElements();
         new DeleteTableView().createElements();
       };
