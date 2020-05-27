@@ -1,28 +1,29 @@
-import {CollapsibleView} from "./common-components/collapsible-view.js";
+import React from "react";
+import ReactDOM from "react-dom";
+import {CollapsibleView} from "../common-components/collapsible-view.jsx";
 
-DeleteTableView.id = {
+DeleteTablePageView.id = {
     deleteTablePageCollapsible: "delete-table",
     deleteTablePageBtn: "delete-table-page-btn",
     delteTablePage: "delete-table-page"
 };
 
-function DeleteTableView() {
+function DeleteTablePageView() {
     this.createElements = () => {
         createPageCollapsible();
         createTableList();
     };
     
     function createPageCollapsible() {
-        console.log("Enter createPageCollapsible()");
         const collapsible = CollapsibleView.getCollapsibleDoc();
-        collapsible.id = DeleteTableView.id.deleteTablePageCollapsible;
+        collapsible.id = DeleteTablePageView.id.deleteTablePageCollapsible;
         
         const btn = collapsible.querySelector("."+CollapsibleView.className.btn);
-        btn.id = DeleteTableView.id.deleteTablePageBtn;
+        btn.id = DeleteTablePageView.id.deleteTablePageBtn;
         btn.innerHTML = "Delete tables" + btn.innerHTML;
         
         const contents = collapsible.querySelector("."+CollapsibleView.className.contents);
-        contents.id = DeleteTableView.id.delteTablePage;
+        contents.id = DeleteTablePageView.id.delteTablePage;
         
         const manageTablePage = document.getElementById("main-page-2");
         manageTablePage.appendChild(collapsible);
@@ -40,11 +41,11 @@ function DeleteTableView() {
     };
     
     function listenOnClickDeteTablePageBtn() {
-        const id = DeleteTableView.id.deleteTablePageCollapsible;
+        const id = DeleteTablePageView.id.deleteTablePageCollapsible;
         CollapsibleView.listenOnClickBtn(document.getElementById(id));
     }
 }
 
 export {
-    DeleteTableView
+    DeleteTablePageView
 };

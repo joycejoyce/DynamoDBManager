@@ -1,12 +1,11 @@
-import {CreateTableView} from "./create-table-view/create-table-view.js";
-import {DeleteTableView} from "./delete-table-view.js";
+import {CreateTablePageView} from "./create-table/create-table-page-view.js";
+import {DeleteTablePageView} from "./delete-table/delete-table-page-view.jsx";
 
 function ElementBuilder() {}
 
 ElementBuilder.init = () => {
-    console.log("Enter init()");
-    new CreateTableView().createElements();
-    new DeleteTableView().createElements();
+    new CreateTablePageView().createElements();
+    new DeleteTablePageView().createElements();
 };
 
 export {

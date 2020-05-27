@@ -1,3 +1,5 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import {Util} from "../common-components/util.js";
 import {IconElem} from "../common-components/icon-elem.js";
 
@@ -35,10 +37,14 @@ function getInitIconDoc() {
 }
 
 CollapsibleView.getContentsDoc = () => {
-    const contents = document.createElement("div");
+    /*const contents = document.createElement("div");
     contents.className = CollapsibleView.className.contents;
     
-    return contents;
+    return contents;*/
+    
+    return(
+        <div className="contents"></div>
+    );
 };
 
 CollapsibleView.listenOnClickBtn = (collapsible) => {
@@ -55,9 +61,9 @@ function toggleContentsMaxHeight(contents) {
         contents.style.maxHeight = null;
     }
     else {
-        //contents.style.maxHeight = contents.scrollHeight + "px";
-        contents.style.maxHeight = "50vh";
-        contents.style.overflow = "auto";
+        contents.style.maxHeight = contents.scrollHeight + "px";
+        /*contents.style.maxHeight = "50vh";
+        contents.style.overflow = "auto";*/
     }
 }
 

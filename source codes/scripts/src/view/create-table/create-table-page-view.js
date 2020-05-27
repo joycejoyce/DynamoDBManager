@@ -1,18 +1,18 @@
 import {Util} from "../common-components/util.js";
-import {CollapsibleView} from "../common-components/collapsible-view.js";
+import {CollapsibleView} from "../common-components/collapsible-view.jsx";
 import {DropdownView} from "../common-components/dropdown-view.js";
 import {DeleteAllAttrBtnView} from "./delete-all-attr-ctrl-item-btn-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";
 import {KeySchemaView} from "./key-schema-view.js";
 import {CreateTableController} from "../../controller/create-table-controller.js";
 
-CreateTableView.id = {
+CreateTablePageView.id = {
     createTable: "create-table",
     createTablePage: "create-table-page",
     createTablePageBtn: "create-table-page-btn"
 };
 
-function CreateTableView() {
+function CreateTablePageView() {
     this.createElements = () => {
         new KeySchemaView().createElements();
         new AttrCtrlItemView().createAnItem();
@@ -22,11 +22,11 @@ function CreateTableView() {
     function createCreateTablePageCollapsible() {
         const collapsibleBtn = getCreateTablePageBtnDoc();
         
-        const collapsibleContents = document.getElementById(CreateTableView.id.createTablePage);
+        const collapsibleContents = document.getElementById(CreateTablePageView.id.createTablePage);
         collapsibleContents.classList.add(CollapsibleView.className.contents);
         
         const collapsible = document.createElement("div");
-        collapsible.id = CreateTableView.id.createTable;
+        collapsible.id = CreateTablePageView.id.createTable;
         collapsible.classList.add(CollapsibleView.className.collapsible);
         
         const manageTablePage = document.querySelector("#main-page-2");
@@ -38,7 +38,7 @@ function CreateTableView() {
     
     function getCreateTablePageBtnDoc() {
         const btn = CollapsibleView.getBtnDoc();
-        btn.id = CreateTableView.id.createTablePageBtn;
+        btn.id = CreateTablePageView.id.createTablePageBtn;
         btn.innerHTML = "Create a table" + btn.innerHTML;
         return btn;
     }
@@ -52,7 +52,7 @@ function CreateTableView() {
     };
     
     function listenOnClickCreateTablePageBtn() {
-        const id = CreateTableView.id.createTable;
+        const id = CreateTablePageView.id.createTable;
         CollapsibleView.listenOnClickBtn(document.getElementById(id));
     }
     
@@ -112,5 +112,5 @@ function CreateTableView() {
 }
 
 export {
-    CreateTableView
+    CreateTablePageView
 };

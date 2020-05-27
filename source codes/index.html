@@ -90,14 +90,6 @@
                 </div>
             </div>
         </div>
-        <script type="module">
-            import {ElementBuilder} from "./scripts/src/view/element-builder.js";
-            import {EventListener} from "./scripts/src/view/event-listener.js";
-            
-            window.addEventListener("load", async () => {
-                ElementBuilder.init();
-                EventListener.init();
-            });
-        </script>
+        <script src="./scripts/dist/bundle.js"></script>
     </body>
 </html>
