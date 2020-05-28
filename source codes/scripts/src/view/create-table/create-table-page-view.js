@@ -1,5 +1,5 @@
 import {Util} from "../common-components/util.js";
-import {CollapsibleView} from "../common-components/collapsible-view.jsx";
+import {CollapsibleView} from "../common-components/collapsible-view.js";
 import {DropdownView} from "../common-components/dropdown-view.js";
 import {DeleteAllAttrBtnView} from "./delete-all-attr-ctrl-item-btn-view.js";
 import {AttrCtrlItemView} from "./attr-ctrl-item-view.js";

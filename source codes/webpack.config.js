@@ -14,19 +14,17 @@ module.exports = {
         //rules的值是一個陣列可以存放多個loader物件
         rules: [
             {
-                test: /.jsx$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: { presets: ['@babel/preset-react','@babel/preset-env'] }
-                }
-            },
-            {
                 test: /.js$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
-                    options: { presets: ['@babel/preset-env'] }
+                    options: { 
+                        presets: ['@babel/preset-react','@babel/preset-env'],
+                        plugins: [
+                            ['@babel/plugin-transform-runtime',
+                            { "regenerator": true }]
+                        ]
+                    }
                 }
             },
             {

@@ -143,13 +143,13 @@ button,input[type=submit] {
         @include lightenOnHover($green);
     }
     
-    &#delete-table-page-btn {
-        @include lightenOnHover($delete-table-page-color);
-    }
-    
     &#create-tbl-btn {
         @include lightenOnHover($green);
     }
+}
+
+#delete-table > .collapsible-btn {
+    @include lightenOnHover($bright-pink);
 }
 
 #container {
@@ -193,6 +193,11 @@ button,input[type=submit] {
 
 #create-table-form {
     border: 1px solid lighten($green, 30%);
+    padding: $form-padding;
+}
+
+#delete-table-form {
+    border: 1px solid lighten($bright-pink, 30%);
     padding: $form-padding;
 }
 

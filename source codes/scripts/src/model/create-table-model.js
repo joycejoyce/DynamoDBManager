@@ -9,11 +9,9 @@ function CreateTableModel() {
         dbApi.createTable(params, (err, data) => {
             if(err) {
                 ActionResultView.showErrMsg(action, err);
-                /*document.getElementById('textarea').innerHTML = "Unable to create table: " + "\n" + JSON.stringify(err, undefined, 2);*/
             }
             else {
                 ActionResultView.showSuccessMsg(action, data);
-                /*document.getElementById('textarea').innerHTML = "Created table: " + "\n" + JSON.stringify(data, undefined, 2);*/
             }
         });
     };
