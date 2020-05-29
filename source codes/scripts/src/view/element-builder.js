@@ -9,10 +9,9 @@ function ElementBuilder() {}
 
 ElementBuilder.init = () => {
     new CreateTablePageView().createElements();
-    //new DeleteTablePageView().createElements();
     ReactDOM.render(
         <DeleteTableView />,
-        document.getElementById('delete-table')
+        document.querySelector("section#delete-table")
     );
 
 };

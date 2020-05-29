@@ -9,7 +9,6 @@ $bright-pink: #ff1654;
 $bright-blue: #0496ff;
 $bright-blue: #0496ff;
 $light-blue: lighten($bright-blue, 45%);
-$delete-table-page-color: $bright-pink;
 
 @mixin lightenOnHover($color) {
     background-color: $color;
@@ -38,6 +37,7 @@ $contents-font: 'Nunito', sans-serif;
 
 /* border */
 $thin-grey-border: 1px solid $normal-grey;
+$bold-grey-border: 3px solid $normal-grey;
 $thin-dark-grey-border: 1px solid $dark-grey;
 
 /* width / height */
@@ -148,8 +148,56 @@ button,input[type=submit] {
     }
 }
 
-#delete-table > .collapsible-btn {
-    @include lightenOnHover($bright-pink);
+#delete-table {
+    $main-color: $bright-pink;
+    
+    .collapsible-btn {
+        @include lightenOnHover($main-color);
+    }
+    
+    #delete-table-form {
+        border: 1px solid lighten($main-color, 30%);
+        padding: $form-padding;
+        
+        #table-num {
+            color: $main-color;
+            font-weight: bold;
+        }
+        
+        table {
+            width: $inner-width - 50px;
+            margin: 5px auto;
+            
+            tr:nth-child(even){
+                background-color: $light-grey;
+            }
+            
+            &,th,td {
+                border-bottom: $thin-grey-border;
+                border-collapse: collapse;
+            }
+            
+            td,th {
+                padding: 10px;
+            }
+            
+            th {
+                text-align: left;
+                border-bottom: $bold-grey-border;
+                font-weight: bold;
+                font-family: $title-font;
+            }
+            
+            input {
+                transform: scale(1.3);
+                border: $thin-grey-border;
+                
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }
 
 #container {
@@ -193,11 +241,6 @@ button,input[type=submit] {
 
 #create-table-form {
     border: 1px solid lighten($green, 30%);
-    padding: $form-padding;
-}
-
-#delete-table-form {
-    border: 1px solid lighten($bright-pink, 30%);
     padding: $form-padding;
 }
 
