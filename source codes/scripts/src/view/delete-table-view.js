@@ -30,12 +30,13 @@ class DeleteTableForm extends React.Component {
 class TableList extends React.Component {
     constructor() {
         super();
-        this.state = { tables: [] , rows: []};
+        this.state = { tables: [] , rows: [] };
         this.setTables();
-        this.setRows = this.setRows.bind(this);
+        
         this.setTables = this.setTables.bind(this);
-        this.selectOrDeselectAll = this.selectOrDeselectAll.bind(this);
+        this.setRows = this.setRows.bind(this);
         this.toggleCheckbox = this.toggleCheckbox.bind(this);
+        this.toggleAllCheckboxes = this.toggleAllCheckboxes.bind(this);
     }
     
     async setTables() {
@@ -44,26 +45,25 @@ class TableList extends React.Component {
         this.setRows(false);
     }
     
-    setRows(checked) {
+    setRows(isChecked) {
         const tables = this.state.tables;
-        const rows = tables.map(table => <TableListRow key={table} tableName={table} checked={checked} onChangeFunc={this.toggleCheckbox}/>);
+        const rows = tables.map(table => ({ table: table, isChecked: isChecked }));
         this.setState(state => ({ rows: rows }));
     }
     
     toggleCheckbox(e) {
-        console.log("checked", e.target.checked);
-        const isChecked = e.target.checked;
-        e.target.checked = !isChecked;
+        const rows = this.state.rows;
+        const targetTable = e.target.value;
+        rows.filter(row => row.table === targetTable)
+            .forEach(row => row.isChecked = e.target.checked);
+        this.setState({ rows: rows });
     }
     
-    selectOrDeselectAll(e) {
-        /*const isChecked = e.target.checked;
-        if(isChecked) {
-            this.setRows(isChecked);
-        }
-        else {
-            this.setRows(!isChecked);
-        }*/
+    toggleAllCheckboxes(e) {
+        const rows = this.state.rows;
+        const targetTable = e.target.value;
+        rows.forEach(row => row.isChecked = e.target.checked);
+        this.setState({ rows: rows });
     }
     
     render() {
@@ -71,12 +71,14 @@ class TableList extends React.Component {
             <table>
                 <thead>
                     <tr>
-                        <th><input type="checkbox" onChange={(e)=>this.selectOrDeselectAll(e)}/></th>
+                        <th><input type="checkbox" onChange={this.toggleAllCheckboxes}/></th>
                         <th>Table Name</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {this.state.rows}
+                    {
+                        this.state.rows.map(row => (<TableListRow key={row.table} onChangeFunc={this.toggleCheckbox} {...row} />))
+                    }
                     <tr>
                         <td colSpan="2">Total: <span id="table-num">{this.state.tables.length}</span> tables</td>
                     </tr>
@@ -90,8 +92,8 @@ class TableListRow extends React.Component {
     render() {
         return(
             <tr>
-                <td><input type="checkbox" className="delete-table-name" checked={this.props.checked} onChange={this.props.onChangeFunc}/></td>
-                <td>{this.props.tableName}</td>
+                <td><input type="checkbox" key={this.props.table} value={this.props.table} checked={this.props.isChecked} onChange={this.props.onChangeFunc}/></td>
+                <td>{this.props.table}</td>
             </tr>
         );
     }
