@@ -4,9 +4,9 @@ import { TableModel } from "../model/table-model.js";
 const React = require("react");
 
 class DeleteTableView extends React.Component {
-	render() {
+    render() {
 		return (
-			<Collapsible 
+			<Collapsible
                 btnText="Delete Tables"
                 contents=<DeleteTableForm />
             />
@@ -15,37 +15,32 @@ class DeleteTableView extends React.Component {
 }
 
 class DeleteTableForm extends React.Component {
-    render() {
-        return (
-			<form id="delete-table-form">
-                <TableList />
-                <button>Deselect All</button>
-                <button>Select All</button>
-                <button type="submit">Delete</button>
-            </form>
-		);
-	}
-}
-
-class TableList extends React.Component {
     constructor() {
         super();
         this.state = { tables: [] , rows: [] };
-        this.setTables();
+        this.resetTables();
         
-        this.setTables = this.setTables.bind(this);
-        this.setRows = this.setRows.bind(this);
+        this.resetTables = this.resetTables.bind(this);
+        this.resetRows = this.resetRows.bind(this);
         this.toggleCheckbox = this.toggleCheckbox.bind(this);
         this.toggleAllCheckboxes = this.toggleAllCheckboxes.bind(this);
+        
+        this.handleClickDeleteBtn = this.handleClickDeleteBtn.bind(this);
+        this.deleteTables = this.deleteTables.bind(this);
+        
+        this.handleClickRefreshBtn = this.handleClickRefreshBtn.bind(this);
     }
     
-    async setTables() {
-        const tables = await TableModel.list;
-        await this.setState(state => ({ tables: tables }));
-        this.setRows(false);
+    resetTables() {
+        return new Promise(async (resolve) => {
+            const tables = await TableModel.list();
+            await this.setState(state => ({ tables: tables }));
+            this.resetRows(false);
+            resolve();
+        });
     }
     
-    setRows(isChecked) {
+    resetRows(isChecked) {
         const tables = this.state.tables;
         const rows = tables.map(table => ({ table: table, isChecked: isChecked }));
         this.setState(state => ({ rows: rows }));
@@ -66,29 +61,61 @@ class TableList extends React.Component {
         this.setState({ rows: rows });
     }
     
+    async handleClickDeleteBtn(e) {
+        e.preventDefault();
+        await this.deleteTables();
+        await this.resetTables();
+    }
+    
+    async deleteTables() {
+        return new Promise(async resolve => {
+            const tablesToDelete = this.state.rows.filter(row => row.isChecked).map(row => row.table);
+            for(const table of tablesToDelete) {
+                await TableModel.delete(table);
+            }
+            resolve();
+        });
+    }
+    
+    async handleClickRefreshBtn() {
+        await this.resetTables();
+        const collapsibleBtn = document.querySelector("#delete-table .collapsible-btn");
+        collapsibleBtn.click(); collapsibleBtn.click();
+    }
+    
+    render() {
+        return (
+			<form id="delete-table-form" onSubmit={this.handleClickDeleteBtn}>
+                <button type="button" id="refresh" onClick={this.handleClickRefreshBtn}>Refresh</button>
+                <TableList rows={this.state.rows} toggleCheckbox={this.toggleCheckbox} toggleAllCheckboxes={this.toggleAllCheckboxes} />
+                <div>Total: <span id="table-num">{this.state.tables.length}</span> tables</div>
+                <button type="submit" id="delete">Delete</button>
+            </form>
+		);
+	}
+}
+
+class TableList extends React.Component {
     render() {
         return (
             <table>
                 <thead>
                     <tr>
-                        <th><input type="checkbox" onChange={this.toggleAllCheckboxes}/></th>
+                        <th><input type="checkbox" onChange={this.props.toggleAllCheckboxes}/></th>
                         <th>Table Name</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        this.state.rows.map(row => (<TableListRow key={row.table} onChangeFunc={this.toggleCheckbox} {...row} />))
+                        this.props.rows.map(row => (<TableListRow key={row.table} onChangeFunc={this.props.toggleCheckbox} {...row} />))
                     }
-                    <tr>
-                        <td colSpan="2">Total: <span id="table-num">{this.state.tables.length}</span> tables</td>
-                    </tr>
                 </tbody>
             </table>
         );
     }
 }
 
-class TableListRow extends React.Component {    
+class TableListRow extends React.Component {
     render() {
         return(
             <tr>

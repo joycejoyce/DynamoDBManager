@@ -1,9 +1,12 @@
 /* colors */
+$basic-text-color: #6D6875;
+$body-background-color: #ffcdb2;
+$page-background-color: white;
 $light-grey: #f1f1f1;
 $normal-grey: #ddd;
 $dark-grey: #ccc;
 $darker-grey: #6d6d6d;
-$green: hsla(118, 100%, 40%, 1);
+$green: hsla(118, 100%, 35%, 1);
 $light-green: hsla(118, 100%, 60%, 1);
 $bright-pink: #ff1654;
 $bright-blue: #0496ff;
@@ -57,6 +60,8 @@ $form-padding: 0px 10px 10px;
 body {
     font-size: 16px;
     font-family: $contents-font;
+    background-color: $body-background-color;
+    color: $basic-text-color;
 }
 
 header {
@@ -158,14 +163,33 @@ button,input[type=submit] {
     #delete-table-form {
         border: 1px solid lighten($main-color, 30%);
         padding: $form-padding;
+        overflow: visible;
+        
+        &>* {
+            $common-margin: 10px;
+            margin-left: $common-margin;
+            margin-top: $common-margin;
+        }
         
         #table-num {
             color: $main-color;
             font-weight: bold;
         }
         
+        button {
+            display: block;
+            /*float: left;*/
+            &#refresh {
+                background-color: $bright-blue;
+            }
+            
+            &#delete {
+                background-color: $main-color
+            }
+        }
+        
         table {
-            width: $inner-width - 50px;
+            width: $inner-width - 40px;
             margin: 5px auto;
             
             tr:nth-child(even){
@@ -224,8 +248,8 @@ button,input[type=submit] {
 }
 
 #main-pages>* {
+    background-color: $page-background-color;
     display: none;
-    overflow: auto;
     border: $thin-grey-border;
     padding: $page-padding;
 }
