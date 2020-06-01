@@ -20,9 +20,12 @@ class Collapsible extends React.Component {
     toggleContentsMaxHeight(contents) {
         if(contents.style.maxHeight) {
             contents.style.maxHeight = null;
+            contents.style.overflow = "hidden";
         }
         else {
-            contents.style.maxHeight = contents.scrollHeight + "px";
+            //contents.style.maxHeight = contents.scrollHeight + "px";
+            contents.style.maxHeight = "60vh";
+            contents.style.overflow = "auto";
         }
     }
     

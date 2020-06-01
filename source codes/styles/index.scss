@@ -1,23 +1,48 @@
 /* colors */
-$basic-text-color: #6D6875;
-$body-background-color: #ffcdb2;
-$page-background-color: white;
+$basic-green: hsla(120, 100%, 25%, 1);
+$basic-red: hsla(0, 100%, 50%, 1);
+
 $light-grey: #f1f1f1;
 $normal-grey: #ddd;
 $dark-grey: #ccc;
+
+$basic-text-color: #264653;
+
+outer-elem-color {
+    background-color: #2A9D8F;
+    color: #E9C46A;
+}
+
+inner-elem-color {
+    background-color: #E9C46A;
+    color: $basic-text-color;
+}
+
+inner2-elem-color {
+    background-color: $normal-grey;
+    color: $basic-text-color;
+}
+
 $darker-grey: #6d6d6d;
-$green: hsla(118, 100%, 35%, 1);
-$light-green: hsla(118, 100%, 60%, 1);
-$bright-pink: #ff1654;
+$green: #2A9D8F;
+$light-green: lighten($green, 25%);
+$red: #E76F51;
 $bright-blue: #0496ff;
-$bright-blue: #0496ff;
-$light-blue: lighten($bright-blue, 45%);
+$light-blue: lighten($bright-blue, 35%);
 
 @mixin lightenOnHover($color) {
     background-color: $color;
     
     &:hover {
         background-color: lighten($color, 30%);
+    }
+}
+
+@mixin darkenOnHover($color) {
+    background-color: $color;
+    
+    &:hover {
+        background-color: darken($color, 10%);
     }
 }
 
@@ -42,6 +67,7 @@ $contents-font: 'Nunito', sans-serif;
 $thin-grey-border: 1px solid $normal-grey;
 $bold-grey-border: 3px solid $normal-grey;
 $thin-dark-grey-border: 1px solid $dark-grey;
+$bold-dark-grey-border: 3px solid $dark-grey;
 
 /* width / height */
 $outer-width: 600px;
@@ -50,6 +76,7 @@ $inner-width: $outer-width * 0.9;
 
 /* animation */
 $normal-trainsition-speed: 0.3s;
+$fast-trainsition-speed: 0.1s;
 
 /* padding */
 $page-padding: 12px 12px;
@@ -58,10 +85,9 @@ $dropdown-btn-padding: 10px 12px;
 $form-padding: 0px 10px 10px;
 
 body {
+    @extend outer-elem-color;
     font-size: 16px;
     font-family: $contents-font;
-    background-color: $body-background-color;
-    color: $basic-text-color;
 }
 
 header {
@@ -85,25 +111,19 @@ input[type=text] {
     padding-right: 12px;
     padding-bottom: 8px;
     padding-left: 12px;
-    border: none;
+    border: $thin-dark-grey-border;
     border-radius: 5px;
-    transition: $normal-trainsition-speed;
+    transition: $fast-trainsition-speed;
     font-family: $contents-font;
     background-color: $light-grey;
     
-    &:-internal-autofill-selected {
-        background-color: $light-grey !important;
-    }
-    
     &:hover {
-        border: 1px solid $dark-grey;
-        box-shadow: 0 0 0 4px $light-blue;
-        background-color: white;
+        box-shadow: 0 0 0 4px $light-green;
     }
     
     &:focus {
         @extend :hover;
-        border: 1px solid $bright-blue;
+        border-color: $green;
     }
 }
 
@@ -141,11 +161,11 @@ button,input[type=submit] {
     }
     
     &#delete-all-attr-ctrl-item-btn {
-        @include lightenOnHover($bright-pink);
+        @include lightenOnHover($red);
     }
     
     &#create-table-page-btn {
-        @include lightenOnHover($green);
+        @include darkenOnHover($green);
     }
     
     &#create-tbl-btn {
@@ -154,20 +174,18 @@ button,input[type=submit] {
 }
 
 #delete-table {
-    $main-color: $bright-pink;
+    $main-color: $red;
     
     .collapsible-btn {
-        @include lightenOnHover($main-color);
+        @include darkenOnHover($main-color);
     }
     
     #delete-table-form {
-        border: 1px solid lighten($main-color, 30%);
         padding: $form-padding;
         overflow: visible;
         
         &>* {
             $common-margin: 10px;
-            margin-left: $common-margin;
             margin-top: $common-margin;
         }
         
@@ -178,13 +196,13 @@ button,input[type=submit] {
         
         button {
             display: block;
-            /*float: left;*/
             &#refresh {
                 background-color: $bright-blue;
             }
             
             &#delete {
-                background-color: $main-color
+                background-color: $main-color;
+                margin-left: auto;
             }
         }
         
@@ -193,7 +211,7 @@ button,input[type=submit] {
             margin: 5px auto;
             
             tr:nth-child(even){
-                background-color: $light-grey;
+                background-color: lighten($main-color, 40%);
             }
             
             &,th,td {
@@ -207,7 +225,7 @@ button,input[type=submit] {
             
             th {
                 text-align: left;
-                border-bottom: $bold-grey-border;
+                border-bottom: 3px solid $main-color;
                 font-weight: bold;
                 font-family: $title-font;
             }
@@ -231,13 +249,14 @@ button,input[type=submit] {
 
 #main-tabs {
     background-color: $light-grey;
-    border: $thin-grey-border;
     overflow: hidden;
     
     &>button {
-        color: black;
+        outline: none;
+        color: $basic-text-color;;
         border-radius: 0;
         font-size: $h3-font-size;
+        font-weight: bold;
         float: left;
         @include changeBkColorOnHover(inherit, $normal-grey);
         
@@ -248,9 +267,8 @@ button,input[type=submit] {
 }
 
 #main-pages>* {
-    background-color: $page-background-color;
+    @extend inner-elem-color;
     display: none;
-    border: $thin-grey-border;
     padding: $page-padding;
 }
 
@@ -264,7 +282,6 @@ button,input[type=submit] {
 }
 
 #create-table-form {
-    border: 1px solid lighten($green, 30%);
     padding: $form-padding;
 }
 
@@ -321,11 +338,11 @@ button,input[type=submit] {
                 width: 100px;
                 $space: 20%;
                 &.yes {
-                    background-color: $bright-pink;
+                    background-color: $red;
                     left: $space;
                 }
                 &.no {
-                    background-color: $normal-grey;
+                    background-color: $dark-grey;
                     right: $space;
                 }
                 &.copy {
@@ -393,6 +410,18 @@ button,input[type=submit] {
 	to {transform: scale(1)}
 }
 
+#query-table {
+    #table-list {
+        .dropdown-btn {
+            color: black;
+        }
+        
+        .dropdown-btn-container,.dropdown-list {
+            width: 200px;
+        }
+    }
+}
+
 .dropdown {
     position: relative;
     
@@ -403,7 +432,7 @@ button,input[type=submit] {
             cursor: default;
         }
 
-        .fa {
+        .fa,.fas {
             display: inline-block;
             position: absolute;
             right: 6px;
@@ -426,9 +455,8 @@ button,input[type=submit] {
     .dropdown-list>* {
         display: block;
         cursor: pointer;
-        background-color: $light-blue;
+        background-color: $light-green;
         padding: 10px 10px;
-        /*border-bottom: 1px solid white;*/
         margin-top: 1px;
     }
 }
@@ -449,30 +477,44 @@ button,input[type=submit] {
 }
 
 .collapsible {
-    margin: 10px auto 0px auto;
-}
-
-.collapsible-btn {
-    font-size: $collapsible-btn-font-size;
-    border-radius: 0;
+    @extend inner2-elem-color;
     width: $inner-width;
-    padding: $dropdown-btn-padding;
-    display: block;
-    margin: 0 auto;
-    cursor: pointer;
-    text-align: center;
-    position: relative;
+    margin: auto;
     
-    &i {
-        position: absolute;
-        right: 6px;
+    .collapsible-btn {
+        font-size: $collapsible-btn-font-size;
+        border-radius: 0;
+        width: $inner-width;
+        padding: $dropdown-btn-padding;
+        display: block;
+        cursor: pointer;
+        text-align: center;
+        position: relative;
+
+        &i {
+            position: absolute;
+            right: 6px;
+        }
+    }
+
+    .collapsible-contents {
+        width: $inner-width;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+
+        * {
+            :not(button):not(input) {
+                color: $basic-text-color;
+            }
+        }
     }
 }
 
-.collapsible-contents {
-    width: $inner-width;
-    margin: 0 auto;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.2s ease-out;
+.middle {
+    height: 10px;
+}
+
+.confirm-msg {
+    color: $basic-text-color;
 }

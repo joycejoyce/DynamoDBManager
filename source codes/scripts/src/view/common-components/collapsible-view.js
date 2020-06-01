@@ -37,11 +37,6 @@ function getInitIconDoc() {
 }
 
 CollapsibleView.getContentsDoc = () => {
-    /*const contents = document.createElement("div");
-    contents.className = CollapsibleView.className.contents;
-    
-    return contents;*/
-    
     return(
         <div className="contents"></div>
     );
@@ -61,9 +56,9 @@ function toggleContentsMaxHeight(contents) {
         contents.style.maxHeight = null;
     }
     else {
-        contents.style.maxHeight = contents.scrollHeight + "px";
-        /*contents.style.maxHeight = "50vh";
-        contents.style.overflow = "auto";*/
+        //contents.style.maxHeight = contents.scrollHeight + "px";
+        contents.style.maxHeight = "60vh";
+        contents.style.overflow = "auto";
     }
 }
 

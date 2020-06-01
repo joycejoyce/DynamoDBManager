@@ -88,6 +88,9 @@ function CreateTablePageView() {
         elem.addEventListener("click", () => {
             enableDeleteAllAttributesBtn();
             new AttrCtrlItemView().createAnItem();
+            
+            const createTablePageBtn = document.querySelector("#"+CreateTablePageView.id.createTablePageBtn);
+            createTablePageBtn.click(); createTablePageBtn.click();
         });
     }
     
