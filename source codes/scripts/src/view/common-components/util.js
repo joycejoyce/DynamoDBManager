@@ -15,6 +15,19 @@ Util.getComputedPropertyValue = (elem, property) => {
     return window.getComputedStyle(elem).getPropertyValue(property);
 };
 
+Util.toggleElemMaxHeight = (elem) => {
+    if(elem.style.maxHeight) {
+        elem.style.maxHeight = null;
+        elem.style.overflow = "hidden";
+    }
+    else {
+        /*elem.style.maxHeight = elem.scrollHeight + "px";
+        elem.style.overflow = "visible";*/
+        elem.style.maxHeight = "60vh";
+        elem.style.overflow = "hidden";
+    }
+}
+
 Util.changeIElem = (iElem) => {
     const classDown = "fa-caret-down";
     const classUp = "fa-caret-up";

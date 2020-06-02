@@ -34,6 +34,33 @@ TableModel.delete = (tableName) => {
     });
 };
 
+TableModel.describe = (tableName, describeName) => {
+    return new Promise((resolve) => {
+        const action = "describe-table";
+        const params = { TableName: tableName };
+        dbApi.describeTable(params, (err, data) => {
+            if(err) {
+                resolve(err);
+            }
+            else {
+                switch (describeName) {
+                    case TableModel.describeName.attributeName:
+                        const attrNames = data.Table.AttributeDefinitions.map(def => def.AttributeName);
+                        resolve(attrNames);
+                        break;
+                    default:
+                        resolve();
+                        break;
+                }
+            }
+        });
+    });
+};
+                    
+TableModel.describeName = {
+    attributeName: "AttributeName"
+};
+                    
 export {
     TableModel
 }

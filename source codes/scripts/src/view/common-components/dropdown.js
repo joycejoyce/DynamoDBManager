@@ -48,16 +48,22 @@ class Dropdown extends React.Component {
         }
     }
     
-    handleClickListItem(e) {
-        this.getBtn().value = e.target.textContent;
+    async handleClickListItem(e) {
         Util.showOrHideElement(this.getList());
         this.toggleFaCaretUpAndDownElem(this.getIElem());
+        
+        const newText = e.target.innerHTML;
+        this.getBtn().value = newText;
+        
+        console.log("before clickItem");
+        await this.props.clickItem(newText);
+        console.log("after clickItem");
     }
     
     render() {
         return(
             <div className="dropdown" id={this.props.id}>
-                <DropdownBtnContainer key="btn" btnText={this.props.btnText} onClick={this.handleClickBtn}/>
+                <DropdownBtnContainer key="btn" onClick={this.handleClickBtn}/>
                 <DropdownList key="list" className="dropdown-list" contents={this.props.contents} onClick={this.handleClickListItem}/>
             </div>
         );
@@ -68,7 +74,7 @@ class DropdownBtnContainer extends React.Component {
     render() {
         return(
             <div className="dropdown-btn-container">
-                <input className="dropdown-btn" type="text" value={this.props.btnText} onClick={this.props.onClick} readOnly />
+                <input className="dropdown-btn" type="text" onClick={this.props.onClick} readOnly />
                 <i className="fas fa-caret-down"></i>
             </div>
         );

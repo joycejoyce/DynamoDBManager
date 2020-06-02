@@ -77,6 +77,11 @@ $inner-width: $outer-width * 0.9;
 /* animation */
 $normal-trainsition-speed: 0.3s;
 $fast-trainsition-speed: 0.1s;
+collapsible-animate {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
 
 /* padding */
 $page-padding: 12px 12px;
@@ -104,7 +109,7 @@ h1 {
 }
 
 input[type=text] {
-    width: 200px;
+    width: inherit;
     font-size: 1rem;
     outline: none;
     padding-top: 8px;
@@ -415,15 +420,15 @@ button,input[type=submit] {
         .dropdown-btn {
             color: black;
         }
-        
-        .dropdown-btn-container,.dropdown-list {
-            width: 200px;
-        }
     }
 }
 
 .dropdown {
     position: relative;
+    
+    & > * {
+        width: 150px;
+    }
     
     .dropdown-btn-container {
         position: relative;
@@ -447,23 +452,16 @@ button,input[type=submit] {
         position: absolute;
         z-index: 1;
         transform: translateY(5px);
-        width: 200px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         background-color: white;
     }
     
-    .dropdown-list>* {
+    .dropdown-list > * {
         display: block;
         cursor: pointer;
         background-color: $light-green;
         padding: 10px 10px;
         margin-top: 1px;
-    }
-}
-
-.dropdown.attr-type {
-    .dropdown-btn,.dropdown-list {
-        width: 150px;
     }
 }
 
@@ -498,10 +496,8 @@ button,input[type=submit] {
     }
 
     .collapsible-contents {
+        @extend collapsible-animate;
         width: $inner-width;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.2s ease-out;
 
         * {
             :not(button):not(input) {
@@ -517,4 +513,12 @@ button,input[type=submit] {
 
 .confirm-msg {
     color: $basic-text-color;
+}
+
+#query-condition {
+    @extend collapsible-animate;
+}
+
+#test > * {
+    display: inline-block;
 }

@@ -1,4 +1,5 @@
 import {IconElem} from "./icon-elem.js";
+import { Util } from "./util.js";
 
 const React = require("react");
 
@@ -6,27 +7,14 @@ class Collapsible extends React.Component {
     constructor() {
         super();
         this.handleClickBtn = this.handleClickBtn.bind(this);
-        this.toggleContentsMaxHeight = this.toggleContentsMaxHeight.bind(this);
         this.toggleIconByContentsMaxHeight = this.toggleIconByContentsMaxHeight.bind(this);
     }
     
     handleClickBtn(e) {
         const btn = e.target;
         const contents = e.target.parentElement.querySelector(".collapsible-contents");
-        this.toggleContentsMaxHeight(contents);
+        Util.toggleElemMaxHeight(contents);
         this.toggleIconByContentsMaxHeight(btn.querySelector("i"), contents.style.maxHeight);
-    }
-    
-    toggleContentsMaxHeight(contents) {
-        if(contents.style.maxHeight) {
-            contents.style.maxHeight = null;
-            contents.style.overflow = "hidden";
-        }
-        else {
-            //contents.style.maxHeight = contents.scrollHeight + "px";
-            contents.style.maxHeight = "60vh";
-            contents.style.overflow = "auto";
-        }
     }
     
     toggleIconByContentsMaxHeight(icon, maxHeight) {
