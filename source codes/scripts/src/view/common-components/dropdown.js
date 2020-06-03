@@ -55,9 +55,7 @@ class Dropdown extends React.Component {
         const newText = e.target.innerHTML;
         this.getBtn().value = newText;
         
-        console.log("before clickItem");
         await this.props.clickItem(newText);
-        console.log("after clickItem");
     }
     
     render() {

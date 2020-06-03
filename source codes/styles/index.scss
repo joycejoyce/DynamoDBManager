@@ -161,11 +161,11 @@ button,input[type=submit] {
         background-color: $light-grey !important;
     }
     
-    &#add-attr-ctrl-item-btn {
+    &#add-attr-ctrl-item-btn,&#add-cond-btn {
         @include lightenOnHover($bright-blue);
     }
     
-    &#delete-all-attr-ctrl-item-btn {
+    &#delete-all-attr-ctrl-item-btn,&#delete-all-cond-btn {
         @include lightenOnHover($red);
     }
     
@@ -415,14 +415,6 @@ button,input[type=submit] {
 	to {transform: scale(1)}
 }
 
-#query-table {
-    #table-list {
-        .dropdown-btn {
-            color: black;
-        }
-    }
-}
-
 .dropdown {
     position: relative;
     
@@ -515,10 +507,15 @@ button,input[type=submit] {
     color: $basic-text-color;
 }
 
-#query-condition {
-    @extend collapsible-animate;
-}
+#query-table-form {
+    button[type=button] {
+        margin-right: 5px;
+    }
+    #query {
+        @extend collapsible-animate;
+    }
 
-#test > * {
-    display: inline-block;
+    #add-query-condition-btn {
+        background-color: $bright-blue;
+    }
 }
