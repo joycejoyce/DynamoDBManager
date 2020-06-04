@@ -1,6 +1,6 @@
 import {CreateTablePageView} from "./create-table/create-table-page-view.js";
 import {DeleteTableView} from "./delete-table-view.js";
-import {QueryTableView} from "./query-table-view.js";
+import {ManageTableItemsView} from "./manage-table-items-view.js";
 
 const React = require("react");
 const ReactDOM = require("react-dom");
@@ -16,10 +16,9 @@ ElementBuilder.init = () => {
     );
     
     ReactDOM.render(
-        <QueryTableView />,
-        document.querySelector("section#query-table")
+        <ManageTableItemsView />,
+        document.querySelector("#main-page-3")
     );
-
 };
 
 export {

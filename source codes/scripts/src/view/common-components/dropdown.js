@@ -6,7 +6,11 @@ class Dropdown extends React.Component {
     constructor() {
         super();
         
-        //this.getIElem = this.getIElem.bind(this);
+        this.state = {
+            btnText: ""
+        };
+        
+        this.getIElem = this.getIElem.bind(this);
         this.getBtn = this.getBtn.bind(this);
         this.getList = this.getList.bind(this);
         
@@ -28,7 +32,23 @@ class Dropdown extends React.Component {
     }
     
     async handleClickBtn(e) {
-        await this.props.updateList();
+        console.log("Enter handleClickBtn()");
+        console.log("props", this.props);
+        
+        if(this.props.contents !== undefined) {
+            console.log("defined0");
+        }
+        else {
+            console.log("undefined0");
+        }
+        
+        if(this.props.onClickBtn !== undefined) {
+            console.log("defined1");
+            await this.props.onClickBtn();
+        }
+        else {
+            console.log("undefined1");
+        }
         
         this.toggleFaCaretUpAndDownElem(this.getIElem());
         
@@ -52,17 +72,19 @@ class Dropdown extends React.Component {
         Util.showOrHideElement(this.getList());
         this.toggleFaCaretUpAndDownElem(this.getIElem());
         
-        const newText = e.target.innerHTML;
-        this.getBtn().value = newText;
+        const text = e.target.innerHTML;
+        this.setState(state => ({ btnText: text }));
         
-        await this.props.clickItem(newText);
+        if(this.props.onClickListItem != undefined) {
+            await this.props.onClickListItem(newText);
+        }
     }
     
     render() {
         return(
             <div className="dropdown" id={this.props.id}>
-                <DropdownBtnContainer key="btn" onClick={this.handleClickBtn}/>
-                <DropdownList key="list" className="dropdown-list" contents={this.props.contents} onClick={this.handleClickListItem}/>
+                <DropdownBtnContainer key="btn" onClickBtn={this.handleClickBtn} btnText={this.state.btnText} />
+                <DropdownList key="list" className="dropdown-list" contents={this.props.contents} onClickListItem={this.handleClickListItem}/>
             </div>
         );
     }
@@ -72,7 +94,7 @@ class DropdownBtnContainer extends React.Component {
     render() {
         return(
             <div className="dropdown-btn-container">
-                <input className="dropdown-btn" type="text" onClick={this.props.onClick} readOnly />
+                <input className="dropdown-btn" type="text" onClick={this.props.onClickBtn} value={this.props.btnText} readOnly />
                 <i className="fas fa-caret-down"></i>
             </div>
         );
@@ -81,10 +103,17 @@ class DropdownBtnContainer extends React.Component {
 
 class DropdownList extends React.Component {
     render() {
-        const contentsLink = this.props.contents.map(content => <a key={content} onClick={this.props.onClick}>{content}</a>);
+        const contents = this.props.contents;
+        let contentElems = [];
+        if(contents.length > 0) {
+            contentElems = contents.map(content => (<a key={content} onClick={this.props.onClickListItem}>{content}</a>));
+        }
+        else {
+            contentElems = [(<a key="" onClick={this.props.onClickListItem}>(No items)</a>)];
+        }
         return(
             <div className="dropdown-list">
-                {contentsLink}
+                {contentElems}
             </div>
         );
     }
