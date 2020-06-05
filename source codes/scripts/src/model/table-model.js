@@ -19,6 +19,20 @@ TableModel.list = () => {
     });
 };
 
+TableModel.create = (params) => {
+    return new Promise((resolve) => {
+        const action = "create-tables";
+        dbApi.createTable(params, (err, data) => {
+            if(err) {
+                resolve(`Fail to create table "${params.TableName}"\n${JSON.stringify(err, undefined, 2)}`);
+            }
+            else {
+                resolve(`Successfully create table "${params.TableName}"`);
+            }
+        });
+    });
+};
+
 TableModel.delete = (tableName) => {
     return new Promise((resolve) => {
         const action = "delete-tables";

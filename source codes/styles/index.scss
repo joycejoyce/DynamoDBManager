@@ -56,7 +56,7 @@ $light-blue: lighten($bright-blue, 35%);
 
 /* font-size */
 $header-font-size: 3rem;
-$h3-font-size: 1.2rem;
+$h1-font-size: 1.2rem;
 $collapsible-btn-font-size: 1.1rem;
 
 /* font-family */
@@ -70,7 +70,7 @@ $thin-dark-grey-border: 1px solid $dark-grey;
 $bold-dark-grey-border: 3px solid $dark-grey;
 
 /* width / height */
-$outer-width: 600px;
+$outer-width: 700px;
 $outer-height: 80vh;
 $inner-width: $outer-width * 0.9;
 
@@ -106,9 +106,10 @@ header {
 h1 {
     font-family: $title-font;
     font-weight: normal;
+    font-size: $h1-font-size;
 }
 
-input[type=text] {
+input[type=text],input[type=button] {
     width: inherit;
     font-size: 1rem;
     outline: none;
@@ -129,6 +130,20 @@ input[type=text] {
     &:focus {
         @extend :hover;
         border-color: $green;
+    }
+}
+
+textarea {
+    resize: none;
+    padding: 10px;
+    border: $thin-dark-grey-border;
+    border-radius: 10px;
+    font-family: $contents-font;
+    font-size: 1rem;
+    display: block;
+
+    &:focus {
+        outline: none;
     }
 }
 
@@ -187,7 +202,8 @@ button,input[type=submit] {
     
     #delete-table-form {
         padding: $form-padding;
-        overflow: visible;
+        overflow: auto;
+        max-height: 60%;
         
         &>* {
             $common-margin: 10px;
@@ -260,7 +276,7 @@ button,input[type=submit] {
         outline: none;
         color: $basic-text-color;;
         border-radius: 0;
-        font-size: $h3-font-size;
+        font-size: $h1-font-size;
         font-weight: bold;
         float: left;
         @include changeBkColorOnHover(inherit, $normal-grey);
@@ -446,6 +462,8 @@ button,input[type=submit] {
         transform: translateY(5px);
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         background-color: white;
+        max-height: 35vh;
+        overflow: auto;
     }
     
     .dropdown-list > * {
@@ -520,5 +538,45 @@ button,input[type=submit] {
     }
 }
 
+#create-test-tables-form {
+    input {
+        margin-right: 5px;
+    }
+    
+    #create-btn {
+        color: $light-grey;
+        background-color: $bright-blue;
+    }
+    
+    textarea {
+        width: 60%;
+        height: 35%;
+        cursor: default;
+        overflow: visible;
+    }
+}
+
+
 #query-form {
+    #conditions {
+        #add-btn {
+            background-color: $bright-blue;
+        }
+        
+        #delete-all-btn {
+            background-color: $red;
+        }
+        
+        button {
+            margin-right: 5px;
+        }
+    }
+}
+
+button,input[type=submit] {
+    &:disabled {
+        cursor: no-drop;
+        color: $darker-grey !important;
+        background-color: $light-grey !important;
+    }
 }

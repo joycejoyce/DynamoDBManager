@@ -32,22 +32,8 @@ class Dropdown extends React.Component {
     }
     
     async handleClickBtn(e) {
-        console.log("Enter handleClickBtn()");
-        console.log("props", this.props);
-        
-        if(this.props.contents !== undefined) {
-            console.log("defined0");
-        }
-        else {
-            console.log("undefined0");
-        }
-        
         if(this.props.onClickBtn !== undefined) {
-            console.log("defined1");
             await this.props.onClickBtn();
-        }
-        else {
-            console.log("undefined1");
         }
         
         this.toggleFaCaretUpAndDownElem(this.getIElem());
@@ -75,8 +61,8 @@ class Dropdown extends React.Component {
         const text = e.target.innerHTML;
         this.setState(state => ({ btnText: text }));
         
-        if(this.props.onClickListItem != undefined) {
-            await this.props.onClickListItem(newText);
+        if(this.props.onClickListItem !== undefined) {
+            await this.props.onClickListItem(text);
         }
     }
     
