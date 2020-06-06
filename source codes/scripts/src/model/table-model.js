@@ -58,9 +58,8 @@ TableModel.describe = (tableName, describeName) => {
             }
             else {
                 switch (describeName) {
-                    case TableModel.describeName.attributeName:
-                        const attrNames = data.Table.AttributeDefinitions.map(def => def.AttributeName);
-                        resolve(attrNames);
+                    case TableModel.describeName.attrDef:
+                        resolve(data.Table.AttributeDefinitions);
                         break;
                     default:
                         resolve();
@@ -72,7 +71,7 @@ TableModel.describe = (tableName, describeName) => {
 };
                     
 TableModel.describeName = {
-    attributeName: "AttributeName"
+    attrDef: "AttributeDefinitions"
 };
                     
 export {

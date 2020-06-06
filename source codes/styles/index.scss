@@ -89,10 +89,12 @@ $main-tab-btn-padding: 14px 16px;
 $dropdown-btn-padding: 10px 12px;
 $form-padding: 0px 10px 10px;
 
-body {
+html {
     @extend outer-elem-color;
     font-size: 16px;
     font-family: $contents-font;
+    width: 100vw;
+    height: 100vh;
 }
 
 header {
@@ -559,6 +561,16 @@ button,input[type=submit] {
 
 #query-form {
     #conditions {
+        table#cond-ctrl-items {
+            color: $basic-text-color;
+            td {
+                text-align: center;
+                .dropdown-list>* {
+                    text-align: left;
+                }
+            }
+        }
+        
         #add-btn {
             background-color: $bright-blue;
         }
@@ -569,6 +581,10 @@ button,input[type=submit] {
         
         button {
             margin-right: 5px;
+        }
+        
+        .delete-cond-ctrl-item-btn {
+            max-width: 20px;
         }
     }
 }

@@ -12,15 +12,21 @@ class ManageTableItemsView extends React.Component {
             queryConditions: [],
             queryConditionsSectionDisplay: "none",
             conditions: [],
-            attrList: []
+            attrDefList: []
         };
+        this.condNum = 0;
         this.setTableList();
         
-        this.setTableList = this.setTableList.bind(this);
         this.handleTableListClick = this.handleTableListClick.bind(this);
         this.handleTableNameClick = this.handleTableNameClick.bind(this);
         this.handleAddCondBtnClick = this.handleAddCondBtnClick.bind(this);
         this.handleAttrNameClick = this.handleAttrNameClick.bind(this);
+        this.handleCondValueChange = this.handleCondValueChange.bind(this);
+        this.handleCondValueChange = this.handleCondValueChange.bind(this);
+        
+        this.setTableList = this.setTableList.bind(this);
+        this.getCondId = this.getCondId.bind(this);
+        this.getNewConditions = this.getNewConditions.bind(this);
     }
     
     handleTableListClick() {
@@ -28,14 +34,20 @@ class ManageTableItemsView extends React.Component {
     }
     
     async handleTableNameClick(tableName) {
-        console.log("tableName", tableName);
-        const attrList = await TableModel.describe(tableName, TableModel.describeName.attributeName);
-        console.log("attrList", attrList);
+        const attrDefList = await TableModel.describe(tableName, TableModel.describeName.attrDef);
+        const id = this.getCondId();
+        const firstCond = { id: id, attrName: "", operator: "", value: "" };
         this.setState(state => ({ 
             queryConditionsSectionDisplay: "block",
             tableName: tableName,
-            attrList: attrList
+            attrDefList: attrDefList,
+            conditions: [firstCond]
         }));
+    }
+    
+    getCondId() {
+        const id = "cond" + (this.condNum++).toString();
+        return id;
     }
     
     async setTableList() {
@@ -44,11 +56,36 @@ class ManageTableItemsView extends React.Component {
     }
     
     handleAddCondBtnClick() {
-        const newConditions = this.state.conditions.concat({ attrName: "", operator: "", value: "" });
+        const id = this.getCondId();
+        const newConditions = this.state.conditions.concat({ id: id, attrName: "", operator: "", value: "" });
         this.setState(state => ({ conditions: newConditions }));
     }
     
-    handleAttrNameClick(attrName) {
+    async handleAttrNameClick(id, attrName) {
+        const newConditions = this.getNewConditions(id, "attrName", attrName);
+        this.setState({ conditions: newConditions });
+    }
+    
+    getNewConditions(id, prop, newValue) {
+        const curConditions = this.state.conditions;
+        const newConditions = curConditions.reduce((result, cond) => {
+            if(cond.id === id) {
+                cond[prop] = newValue;
+            }
+            result.push(cond);
+            return result;
+        }, []);
+        return newConditions;
+    }
+    
+    handleCondValueChange(id, value) {
+        const newConditions = this.getNewConditions(id, "value", value);
+        this.setState({ conditions: newConditions });
+    }
+    
+    handleCondValueChange(id, operator) {
+        const newConditions = this.getNewConditions(id, "operator", operator);
+        this.setState({ conditions: newConditions });
     }
     
     render() {
@@ -61,8 +98,10 @@ class ManageTableItemsView extends React.Component {
                     tableList={this.state.tableList}
                     queryConditionsSectionDisplay={this.state.queryConditionsSectionDisplay}
                     conditions={this.state.conditions}
-                    attrList={this.state.attrList}
+                    attrDefList={this.state.attrDefList}
                     onAttrNameClick={this.handleAttrNameClick}
+                    onOperatorClick={this.handleOperatorClick}
+                    onCondValueChange={this.handleCondValueChange}
                 />
                 <Modify />
             </div>
@@ -91,13 +130,13 @@ class Query extends React.Component {
                             <tr>
                                 <td></td>
                                 <td>Attribute Name</td>
-                                <td></td>
+                                <td>Operator</td>
                                 <td>Value</td>
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                this.props.conditions.map((cond, index) => (<CondCtrlItem key={cond.attrName+cond.operator} id={"id"+index.toString()} condition={cond} attrList={this.props.attrList} onAttrNameClick={this.props.onAttrNameClick} />))
+                                this.props.conditions.map(cond => (<CondCtrlItem key={cond.id} id={cond.id} attrDefList={this.props.attrDefList} onAttrNameClick={this.props.onAttrNameClick} onCondValueChange={this.props.onCondValueChange} onOperatorClick={this.props.onOperatorClick} />))
                             }
                         </tbody>
                     </table>
@@ -108,11 +147,64 @@ class Query extends React.Component {
 }
 
 class CondCtrlItem extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            operatorList: []
+        };
+        
+        this.handleAttrNameClick = this.handleAttrNameClick.bind(this);
+        this.handleOperatorClick = this.handleOperatorClick.bind(this);
+        this.handleCondValueChange = this.handleCondValueChange.bind(this);
+        
+        this.getAttrType = this.getAttrType.bind(this);
+    }
+    
+    handleAttrNameClick(attrName) {
+        this.props.onAttrNameClick(this.props.id, attrName);
+        
+        const attrType = this.getAttrType(attrName);
+        let operatorList = [];
+        switch(attrType) {
+            case "S":
+                operatorList = ["=", "<", ">", "<=", ">="];
+                break;
+            case "N":
+                operatorList = ["=", "<", ">", "<=", ">="];
+                break;
+            case "B":
+                operatorList = ["true", "false"];
+                break;
+            default:
+                operatorList = ["(unexpected attribute type)"];
+                break;
+        }
+        this.setState({ operatorList: operatorList });
+    }
+    
+    getAttrType(attrName) {
+        const type = this.props.attrDefList.filter(def => def.AttributeName === attrName)[0].AttributeType;
+        return type;
+    }
+    
+    handleOperatorClick(operator) {
+        
+    }
+    
+    handleCondValueChange(e) {
+        const value = e.target.value;
+        const id = this.props.id;
+        this.props.onCondValueChange(id, value);
+    }
+    
     render() {
+        const attrNameList = this.props.attrDefList.map(def => def.AttributeName);
         return (
             <tr className="cond-ctrl-item">
-                <td><img src="./resources/manage-table-items-page/delete-cond-ctrl-item-btn.png" alt="delete this item"/></td>
-                <td><Dropdown id={this.props.id} contents={this.props.attrList} onClickListItem={this.props.onAttrNameClick} /></td>
+                <td><img className="delete-cond-ctrl-item-btn" src="./resources/manage-table-items-page/delete-cond-ctrl-item-btn.png" alt="delete this item"/></td>
+                <td><Dropdown id={this.props.id+"-attr-name"} contents={attrNameList} onClickListItem={this.handleAttrNameClick} /></td>
+                <td><Dropdown id={this.props.id+"-attr-operator"} contents={this.state.operatorList} onOperatorClick={this.handleOperatorClick} /></td>
+                <td><input type="text" onChange={this.handleCondValueChange}/></td>
             </tr>
         );
     }

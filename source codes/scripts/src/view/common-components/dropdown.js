@@ -58,7 +58,7 @@ class Dropdown extends React.Component {
         Util.showOrHideElement(this.getList());
         this.toggleFaCaretUpAndDownElem(this.getIElem());
         
-        const text = e.target.innerHTML;
+        const text = e.target.textContent;
         this.setState(state => ({ btnText: text }));
         
         if(this.props.onClickListItem !== undefined) {
