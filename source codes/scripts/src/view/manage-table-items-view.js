@@ -1,5 +1,6 @@
 import { TableModel } from "../model/table-model.js";
 import { Dropdown } from "./common-components/dropdown.js";
+import { Select } from "./form-components/select.js";
 
 const React = require("react");
 
@@ -7,6 +8,20 @@ class ManageTableItemsView extends React.Component {
     constructor() {
         super();
         this.state = {
+            formControls: {
+                tableName: {
+                    name: "tableName",
+                    value: "",
+                    placeholder: "Choose a table",
+                    valid: false,
+                    touched: false,
+                    validationRules: {
+                        isRequired: true
+                    },
+                    options: []
+                }
+            },
+            
             tableList: [],
             tableName: "",
             queryConditions: [],
@@ -16,6 +31,7 @@ class ManageTableItemsView extends React.Component {
         };
         this.condNum = 0;
         this.setTableList();
+        this.setTableNameOptions();
         
         this.handleTableListClick = this.handleTableListClick.bind(this);
         this.handleTableNameClick = this.handleTableNameClick.bind(this);
@@ -27,6 +43,15 @@ class ManageTableItemsView extends React.Component {
         this.setTableList = this.setTableList.bind(this);
         this.getCondId = this.getCondId.bind(this);
         this.getNewConditions = this.getNewConditions.bind(this);
+    }
+    
+    async setTableNameOptions() {
+        const tableNameList = await TableModel.list();
+        const tableNameOptions = Select.getOptionsByList(tableNameList);
+        console.log("tableNameOptions", tableNameOptions);
+        const formControls = {...this.state.formControls};
+        formControls.tableName.options = tableNameOptions;
+        this.setState({formControls});
     }
     
     handleTableListClick() {
@@ -89,9 +114,12 @@ class ManageTableItemsView extends React.Component {
     }
     
     render() {
+        console.log("tableName options", this.state.formControls.tableName.options);
         return (
             <div id="manage-table-items">
                 <Query
+                    tableName={this.state.formControls.tableName}
+            
                     onTableListClick={this.handleTableListClick}
                     onTableNameClick={this.handleTableNameClick}
                     onAddCondBtnClick={this.handleAddCondBtnClick}
@@ -119,7 +147,8 @@ class Query extends React.Component {
         return (
             <form id="query-form">
                 <label htmlFor="tableName"><h1>Choose a table</h1></label>
-                <Dropdown id="tableName" contents={this.props.tableList} onClickBtn={this.props.onTableListClick} onClickListItem={this.props.onTableNameClick} />
+                <Select contents={this.props.tableName} />
+                {/*<Dropdown id="tableName" contents={this.props.tableList} onClickBtn={this.props.onTableListClick} onClickListItem={this.props.onTableNameClick} />*/}
             
                 <section id="conditions" style={styles.queryConditionsSectionDisplay}>
                     <h1>Query Conditions</h1>
