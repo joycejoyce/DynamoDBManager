@@ -596,3 +596,19 @@ button,input[type=submit] {
         background-color: $light-grey !important;
     }
 }
+
+select {
+    font-family: $contents-font !important;
+    font-size: 1rem;
+    height: 40px;
+    width: 150px;
+    padding: 5px;
+    border-radius: 3px;
+    border: none;
+}
+
+option {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer !important;
+}

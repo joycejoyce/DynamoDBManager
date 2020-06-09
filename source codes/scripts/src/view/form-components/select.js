@@ -7,15 +7,12 @@ class Select extends React.Component {
     }
     
     render() {
-        const exceptOptions = Object.entries(this.props.contents)
-            .filter(([key, value]) => key !== "options")
-            .map(entry => entry);
-        console.log("exceptOptions", exceptOptions);
         return (
-            <select {...exceptOptions}>
+            <select name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
+                <option value="default" disabled>{this.props.placeholder}</option>
                 {
-                    this.props.contents.options.map(opt => (
-                        <option value={opt.value}>
+                    this.props.options.map(opt => (
+                        <option key={opt.value} value={opt.value}>
                             {opt.displayValue}
                         </option>
                     ))
