@@ -433,50 +433,6 @@ button,input[type=submit] {
 	to {transform: scale(1)}
 }
 
-.dropdown {
-    position: relative;
-    
-    & > * {
-        width: 150px;
-    }
-    
-    .dropdown-btn-container {
-        position: relative;
-
-        .dropdown-btn {
-            cursor: default;
-        }
-
-        .fa,.fas {
-            display: inline-block;
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            margin: auto;
-            transform: translateY(-60%);
-        }
-    }
-    
-    .dropdown-list {
-        display: none;
-        position: absolute;
-        z-index: 1;
-        transform: translateY(5px);
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        background-color: white;
-        max-height: 35vh;
-        overflow: auto;
-    }
-    
-    .dropdown-list > * {
-        display: block;
-        cursor: pointer;
-        background-color: $light-green;
-        padding: 10px 10px;
-        margin-top: 1px;
-    }
-}
-
 #provisioned-throughput-tbl input {
     width: 100px;
 }
@@ -597,18 +553,51 @@ button,input[type=submit] {
     }
 }
 
-select {
-    font-family: $contents-font !important;
-    font-size: 1rem;
-    height: 40px;
-    width: 150px;
-    padding: 5px;
-    border-radius: 3px;
-    border: none;
-}
+.dropdown {
+    position: relative;
+    
+    & > * {
+        width: 170px;
+    }
+    
+    .dropdown-btn-container {
+        position: relative;
 
-option {
-    -webkit-appearance: none;
-    appearance: none;
-    cursor: pointer !important;
+        .dropdown-btn {
+            cursor: default;
+        }
+
+        .fa,.fas {
+            display: inline-block;
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            margin: auto;
+            transform: translateY(-60%);
+        }
+    }
+    
+    .dropdown-list {
+        display: none;
+        position: absolute;
+        z-index: 1;
+        transform: translateY(5px);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        background-color: white;
+        max-height: 35vh;
+        overflow: auto;
+    }
+    
+    .dropdown-list > input, .dropdown-list > a {
+        display: block;
+        cursor: pointer;
+        background-color: $light-green;
+        padding: 10px 10px;
+        margin-top: 1px;
+        border-radius: 0px;
+        
+        &:hover {
+            box-shadow: none;
+        }
+    }
 }

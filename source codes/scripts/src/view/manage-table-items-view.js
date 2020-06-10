@@ -8,9 +8,11 @@ const React = require("react");
 class ManageTableItemsView extends React.Component {
     constructor() {
         super();
-        //new
+        
         this.setTableNameOptions = this.setTableNameOptions.bind(this);
         this.changeHandler = this.changeHandler.bind(this);
+        this.handleChangeOnTableName = this.handleChangeOnTableName.bind(this);
+        
         this.state = {
             formIsValid: false,
             formControls: {
@@ -22,39 +24,54 @@ class ManageTableItemsView extends React.Component {
                         isRequired: true
                     },
                     options: [],
-                    onChange: this.changeHandler
+                    onChange: this.handleChangeOnTableName
+                },
+                queryCondition: {
+                    display: "none"
                 }
             }
         };
-        //new
+
         this.setTableNameOptions();
     }
     
-    changeHandler(event) {
-        console.log("enter");
-        const name = event.target.name;
-        const value = event.target.value;
+    async handleChangeOnTableName(e) {
+        await this.changeHandler(e);
+        
+        const formControls = {...this.state.formControls};
+        formControls.queryCondition.display = "block";
+        this.setState({formControls});
+    }
+    
+    changeHandler(event, ...callbacks) {
+        return new Promise(async resolve => {
+            const name = event.target.name;
+            const value = event.target.value;
 
-        const updatedControls = {
-            ...this.state.formControls
-        };
-        const updatedFormElement = {
-            ...updatedControls[name]
-        };
-        updatedFormElement.value = value;
-        updatedFormElement.valid = validate(value, updatedFormElement.validationRules);
+            const updatedControls = {
+                ...this.state.formControls
+            };
+            const updatedFormElement = {
+                ...updatedControls[name]
+            };
+            updatedFormElement.value = value;
+            updatedFormElement.valid = validate(value, updatedFormElement.validationRules);
 
-        updatedControls[name] = updatedFormElement;
+            updatedControls[name] = updatedFormElement;
 
-        let formIsValid = true;
-        for (let inputIdentifier in updatedControls) {
-            formIsValid = updatedControls[inputIdentifier].valid && formIsValid;
-        }
+            let formIsValid = true;
+            for (let inputIdentifier in updatedControls) {
+                formIsValid = updatedControls[inputIdentifier].valid && formIsValid;
+            }
 
-        this.setState({
-            formControls: updatedControls,
-            formIsValid: formIsValid
+            await this.setState({
+                formControls: updatedControls,
+                formIsValid: formIsValid
+            });
+            
+            resolve();
         });
+        
     }
     
     async setTableNameOptions() {
@@ -70,6 +87,7 @@ class ManageTableItemsView extends React.Component {
             <div id="manage-table-items">
                 <Query
                     tableName={this.state.formControls.tableName}
+                    queryCondition={this.state.formControls.queryCondition}
                 />
                 {/*<Modify />*/}
             </div>
@@ -79,15 +97,24 @@ class ManageTableItemsView extends React.Component {
 
 class Query extends React.Component {
     render() {
+        const queryConditionStyles = {
+            display: this.props.queryCondition.display
+        };
+        
         return (
             <form id="query-form">
-                <label htmlFor="tableName"><h1>Table Name</h1></label>
-                <Dropdown
-                    name="tableName"
-                    value={this.props.tableName.value}
-                    onChange={this.props.tableName.onChange}
-                    options={this.props.tableName.options}
-                />
+                <section id="tableName">
+                    <h1>Table Name</h1>
+                    <Dropdown
+                        name="tableName"
+                        value={this.props.tableName.value}
+                        onChange={this.props.tableName.onChange}
+                        options={this.props.tableName.options}
+                    />
+                </section>
+                <section id="queryCondition" style={queryConditionStyles}>
+                    <h1>Query Conditions</h1>
+                </section>
             </form>
         );
     }

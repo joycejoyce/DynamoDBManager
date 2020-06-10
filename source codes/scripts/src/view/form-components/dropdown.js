@@ -4,8 +4,6 @@ class Dropdown extends React.Component {
     constructor(props) {
         super(props);
         
-        this.testHandleBtnChange = this.testHandleBtnChange.bind(this);
-        
         this.handleBtnClick = this.handleBtnClick.bind(this);
         this.handleItemClick = this.handleItemClick.bind(this);
         
@@ -26,9 +24,15 @@ class Dropdown extends React.Component {
     }
     
     handleItemClick(e) {
-        const btnText = e.target.textContent;
-        this.toggle();
+        //1
+        const btnText = e.target.value;
         this.setState({btnText});
+        
+        //2
+        this.toggle();
+        
+        //3
+        this.props.onChange(e);
     }
     
     handleBtnClick() {
@@ -52,10 +56,6 @@ class Dropdown extends React.Component {
         this.setState({iElemClass});
     }
     
-    testHandleBtnChange(e) {
-        console.log("e.value", e.target.value);
-    }
-    
     render() {
         const styles = {
             listDisplay: {
@@ -66,34 +66,28 @@ class Dropdown extends React.Component {
             <div className="dropdown">
                 <div className="dropdown-btn-container">
                     <input className="dropdown-btn"
-                            type="text"
-                            onChange={this.testHandleBtnChange.bind(this)}
-                            onClick={this.handleBtnClick}
-                            value={this.state.btnText}
-                            readOnly
+                        type="text"
+                        onClick={this.handleBtnClick}
+                        value={this.state.btnText}
+                        readOnly
                     />
                     <i className={"fas "+this.state.iElemClass}></i>
                 </div>
                 <div className="dropdown-list" style={styles.listDisplay}>
                     {
                         this.props.options.map(opt => (
-                            <a type="text" key={opt.value} onClick={this.handleItemClick}>{opt.displayValue}</a>
+                            <input type="text"
+                                key={opt.value}
+                                name={this.props.name}
+                                value={opt.value}
+                                onClick={this.handleItemClick}
+                                spellcheck="false"
+                                readOnly
+                            />
                         ))
                     }
                 </div>
-
-            {/*<select calssName="dropdown" name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
-                <option value="default" disabled>{this.props.placeholder}</option>
-                {
-                    this.props.options.map(opt => (
-                        <option key={opt.value} value={opt.value}>
-                            {opt.displayValue}
-                        </option>
-                    ))
-                }
-            </select>*/}
             </div>
-            
         );
     }
 }
