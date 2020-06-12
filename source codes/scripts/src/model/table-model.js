@@ -71,7 +71,9 @@ TableModel.describe = (tableName, describeName) => {
 };
                     
 TableModel.describeName = {
-    attrDef: "AttributeDefinitions"
+    attrDef: "AttributeDefinitions",
+    attrName: "AttributeName",
+    attrType: "AttributeType"
 };
                     
 export {

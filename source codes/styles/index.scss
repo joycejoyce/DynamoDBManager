@@ -5,24 +5,7 @@ $basic-red: hsla(0, 100%, 50%, 1);
 $light-grey: #f1f1f1;
 $normal-grey: #ddd;
 $dark-grey: #ccc;
-
 $basic-text-color: #264653;
-
-outer-elem-color {
-    background-color: #2A9D8F;
-    color: #E9C46A;
-}
-
-inner-elem-color {
-    background-color: #E9C46A;
-    color: $basic-text-color;
-}
-
-inner2-elem-color {
-    background-color: $normal-grey;
-    color: $basic-text-color;
-}
-
 $darker-grey: #6d6d6d;
 $green: #2A9D8F;
 $light-green: lighten($green, 25%);
@@ -34,7 +17,7 @@ $light-blue: lighten($bright-blue, 35%);
     background-color: $color;
     
     &:hover {
-        background-color: lighten($color, 30%);
+        background-color: lighten($color, 10%);
     }
 }
 
@@ -54,6 +37,28 @@ $light-blue: lighten($bright-blue, 35%);
     }
 }
 
+outer-elem-color {
+    background-color: #2A9D8F;
+    color: #E9C46A;
+}
+
+inner-elem-color {
+    background-color: #E9C46A;
+    color: $basic-text-color;
+}
+
+inner2-elem-color {
+    background-color: $normal-grey;
+    color: $basic-text-color;
+}
+
+add-btn-color {
+    @include lightenOnHover($bright-blue);
+}
+
+del-btn-color {
+    @include lightenOnHover($red);
+}
 /* font-size */
 $header-font-size: 3rem;
 $h1-font-size: 1.2rem;
@@ -111,7 +116,7 @@ h1 {
     font-size: $h1-font-size;
 }
 
-input[type=text],input[type=button] {
+input[type=text] {
     width: inherit;
     font-size: 1rem;
     outline: none;
@@ -161,7 +166,7 @@ table {
     }
 }
 
-button,input[type=submit] {
+button,input[type=submit],input[type=button] {
     font-family: $contents-font;
     font-size: 1rem;
     border: none;
@@ -178,8 +183,8 @@ button,input[type=submit] {
         background-color: $light-grey !important;
     }
     
-    &#add-attr-ctrl-item-btn,&#add-cond-btn {
-        @include lightenOnHover($bright-blue);
+    &#add-attr-ctrl-item-btn {
+        @extend add-btn-color;
     }
     
     &#delete-all-attr-ctrl-item-btn,&#delete-all-cond-btn {
@@ -599,5 +604,44 @@ button,input[type=submit] {
         &:hover {
             box-shadow: none;
         }
+    }
+}
+
+#query-form {
+    #queryCondition {
+        input[type="text"] {
+            width: 170px;
+        }
+        
+        input[type="button"] {
+            margin-right: 5px;
+        }
+
+        input[value="Add"] {
+            @extend add-btn-color;
+        }
+
+        input[value="Delete All"] {
+            @extend del-btn-color;
+        }
+
+        img {
+            width: 20px;
+        }
+
+        table {
+            color: $basic-text-color;
+
+            td {
+                background-color: inherit;
+                text-align: center;
+            }
+        }
+    }
+    
+    input[value="Query"] {
+        @include lightenOnHover($green);
+        display: block;
+        margin-left: auto;
     }
 }

@@ -69,8 +69,8 @@ class Dropdown extends React.Component {
     render() {
         return(
             <div className="dropdown" id={this.props.id}>
-                <DropdownBtnContainer key="btn" onClickBtn={this.handleClickBtn} btnText={this.state.btnText} />
-                <DropdownList key="list" className="dropdown-list" contents={this.props.contents} onClickListItem={this.handleClickListItem}/>
+                <DropdownBtnContainer onClickBtn={this.handleClickBtn} btnText={this.state.btnText} />
+                <DropdownList className="dropdown-list" contents={this.props.contents} onClickListItem={this.handleClickListItem}/>
             </div>
         );
     }
@@ -95,7 +95,7 @@ class DropdownList extends React.Component {
             contentElems = contents.map(content => (<a key={content} onClick={this.props.onClickListItem}>{content}</a>));
         }
         else {
-            contentElems = [(<a key="" onClick={this.props.onClickListItem}>(No items)</a>)];
+            contentElems = [(<a onClick={this.props.onClickListItem}>(No items)</a>)];
         }
         return(
             <div className="dropdown-list">

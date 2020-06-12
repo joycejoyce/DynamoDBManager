@@ -25,13 +25,9 @@ class Dropdown extends React.Component {
     
     handleItemClick(e) {
         //1
-        const btnText = e.target.value;
-        this.setState({btnText});
-        
-        //2
         this.toggle();
         
-        //3
+        //2
         this.props.onChange(e);
     }
     
@@ -68,7 +64,7 @@ class Dropdown extends React.Component {
                     <input className="dropdown-btn"
                         type="text"
                         onClick={this.handleBtnClick}
-                        value={this.state.btnText}
+                        value={this.props.value}
                         readOnly
                     />
                     <i className={"fas "+this.state.iElemClass}></i>
