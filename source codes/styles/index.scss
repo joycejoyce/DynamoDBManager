@@ -607,36 +607,36 @@ button,input[type=submit] {
     }
 }
 
+#manage-table-items {
+    table {
+        color: $basic-text-color;
+
+        td {
+            background-color: inherit;
+            text-align: center;
+        }
+    }
+    
+    .dropdown-btn-container,input[type="text"],.dropdown-list {
+        width: $inner-width / 3;
+    }
+}
+
 #query-form {
-    #queryCondition {
-        input[type="text"] {
-            width: 170px;
-        }
-        
-        input[type="button"] {
-            margin-right: 5px;
-        }
+    input[type="button"] {
+        margin-right: 5px;
+    }
 
-        input[value="Add"] {
-            @extend add-btn-color;
-        }
+    input[value="Add"] {
+        @extend add-btn-color;
+    }
 
-        input[value="Delete All"] {
-            @extend del-btn-color;
-        }
+    input[value="Delete All"] {
+        @extend del-btn-color;
+    }
 
-        img {
-            width: 20px;
-        }
-
-        table {
-            color: $basic-text-color;
-
-            td {
-                background-color: inherit;
-                text-align: center;
-            }
-        }
+    input[type="image"] {
+        width: 20px;
     }
     
     input[value="Query"] {

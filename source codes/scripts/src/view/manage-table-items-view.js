@@ -15,6 +15,7 @@ class ManageTableItemsView extends React.Component {
         this.handleClickDeleteAllQueryCondition = this.handleClickDeleteAllQueryCondition.bind(this);
         this.handleClickDeleteQueryCondition = this.handleClickDeleteQueryCondition.bind(this);
         this.handleClickQuery = this.handleClickQuery.bind(this);
+        this.handleClickAddItem = this.handleClickAddItem.bind(this);
         
         this.setTableNameOptions = this.setTableNameOptions.bind(this);
         
@@ -36,8 +37,12 @@ class ManageTableItemsView extends React.Component {
                     options: [],
                     onChange: this.handleChangeOnTableName
                 },
+                attrData: {
+                    defList: [],
+                    nameOptions: [],
+                    nameTypeMap: {}
+                },
                 queryCondition: {
-                    display: "none",
                     add: {
                         onClick: this.handleClickOnAddQueryCondition
                     },
@@ -48,17 +53,17 @@ class ManageTableItemsView extends React.Component {
                     delete: {
                         onClick: this.handleClickDeleteQueryCondition
                     },
-                    query: {
-                        onClick: this.handleClickQuery
-                    },
                     conditions: [],
-                    condNum: -1,
-                    onChangeQueryCondition: this.handleChangeOnQueryCondition
+                    onChange: this.handleChangeOnQueryCondition
                 },
-                attrData: {
-                    defList: [],
-                    nameOptions: [],
-                    nameTypeMap: {}
+                query: {
+                    display: "none",
+                    onClick: this.handleClickQuery
+                },
+                modify: {
+                    display: "none",
+                    onClickAddItem: this.handleClickAddItem,
+                    items: []
                 }
             },
             
@@ -68,7 +73,6 @@ class ManageTableItemsView extends React.Component {
     componentDidMount() {
         this.setTableNameOptions();
         this.resetQueryConditions();
-        console.log("init conditions", this.state.formControls.queryCondition.conditions);
     }
     
     getEmptyCondition() {
@@ -83,13 +87,8 @@ class ManageTableItemsView extends React.Component {
     }
     
     resetQueryConditions() {
-        const conditions = [this.getEmptyCondition()];
-        const condNum = 1;
-        
         const formControls = {...this.state.formControls};
-        formControls.queryCondition.conditions = conditions;
-        formControls.queryCondition.condNum = condNum;
-        
+        formControls.queryCondition.conditions = [this.getEmptyCondition()];
         this.setState({formControls});
     }
     
@@ -100,7 +99,8 @@ class ManageTableItemsView extends React.Component {
         
         const formControls = {...this.state.formControls};
         
-        formControls.queryCondition.display = "block";
+        formControls.query.display = "block";
+        formControls.modify.display = "block";
         formControls.attrData = await this.getAttrData();
         
         this.setState({formControls});
@@ -149,9 +149,9 @@ class ManageTableItemsView extends React.Component {
     }
     
     addCondition() {
-        const condition = this.getEmptyCondition();
-        condition.id = this.state.formControls.queryCondition.condNum++;
         const formControls = {...this.state.formControls};
+        const condition = this.getEmptyCondition();
+        condition.id = formControls.queryCondition.conditions.length;
         formControls.queryCondition.conditions.push(condition);
         this.setState({formControls});
     }
@@ -163,7 +163,7 @@ class ManageTableItemsView extends React.Component {
     }
     
     handleClickDeleteQueryCondition(id) {
-        if(this.state.formControls.queryCondition.condNum <= 1) {
+        if(this.state.formControls.queryCondition.conditions.length <= 1) {
             this.resetQueryConditions();
         }
         else {
@@ -218,7 +218,6 @@ class ManageTableItemsView extends React.Component {
     }
     
     handleChangeOnQueryCondition(id, condName, condValue) {
-        console.log("arguments", arguments);
         const formControls = {...this.state.formControls};
         const newConditions = formControls.queryCondition.conditions.reduce((result, condition) => {
             if(condition.id === id) {
@@ -226,8 +225,6 @@ class ManageTableItemsView extends React.Component {
                 
                 if(condName === QUERY_CONDITION.attrName) {
                     this.modifyConditionByAttrName(condValue, condition);
-                    console.log("operatorOptions", condition.operatorOptions);
-                    console.log("valueOptions", condition.valueOptions);
                 }
             }
             
@@ -294,19 +291,34 @@ class ManageTableItemsView extends React.Component {
         return valueOptions;
     }
     
-    handleClickQuery() {
+    handleClickQuery(e) {
+        e.preventDefault();
+    }
+    
+    handleClickAddItem() {
         
     }
     
     render() {
         return (
             <div id="manage-table-items">
-                <Query
+                <section id="tableName">
+                    <h1>Table Name</h1>
+                    <Dropdown
+                        name="tableName"
+                        value={this.state.formControls.tableName.value}
+                        onChange={this.state.formControls.tableName.onChange}
+                        options={this.state.formControls.tableName.options}
+                    />
+                </section>
+                <Query query={this.state.formControls.query}
                     tableName={this.state.formControls.tableName}
                     queryCondition={this.state.formControls.queryCondition}
                     attrData={this.state.formControls.attrData}
                 />
-                {/*<Modify />*/}
+                <Modify modify={this.state.formControls.modify}
+                    attrData={this.state.formControls.attrData}
+                />
             </div>
         );
     }
@@ -314,29 +326,18 @@ class ManageTableItemsView extends React.Component {
 
 class Query extends React.Component {
     render() {
-        const queryConditionStyles = {
-            display: this.props.queryCondition.display
+        const styles = {
+            display: this.props.query.display
         };
         
         return (
-            <form id="query-form">
-                <section id="tableName">
-                    <h1>Table Name</h1>
-                    <Dropdown
-                        name="tableName"
-                        value={this.props.tableName.value}
-                        onChange={this.props.tableName.onChange}
-                        options={this.props.tableName.options}
-                    />
-                </section>
-                <section id="queryCondition" style={queryConditionStyles}>
-                    <h1>Query Conditions</h1>
-                    <input type="button" value="Add" onClick={this.props.queryCondition.add.onClick} />
-                    <input type="button" value="Delete All" onClick={this.props.queryCondition.deleteAll.onClick} disabled={this.props.queryCondition.deleteAll.disabled} />
-                    <QueryConditionTable queryCondition={this.props.queryCondition}
-                        attrData={this.props.attrData}/>
-                    <input type="submit" value="Query" onClick={this.props.queryCondition.query.onClick} />
-                </section>
+            <form id="query-form" style={styles}>
+                <h1>Query</h1>
+                <input type="button" value="Add" onClick={this.props.queryCondition.add.onClick} />
+                <input type="button" value="Delete All" onClick={this.props.queryCondition.deleteAll.onClick} disabled={this.props.queryCondition.deleteAll.disabled} />
+                <QueryConditionTable queryCondition={this.props.queryCondition}
+                    attrData={this.props.attrData}/>
+                <input type="submit" value="Query" onClick={this.props.query.onClick} />
             </form>
         );
     }
@@ -380,28 +381,17 @@ class QueryConditionRow extends React.Component {
         }
         
         this.handleClickOnDelete = this.handleClickOnDelete.bind(this);
-        this.handleChangeOnAttrName = this.handleChangeOnAttrName.bind(this);
-        this.handleChangeOnOperator = this.handleChangeOnOperator.bind(this);
-        this.handleChangeOnValue = this.handleChangeOnValue.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
     }
     
     handleClickOnDelete() {
         this.props.queryCondition.delete.onClick(this.props.condition.id);
     }
     
-    handleChangeOnAttrName(e) {
-        const attrName = e.target.value;
-        this.props.queryCondition.onChangeQueryCondition(this.props.condition.id, QUERY_CONDITION.attrName, attrName);
-    }
-    
-    handleChangeOnOperator(e) {
-        const operator = e.target.value;
-        this.props.queryCondition.onChangeQueryCondition(this.props.condition.id, QUERY_CONDITION.operator, operator);
-    }
-    
-    handleChangeOnValue(e) {
+    handleInputChange(e) {
+        const name = e.target.name;
         const value = e.target.value;
-        this.props.queryCondition.onChangeQueryCondition(this.props.condition.id, QUERY_CONDITION.value, value);
+        this.props.queryCondition.onChange(this.props.condition.id, name, value);
     }
     
     render() {
@@ -411,14 +401,14 @@ class QueryConditionRow extends React.Component {
                 type="text"
                 name="value"
                 value={this.props.condition.value}
-                onChange={this.handleChangeOnValue}
+                onChange={this.handleInputChange}
             />;
         }
         else {
             valueInput = <Dropdown
                 name="value"
                 value={this.props.condition.value}
-                onChange={this.handleChangeOnValue}
+                onChange={this.handleInputChange}
                 options={this.props.condition.valueOptions}
             />;
         }
@@ -427,9 +417,9 @@ class QueryConditionRow extends React.Component {
         if(this.props.condition.operatorOptions.length == 1) {
             operatorInput = <input
                 type="text"
-                name="value"
+                name="operator"
                 value={this.props.condition.operatorOptions[0].displayValue}
-                onChange={this.handleChangeOnOperator}
+                onChange={this.handleInputChange}
                 readOnly
             />;
         }
@@ -437,7 +427,7 @@ class QueryConditionRow extends React.Component {
             operatorInput = <Dropdown
                 name="operator"
                 value={this.props.condition.operator}
-                onChange={this.handleChangeOnOperator}
+                onChange={this.handleInputChange}
                 options={this.props.condition.operatorOptions}
             />
         }
@@ -445,7 +435,10 @@ class QueryConditionRow extends React.Component {
         return (
             <tr>
                 <td>
-                    <img src="./resources/manage-table-items-page/delete-cond.png"
+                    <input
+                        name="delete"
+                        type="image"
+                        src="./resources/manage-table-items-page/delete-cond.png"
                         alt="delete"
                         onClick={this.handleClickOnDelete}
                     />
@@ -454,7 +447,7 @@ class QueryConditionRow extends React.Component {
                     <Dropdown
                         name="attrName"
                         value={this.props.condition.attrName}
-                        onChange={this.handleChangeOnAttrName}
+                        onChange={this.handleInputChange}
                         options={this.props.attrData.nameOptions}
                     />
                 </td>
@@ -477,6 +470,44 @@ const QUERY_CONDITION = {
     operatorOptions: "operatorOptions",
     valueOptions: "valueOptions"
 };
+
+class Modify extends React.Component {
+    render() {
+        const styles = {
+            display: this.props.modify.display
+        };
+        
+        return(
+            <form id="modify-form"  style={styles}>
+                <h1>Modify</h1>
+                <input type="button" value="Add Item" onClick={this.props.modify.onClickAddItem} />
+                <ModifyConditionTable attrData={this.props.attrData} />
+            </form>
+        );
+    }
+}
+
+class ModifyConditionTable extends React.Component {
+    render() {
+        return(
+            <table>
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td>No.</td>
+                        {
+                            this.props.attrData.nameOptions.map(option => (
+                                <td key={option.value}>{option.displayValue}</td>
+                            ))
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        );
+    }
+}
 
 export {
     ManageTableItemsView

@@ -77,7 +77,7 @@ class Dropdown extends React.Component {
                                 name={this.props.name}
                                 value={opt.value}
                                 onClick={this.handleItemClick}
-                                spellcheck="false"
+                                spellCheck="false"
                                 readOnly
                             />
                         ))
