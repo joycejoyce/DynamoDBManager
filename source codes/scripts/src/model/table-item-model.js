@@ -1,21 +1,38 @@
 import {DBConnection} from "./db-connection.js";
 
-const docClient = new DBConnection().getDBApi().DocumentClient();
+const beautify = require("json-beautify");
+const dbApi = new DBConnection().getDBApi();
 
 function TableItemModel() {}
 
-TableItemModel.query(params) {
+TableItemModel.addItems = (params) => {
     return new Promise((resolve) => {
-        docClient.query(params, (err, data) => {
+        dbApi.batchWriteItem(params, (err, data) => {
+            const commonStr = `create items for table "${Object.keys(params.RequestItems)[0]}":\n`;
             if(err) {
-                resolve(`Failed to query table "${params.TableName}"\n${JSON.stringify(err, undefined, 2)}`);
+                resolve(`Failed to ${commonStr}${beautify(err, null, 2, 100)}\nparams: ${beautify(params, null, 2, 100)}`);
             }
-            else {
-                resolve(data);
+            else {        
+                resolve(`Successfully ${commonStr} ${beautify(data, null, 2, 100)}\nparams: ${beautify(params, null, 2, 100)}`,);
             }
         });
     });
-}
+};
+
+TableItemModel.query = (params) => {
+    return new Promise((resolve) => {
+        console.log("params", beautify(params, null, 2, 100));
+        dbApi.query(params, (err, data) => {
+            const commonStr = `query items for table "${params.TableName}":\n`;
+            if(err) {
+                resolve(`Failed to ${commonStr}${beautify(err, null, 2, 100)}\nparams: ${beautify(params, null, 2, 100)}`);
+            }
+            else {        
+                resolve(`Successfully ${commonStr} ${beautify(data, null, 2, 100)}`);
+            }
+        });
+    });
+};
 
 export {
     TableItemModel

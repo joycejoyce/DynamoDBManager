@@ -1,5 +1,6 @@
 import {DBConnection} from "./db-connection.js";
 
+const beautify = require("json-beautify");
 const dbApi = new DBConnection().getDBApi();
 
 function TableModel() {}
@@ -23,11 +24,12 @@ TableModel.create = (params) => {
     return new Promise((resolve) => {
         const action = "create-tables";
         dbApi.createTable(params, (err, data) => {
+            const commonStr = `create table "${params.TableName}:\n`;
             if(err) {
-                resolve(`Fail to create table "${params.TableName}"\n${JSON.stringify(err, undefined, 2)}`);
+                resolve(`Fail to create table ${commonStr}${beautify(err, null, 2, 100)}`);
             }
             else {
-                resolve(`Successfully create table "${params.TableName}"`);
+                resolve(`Successfully ${commonStr}${beautify(data, null, 2, 100)}`);
             }
         });
     });

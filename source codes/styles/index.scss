@@ -501,21 +501,25 @@ button,input[type=submit],input[type=button] {
     }
 }
 
-#create-test-tables-form {
+#main-page-4 {
     input {
         margin-right: 5px;
     }
     
-    #create-btn {
+    input[type="submit"],button {
         color: $light-grey;
         background-color: $bright-blue;
     }
     
     textarea {
-        width: 60%;
+        width: 100%;
         height: 35%;
         cursor: default;
         overflow: visible;
+    }
+    
+    table {
+        color: $basic-text-color;
     }
 }
 
