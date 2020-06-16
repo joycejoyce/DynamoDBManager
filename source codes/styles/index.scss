@@ -61,8 +61,9 @@ del-btn-color {
 }
 /* font-size */
 $header-font-size: 3rem;
-$h1-font-size: 1.2rem;
+$h1-font-size: 1.3rem;
 $collapsible-btn-font-size: 1.1rem;
+$td-font-size: 1.1rem;
 
 /* font-family */
 $title-font: 'Montserrat', sans-serif;
@@ -176,6 +177,7 @@ button,input[type=submit],input[type=button] {
     outline: none;
     color: white;
     transition: $normal-trainsition-speed;
+    background-color: $bright-blue;
     
     &:disabled {
         cursor: no-drop;
@@ -611,41 +613,30 @@ button,input[type=submit] {
     }
 }
 
-#manage-table-items {
-    table {
-        color: $basic-text-color;
-
-        td {
-            background-color: inherit;
-            text-align: center;
-        }
-    }
-    
-    .dropdown-btn-container,input[type="text"],.dropdown-list {
-        width: $inner-width / 3;
+section#add-item {
+    button {
+        margin-bottom: 10px;
     }
 }
 
-#query-form {
-    input[type="button"] {
-        margin-right: 5px;
-    }
-
-    input[value="Add"] {
-        @extend add-btn-color;
-    }
-
-    input[value="Delete All"] {
-        @extend del-btn-color;
-    }
-
-    input[type="image"] {
-        width: 20px;
+table {
+    color: $basic-text-color;
+    
+    thead td {
+        font-weight: bold;
     }
     
-    input[value="Query"] {
-        @include lightenOnHover($green);
-        display: block;
-        margin-left: auto;
+    td {
+        padding: 5px;
+        font-size: $td-font-size;
     }
+}
+
+table, th, td {
+    border: $thin-grey-border;
+    border-collapse: collapse;
+}
+
+.delete-btn {
+    width: 20px;
 }

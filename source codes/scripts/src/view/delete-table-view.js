@@ -1,5 +1,6 @@
 import { Collapsible } from "./common-components/collapsible.js";
 import { TableModel } from "../model/table-model.js";
+import { TableController } from "../controller/table-controller.js";
 
 const React = require("react");
 
@@ -33,7 +34,7 @@ class DeleteTableForm extends React.Component {
     
     resetTables() {
         return new Promise(async (resolve) => {
-            const tables = await TableModel.list();
+            const tables = await TableController.getAllTableNames();
             await this.setState(state => ({ tables: tables }));
             this.resetRows(false);
             resolve();

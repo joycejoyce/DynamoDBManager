@@ -1,36 +1,20 @@
-import {DBConnection} from "./db-connection.js";
+import { DBConnection } from "./db-connection.js";
+import { ResultHandler } from "./result-handler.js";
 
-const beautify = require("json-beautify");
 const dbApi = new DBConnection().getDBApi();
 
 function TableModel() {}
 
-TableModel.list = () => {
+TableModel.list = (params) => {
     return new Promise((resolve) => {
-        const action = "list-tables";
-        const params = {};
-        dbApi.listTables(params, (err, data) => {
-            if(err) {
-                resolve([]);
-            }
-            else {
-                resolve(data.TableNames);
-            }
-        });
+        dbApi.listTables(params, (err, data) => resolve({err, data}));
     });
 };
 
 TableModel.create = (params) => {
     return new Promise((resolve) => {
-        const action = "create-tables";
         dbApi.createTable(params, (err, data) => {
-            const commonStr = `create table "${params.TableName}:\n`;
-            if(err) {
-                resolve(`Fail to create table ${commonStr}${beautify(err, null, 2, 100)}`);
-            }
-            else {
-                resolve(`Successfully ${commonStr}${beautify(data, null, 2, 100)}`);
-            }
+            ResultHandler.resolve(err, data, "Create Tables", resolve);
         });
     });
 };
@@ -50,32 +34,10 @@ TableModel.delete = (tableName) => {
     });
 };
 
-TableModel.describe = (tableName, describeName) => {
+TableModel.describe = (params) => {
     return new Promise((resolve) => {
-        const action = "describe-table";
-        const params = { TableName: tableName };
-        dbApi.describeTable(params, (err, data) => {
-            if(err) {
-                resolve(err);
-            }
-            else {
-                switch (describeName) {
-                    case TableModel.describeName.attrDef:
-                        resolve(data.Table.AttributeDefinitions);
-                        break;
-                    default:
-                        resolve();
-                        break;
-                }
-            }
-        });
+        dbApi.describeTable(params, (err, data) => resolve({err, data}));
     });
-};
-                    
-TableModel.describeName = {
-    attrDef: "AttributeDefinitions",
-    attrName: "AttributeName",
-    attrType: "AttributeType"
 };
                     
 export {

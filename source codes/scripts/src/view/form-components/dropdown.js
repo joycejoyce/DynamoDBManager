@@ -18,7 +18,7 @@ class Dropdown extends React.Component {
         };
     }
     
-    static getOptionsByList(items) {
+    getOptionsByList(items) {
         const options = items.map(item => ({value: item, displayValue: item}));
         return options;
     }
@@ -58,6 +58,7 @@ class Dropdown extends React.Component {
                 display: this.state.listDisplay
             }
         };
+        
         return (
             <div className="dropdown">
                 <div className="dropdown-btn-container">
@@ -71,11 +72,10 @@ class Dropdown extends React.Component {
                 </div>
                 <div className="dropdown-list" style={styles.listDisplay}>
                     {
-                        this.props.options.map(opt => (
+                        this.props.list.map(item => (
                             <input type="text"
-                                key={opt.value}
-                                name={this.props.name}
-                                value={opt.value}
+                                key={item}
+                                value={item}
                                 onClick={this.handleItemClick}
                                 spellCheck="false"
                                 readOnly

@@ -1,6 +1,8 @@
 import { TableModel } from "../model/table-model.js";
 import { TableItemModel } from "../model/table-item-model.js";
+import { TableItemController } from "../controller/table-item-controller.js";
 
+const beautify = require("json-beautify");
 const React = require("react");
 
 class TestElemView extends React.Component {
@@ -10,7 +12,8 @@ class TestElemView extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmitCreateTableForm = this.handleSubmitCreateTableForm.bind(this);
         this.handleSubmitAddItemForm = this.handleSubmitAddItemForm.bind(this);
-        this.handleSubmitQueryItemForm = this.handleSubmitQueryItemForm.bind(this);
+        this.queryItems = this.queryItems.bind(this);
+        this.queryAllItems = this.queryAllItems.bind(this);
         
         this.createTable = this.createTable.bind(this);
         this.deleteTable = this.deleteTable.bind(this);
@@ -19,26 +22,27 @@ class TestElemView extends React.Component {
         
         this.state = {
             createTable: {
-                num: 0,
+                num: 1,
                 onChange: this.handleChange,
                 onSubmit: this.handleSubmitCreateTableForm
             },
             addItem: {
-                num: 0,
+                num: 10,
                 tableName: "TestTable1",
                 onChange: this.handleChange,
                 onSubmit: this.handleSubmitAddItemForm
             },
             queryItem: {
                 actor: "John",
-                year: "1900",
-                title: "",
+                year: "1910",
+                title: "title",
                 popular: "Y",
                 tableName: "TestTable1",
                 onChange: this.handleChange,
-                onSubmit: this.handleSubmitQueryItemForm
+                onClickQuery: this.queryItems,
+                onClickQueryAll: this.queryAllItems
             },
-            results: []
+            result: {}
         };
     }
     
@@ -58,16 +62,16 @@ class TestElemView extends React.Component {
     async handleSubmitCreateTableForm(e) {
         e.preventDefault();
         
-        this.setState({results: []});
+        this.setState({result: {}});
         const num = this.state.createTable.num;
-        let results = [];
+        let result = [];
         for(let i=1; i<=num; i++) {
             const tableName = this.genNewTableName(i);
             await this.deleteTable(tableName);
-            const result = await this.createTable(tableName);
-            results.push(result);
+            const createTableResult = await this.createTable(tableName);
+            result.push(createTableResult);
         }
-        this.setState({results});
+        this.setState({result});
     }
     
     genNewTableName(num) {
@@ -120,19 +124,13 @@ class TestElemView extends React.Component {
         return params;
     }
     
-    handleChangeAddItemNum(e) {
-        const addItemNum = e.target.value;
-        
-    }
-    
     async handleSubmitAddItemForm(e) {
         e.preventDefault();
         
-        this.setState({results: []});
+        this.setState({result: {}});
         const params = this.genAddItemsParams();
         const result = await TableItemModel.addItems(params);
-        console.log("result", result);
-        this.setState({results: [result]});
+        this.setState({result});
     }
     
     genAddItemsParams() {
@@ -166,13 +164,13 @@ class TestElemView extends React.Component {
         return params;
     }
     
-    async handleSubmitQueryItemForm(e) {
+    async queryItems(e) {
         e.preventDefault();
         
-        this.setState({results: []});
+        this.setState({result: {}});
         const params = this.genQueryItemParams();
         const result = await TableItemModel.query(params);
-        this.setState({results: [result]});
+        this.setState({result});
     }
     
     genQueryItemParams() {
@@ -200,12 +198,13 @@ class TestElemView extends React.Component {
         return params;
     }
     
-    render() {
-        const resultsStr = this.state.results.reduce((str, result) => {
-            str += "* " + result + "\n";
-            return str;
-        }, "");
-        
+    async queryAllItems(e) {
+        e.preventDefault();
+        const items = await TableItemController.queryAllItems(this.state.queryItem.tableName);
+        this.setState({result: {...items}});
+    }
+    
+    render() {        
         return(
             <div>
                 <QueryItemForm 
@@ -221,7 +220,7 @@ class TestElemView extends React.Component {
                     formControls={this.state.createTable}
                 />
                 <h1>Result:</h1>
-                <textarea value={resultsStr} readOnly />
+                <textarea value={beautify(this.state.result, null, 2, 100)} readOnly />
             </div>
         );
     }
@@ -232,7 +231,7 @@ class CreateTableForm extends React.Component {
         return(
             <form>
                 <h1>Create how many tables?</h1>
-                <input name={this.props.name+"-num"} type="text" onChange={this.props.formControls.onChange} />
+                <input name={this.props.name+"-num"} value={this.props.formControls.num} type="text" onChange={this.props.formControls.onChange} />
                 <input type="submit" value="Create" onClick={this.props.formControls.onSubmit} />
             </form>
         );
@@ -244,7 +243,7 @@ class AddItemForm extends React.Component {
         return(
             <form>
                 <h1>Create how many items?</h1>
-                <input name={this.props.name+"-num"} type="text" onChange={this.props.formControls.onChange} />
+                <input name={this.props.name+"-num"} value={this.props.formControls.num} type="text" onChange={this.props.formControls.onChange} />
                 <input type="submit" value="Create" onClick={this.props.formControls.onSubmit} />
             </form>
         );
@@ -268,15 +267,16 @@ class QueryItemForm extends React.Component {
                         </tr>
                         <tr>
                             <td>Title:</td>
-                            <td><input name={this.props.name+"-title"} type="text" onChange={this.props.formControls.onChange} /></td>
+                            <td><input name={this.props.name+"-title"} value={this.props.formControls.title} type="text" onChange={this.props.formControls.onChange} /></td>
                         </tr>
                         <tr>
                             <td>Popular:</td>
-                            <td><input name={this.props.name+"-popular"} type="text" onChange={this.props.formControls.onChange} /></td>
+                            <td><input name={this.props.name+"-popular"} value={this.props.formControls.popular} type="text" onChange={this.props.formControls.onChange} /></td>
                         </tr>
                     </tbody>
                 </table>
-                <input type="submit" value="Query" onClick={this.props.formControls.onSubmit} />
+                <input type="submit" value="Query" onClick={this.props.formControls.onClickQuery} />
+                <input type="submit" value="Query All" onClick={this.props.formControls.onClickQueryAll} />
             </form>
         );
     }
