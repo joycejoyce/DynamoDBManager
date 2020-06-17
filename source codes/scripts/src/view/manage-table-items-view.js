@@ -1,5 +1,4 @@
 import { TableController } from "../controller/table-controller.js";
-import { TableItemController } from "../controller/table-item-controller.js";
 import { Dropdown } from "./form-components/dropdown.js";
 
 const React = require("react");
@@ -8,37 +7,39 @@ class ManageTableItemsView extends React.Component {
     constructor() {
         super();
         
+        this.handleClickChooseTableName = this.handleClickChooseTableName.bind(this);
         this.handleTableNameChange = this.handleTableNameChange.bind(this);
         this.handleClickAddItem = this.handleClickAddItem.bind(this);
+        this.handleClickAddAttr = this.handleClickAddAttr.bind(this);
         this.handleClickDeleteAddedItem = this.handleClickDeleteAddedItem.bind(this);
+        this.handleChangeAttrValue = this.handleChangeAttrValue.bind(this);
+        
+        this.setTableData = this.setTableData.bind(this);
         
         this.state = {
             tableName: {
                 value: "",
                 list: [],
+                onClick: this.handleClickChooseTableName,
                 onChange: this.handleTableNameChange
             },
             update: {
                 display: "none",
                 items: [],
-                attrs: []
-            },
-            add: {
-                display: "none",
-                items: [],
-                attrs: [],
                 onClickAddItem: this.handleClickAddItem,
-                onClickDelete: this.handleClickDeleteAddedItem,
-                onChange: this.handleChangeAddedItem
+                onClickAddAttr: this.handleClickAddAttr,
+                onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
+                onChangeAttrValue: this.handleChangeAttrValue
+            },
+            attrs: {
+                orig: [],
+                added: [],
+                nameTypeMap: {}
             }
         }
     }
     
-    componentDidMount() {
-        this.setTableNameList();
-    }
-    
-    async setTableNameList() {
+    async handleClickChooseTableName() {
         const list = await TableController.getAllTableNames();
         this.changeState("tableName", "list", list);
     }
@@ -48,65 +49,87 @@ class ManageTableItemsView extends React.Component {
         
         const level = args.length - 1;
         switch(level) {
+            case 1:
+                this.setState({[args[0]]: args[1]});
+                break;
             case 2:
                 newState[args[1]] = args[2];
+                this.setState({[args[0]]: newState});
                 break;
             default:
                 throw(`Unexpected level number: ${level}`);
                 break;
         }
-        
-        this.setState({[args[0]]: newState});
     }
     
-    async handleTableNameChange(e) {
+    handleTableNameChange(e) {
         const tableName = e.target.value;
         this.changeState("tableName", "value", tableName);
         
-        const items = await TableItemController.queryAllItems(tableName);
-        this.changeState("add", "items", items);
+        this.setTableData(tableName);
+        
+        this.changeState("update", "display", "block");
+    }
+    
+    async setTableData(tableName) {
+        const items = await TableController.getAllItems(tableName);
         this.changeState("update", "items", items);
         
         const attrs = await TableController.getAllAttrs(tableName);
-        this.changeState("add", "attrs", attrs);
-        this.changeState("update", "attrs", attrs);
+        this.changeState("attrs", "orig", attrs);
         
-        this.changeState("update", "display", "block");
-        this.changeState("add", "display", "block");
+        const attrNameTypeMap = await TableController.getAllAttrNameTypeMap(tableName);
+        this.changeState("attrs", "nameTypeMap", attrNameTypeMap);
     }
     
     handleClickAddItem() {
-        const newItem = this.getEmptyAddItemCtrl();
-        this.changeState("add", "items", [...this.state.add.items, newItem]);
+        const newItem = this.getEmptyNewItem();
+        this.changeState("update", "items", [...this.state.update.items, newItem]);
     }
     
-    getEmptyAddItemCtrl() {
-        const attrs = this.state.add.attrs.reduce((result, attr) => {
-            result[attr] = "";
-            return result;
+    getEmptyNewItem() {
+        const attrs = this.state.attrs.orig.reduce((accumulator, attr) => {
+            accumulator[attr] = "";
+            return accumulator;
         }, {});
-        
-        return {
-            id: this.state.add.items.length,
+        const item = {
+            id: this.state.update.items.length,
+            updateMethod: UPDATE_METHOD.add,
             attrs
         };
+        return item;
     }
     
     handleClickDeleteAddedItem(id) {
-        const newItems = this.state.add.items.filter(item => item.id !== id);
-        this.changeState("add", "items", newItems);
+        const newItems = this.state.update.items.filter(item => item.id !== id);
+        this.changeState("update", "items", newItems);
     }
     
-    handleChangeAddedItem(item) {
-        const changedItem = this.state.add.items.filter()
+    handleChangeAttrValue(e, id) {
+        const name = e.target.name;
+        const value = e.target.value;
+        
+        const curItems = [...this.state.update.items];
+        const newItems= curItems.reduce((result, item) => {
+            if(item.id === id) {
+                item.attrs[name] = value;
+            }
+            result.push(item);
+            return result;
+        }, []);
+        
+        this.changeState("update", "items", newItems);
+    }
+    
+    handleClickAddAttr() {
+        
     }
     
     render() {
         return(
             <div>
                 <TableNameSection ctrl={this.state.tableName} />
-                <UpdateSection ctrl={this.state.update} />
-                <AddSection ctrl={this.state.add} />
+                <UpdateSection ctrl={this.state.update} attrs={this.state.attrs} />
             </div>
         );
     }
@@ -120,6 +143,7 @@ class TableNameSection extends React.Component {
                 <Dropdown id="tableName"
                     list={this.props.ctrl.list}
                     value={this.props.ctrl.value}
+                    onClick={this.props.ctrl.onClick}
                     onChange={this.props.ctrl.onChange} />
             </section>
         );
@@ -131,17 +155,52 @@ class UpdateSection extends React.Component {
         const display = {
             display: this.props.ctrl.display
         };
+        const itemsDisplay = {
+            display: (this.props.ctrl.items.length > 0) ? "block" : "none"
+        }
+        
+        const addedNum = this.props.ctrl.items.filter(item => item.updateMethod === UPDATE_METHOD.add).length;
+        const modifiedNum = this.props.ctrl.items.filter(item => item.updateMethod === UPDATE_METHOD.modify).length;
+        const deletedNum = this.props.ctrl.items.filter(item => item.updateMethod === UPDATE_METHOD.delete).length;
+        const origNum = this.props.ctrl.items.length - addedNum;
         
         return(
-            <section style={display}>
+            <section id="update-table-items" style={display}>
                 <h1>Update Items</h1>
-                <table>
+                <button onClick={this.props.ctrl.onClickAddItem}>Add Item</button>
+                <button onClick={this.props.ctrl.onClickAddAttr}>Add Attribute</button>
+                <table id="update-status">
+                    <tbody>
+                        <tr>
+                            <td>Total in DB:</td>
+                            <td><span className="stress">{origNum}</span> items</td>
+                        </tr>
+                        <tr>
+                            <td>Added:</td>
+                            <td><span className="stress">{addedNum}</span> items</td>
+                        </tr>
+                        <tr>
+                            <td>Modified:</td>
+                            <td><span className="stress">{modifiedNum}</span> items</td>
+                        </tr>
+                        <tr>
+                            <td>Deleted:</td>
+                            <td><span className="stress">{deletedNum}</span> items</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="update-items" style={itemsDisplay}>
                     <thead>
                         <tr>
                             <td>Reset</td>
                             <td>Update</td>
                             {
-                                this.props.ctrl.attrs.map(attr => (<td key={attr}>{attr}</td>))
+                                this.props.attrs.orig.map(attr => (
+                                    <td key={attr}>
+                                        <div>{attr}</div>
+                                        <div className="attr-type">{this.props.attrs.nameTypeMap[attr]}</div>
+                                    </td>
+                                ))
                             }
                         </tr>
                     </thead>
@@ -150,15 +209,13 @@ class UpdateSection extends React.Component {
                             this.props.ctrl.items.map(item => (
                                 <UpdateItemRow key={item.id}
                                     item={item}
+                                    attrs={this.props.attrs}
+                                    onChange={this.props.ctrl.onChangeAttrValue}
+                                    onClickDeleteAddedItem={this.props.ctrl.onClickDeleteAddedItem}
                                 />
                             ))
                         }
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan="100%">Total: {this.props.ctrl.items.length} items</td>
-                        </tr>
-                    </tfoot>
                 </table>
             </section>
         );
@@ -167,70 +224,32 @@ class UpdateSection extends React.Component {
 
 class UpdateItemRow extends React.Component {
     render() {
-        return(
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        );
-    }
-}
-
-class AddSection extends React.Component {
-    render() {
-        const display = {
-            display: this.props.ctrl.display
-        };
+        let resetInput;
+        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
+            resetInput = (
+                <img className="delete-btn"
+                    src="./resources/manage-table-items-page/delete.png"
+                    onClick={() => this.props.onClickDeleteAddedItem(this.props.item.id)}
+                />
+            );
+        }
         
-        return(
-            <section id="add-item" style={display}>
-                <h1>Add Items</h1>
-                <button onClick={this.props.ctrl.onClickAddItem}>Add Item</button>
-                <table>
-                    <thead>
-                        <tr>
-                            <td></td>
-                            {
-                                this.props.ctrl.attrs.map(attr => (<td key={attr}>{attr}</td>))
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            this.props.ctrl.items.map(item => (
-                                <AddItemRow key={item.id}
-                                    item={item}
-                                    attrs={this.props.ctrl.attrs}
-                                    onClickDelete={this.props.ctrl.onClickDelete}
-                                    onChange={this.props.ctrl.onChange}
-                                />
-                            ))
-                        }
-                    </tbody>
-                </table>
-            </section>
-        );
-    }
-}
-
-class AddItemRow extends React.Component {
-    render() {
+        let updateInput;
+        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
+            updateInput = (<p>add</p>);
+        }
+                           
         return(
             <tr>
-                <td>
-                    <img className="delete-btn"
-                        src="./resources/manage-table-items-page/delete.png"
-                        onClick={() => this.props.onClickDelete(this.props.item.id)}
-                    />
-                </td>
+                <td>{resetInput}</td>
+                <td>{updateInput}</td>
                 {
-                    this.props.attrs.map(attr => (
+                    Object.keys(this.props.item.attrs).map(attr => (
                         <td key={attr}>
                             <input type="text"
                                 name={attr}
                                 value={this.props.item.attrs[attr]}
-                                onChange={() => this.props.onChange(this.props.item.id)}
+                                onChange={(e) => this.props.onChange(e, this.props.item.id)}
                             />
                         </td>
                     ))
@@ -238,6 +257,13 @@ class AddItemRow extends React.Component {
             </tr>
         );
     }
+}
+
+const UPDATE_METHOD = {
+    add: "add",
+    delete: "delete",
+    modify: "modify",
+    none: ""
 }
 
 export {

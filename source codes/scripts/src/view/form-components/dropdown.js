@@ -33,6 +33,10 @@ class Dropdown extends React.Component {
     
     handleBtnClick() {
         this.toggle();
+        
+        if(this.props.onClick !== undefined) {
+            this.props.onClick();
+        }
     }
     
     toggle() {

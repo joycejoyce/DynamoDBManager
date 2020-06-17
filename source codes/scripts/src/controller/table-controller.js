@@ -1,4 +1,5 @@
 import { TableModel } from "../model/table-model.js";
+import { ResultParser } from "./result-parser.js";
 
 class TableController {
     static async getAllTableNames() {
@@ -12,9 +13,28 @@ class TableController {
     static async getAllAttrs(tableName) {
         const params = { TableName: tableName };
         const result = await this.callModelFunc(params, FuncNames.describe);
-        const attrs = result.data.Table.AttributeDefinitions.map(def => def.AttributeName);
+        const attrs = ResultParser.getAttrNames(result.data.Table.AttributeDefinitions);
         
         return attrs;
+    }
+    
+    static async getAllAttrNameTypeMap(tableName) {
+        const params = { TableName: tableName };
+        const result = await this.callModelFunc(params, FuncNames.describe);
+        const attrTypeMap = ResultParser.getAttrNameTypeMap(result.data.Table.AttributeDefinitions);
+        
+        return attrTypeMap;
+    }
+    
+    static async getAllItems(tableName) {
+        const params = {
+            TableName: tableName,
+            ReturnConsumedCapacity: "TOTAL"
+        };
+        const result = await this.callModelFunc(params, FuncNames.scan);
+        const items = ResultParser.getItemsOfView(result.data.Items);
+
+        return items;
     }
     
     static callModelFunc(params, func) {
@@ -26,7 +46,8 @@ class TableController {
 
 const FuncNames = {
     list: "list",
-    describe: "describe"
+    describe: "describe",
+    scan: "scan"
 }
 
 export {

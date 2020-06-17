@@ -56,7 +56,7 @@ function CreateTableController() {
                 return "S";
             case "number":
                 return "N";
-            case "boolean":
+            case "binary":
                 return "B"
             default:
                 throw `Unkown type: [${type}]`;

@@ -2,6 +2,9 @@
 $basic-green: hsla(120, 100%, 25%, 1);
 $basic-red: hsla(0, 100%, 50%, 1);
 
+$yellow: hsl(43, 74%, 66%);
+$light-yellow: hsl(43, 74%, 71%);
+$dark-yellow: hsl(43, 74%, 61%);
 $light-grey: #f1f1f1;
 $normal-grey: #ddd;
 $dark-grey: #ccc;
@@ -39,11 +42,11 @@ $light-blue: lighten($bright-blue, 35%);
 
 outer-elem-color {
     background-color: #2A9D8F;
-    color: #E9C46A;
+    color: $yellow;
 }
 
 inner-elem-color {
-    background-color: #E9C46A;
+    background-color: $yellow;
     color: $basic-text-color;
 }
 
@@ -613,9 +616,10 @@ button,input[type=submit] {
     }
 }
 
-section#add-item {
+section#update-table-items {
     button {
         margin-bottom: 10px;
+        margin-right: 10px;
     }
 }
 
@@ -632,11 +636,46 @@ table {
     }
 }
 
-table, th, td {
+/*table, th, td {
     border: $thin-grey-border;
     border-collapse: collapse;
-}
+}*/
 
 .delete-btn {
     width: 20px;
+    cursor: pointer;
+}
+
+.stress {
+    font-weight: bold;
+    color: $bright-blue;
+}
+
+#update-status {
+    border: none;
+    td, th {
+        border: none;
+    }
+}
+
+table#update-items {
+    border-collapse: collapse;
+    overflow: auto;
+    
+    thead td {
+        border-bottom: 3px solid $red;
+        vertical-align: baseline;
+    }
+    
+    tbody>tr:nth-child(odd) {
+        background-color: $light-yellow;
+    }
+    
+    tbody>tr:nth-child(even) {
+        background-color: $dark-yellow;
+    }
+    
+    .attr-type {
+        color: $light-grey;
+    }
 }

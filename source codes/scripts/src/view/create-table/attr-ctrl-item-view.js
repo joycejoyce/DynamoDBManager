@@ -96,7 +96,7 @@ function AttrCtrlItemView() {
 const ATTR_TYPES = {
     string: "string",
     number: "number",
-    boolean: "boolean"
+    binary: "binary"
 };
 
 export {

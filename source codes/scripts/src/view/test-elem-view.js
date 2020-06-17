@@ -1,6 +1,5 @@
 import { TableModel } from "../model/table-model.js";
-import { TableItemModel } from "../model/table-item-model.js";
-import { TableItemController } from "../controller/table-item-controller.js";
+import { TableController } from "../controller/table-controller.js";
 
 const beautify = require("json-beautify");
 const React = require("react");
@@ -129,7 +128,7 @@ class TestElemView extends React.Component {
         
         this.setState({result: {}});
         const params = this.genAddItemsParams();
-        const result = await TableItemModel.addItems(params);
+        const result = await TableModel.addItems(params);
         this.setState({result});
     }
     
@@ -169,7 +168,7 @@ class TestElemView extends React.Component {
         
         this.setState({result: {}});
         const params = this.genQueryItemParams();
-        const result = await TableItemModel.query(params);
+        const result = await TableModel.query(params);
         this.setState({result});
     }
     
@@ -200,7 +199,7 @@ class TestElemView extends React.Component {
     
     async queryAllItems(e) {
         e.preventDefault();
-        const items = await TableItemController.queryAllItems(this.state.queryItem.tableName);
+        const items = await TableController.getAllItems(this.state.queryItem.tableName);
         this.setState({result: {...items}});
     }
     
