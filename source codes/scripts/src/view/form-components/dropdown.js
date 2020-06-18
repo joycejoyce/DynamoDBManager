@@ -28,7 +28,11 @@ class Dropdown extends React.Component {
         this.toggle();
         
         //2
-        this.props.onChange(e);
+        let params = [];
+        if(this.props.onChangeParams !== undefined) {
+            params = this.props.onChangeParams;
+        }
+        this.props.onChange(e, ...params);
     }
     
     handleBtnClick() {
@@ -76,19 +80,34 @@ class Dropdown extends React.Component {
                 </div>
                 <div className="dropdown-list" style={styles.listDisplay}>
                     {
-                        this.props.list.map(item => (
-                            <input type="text"
-                                key={item}
-                                value={item}
-                                onClick={this.handleItemClick}
-                                spellCheck="false"
-                                readOnly
-                            />
-                        ))
+                        this.props.list.map(item => this.getListItems(item, this.props.isIcon))
                     }
                 </div>
             </div>
         );
+    }
+    
+    getListItems(item, isIcon) {
+        let listItemInput;
+        
+        if(isIcon) {
+            listItemInput = (
+                <i key={item} className={item}></i>
+            );
+        }
+        else {
+            listItemInput = (
+                <input key={item}
+                    type="text"
+                    value={item}
+                    onClick={this.handleItemClick}
+                    spellCheck="false"
+                    readOnly
+                />
+            );
+        }
+        
+        return listItemInput;
     }
 }
 

@@ -13,6 +13,7 @@ class ManageTableItemsView extends React.Component {
         this.handleClickAddAttr = this.handleClickAddAttr.bind(this);
         this.handleClickDeleteAddedItem = this.handleClickDeleteAddedItem.bind(this);
         this.handleChangeAttrValue = this.handleChangeAttrValue.bind(this);
+        this.handleChangeUpdateMethod = this.handleChangeUpdateMethod.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -29,10 +30,12 @@ class ManageTableItemsView extends React.Component {
                 onClickAddItem: this.handleClickAddItem,
                 onClickAddAttr: this.handleClickAddAttr,
                 onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
-                onChangeAttrValue: this.handleChangeAttrValue
+                onChangeAttrValue: this.handleChangeAttrValue,
+                onChangeUpdateMethod: this.handleChangeUpdateMethod
             },
             attrs: {
-                orig: [],
+                keyAttrs: [],
+                nameKeyMap: {},
                 added: [],
                 nameTypeMap: {}
             }
@@ -75,8 +78,11 @@ class ManageTableItemsView extends React.Component {
         const items = await TableController.getAllItems(tableName);
         this.changeState("update", "items", items);
         
-        const attrs = await TableController.getAllAttrs(tableName);
-        this.changeState("attrs", "orig", attrs);
+        const keyAttrs = await TableController.getKeyAttrs(tableName);
+        this.changeState("attrs", "keyAttrs", keyAttrs);
+        
+        const nameKeyMap = await TableController.getAttrNameKeyMap(tableName);
+        this.changeState("attrs", "nameKeyMap", nameKeyMap);
         
         const attrNameTypeMap = await TableController.getAllAttrNameTypeMap(tableName);
         this.changeState("attrs", "nameTypeMap", attrNameTypeMap);
@@ -88,7 +94,7 @@ class ManageTableItemsView extends React.Component {
     }
     
     getEmptyNewItem() {
-        const attrs = this.state.attrs.orig.reduce((accumulator, attr) => {
+        const attrs = this.state.attrs.keyAttrs.reduce((accumulator, attr) => {
             accumulator[attr] = "";
             return accumulator;
         }, {});
@@ -125,6 +131,19 @@ class ManageTableItemsView extends React.Component {
         
     }
     
+    handleChangeUpdateMethod(e, id) {
+        const updateMethod = e.target.value == UPDATE_METHOD.reverseChanges ? "" : e.target.value;
+        const newItems = [...this.state.update.items].reduce((accumulator, item) => {
+            if(item.id === id) {
+                item.updateMethod = updateMethod;
+            }
+            accumulator.push(item);
+            return accumulator;
+        }, []);
+        
+        this.changeState("update", "items", newItems);
+    }
+    
     render() {
         return(
             <div>
@@ -144,7 +163,8 @@ class TableNameSection extends React.Component {
                     list={this.props.ctrl.list}
                     value={this.props.ctrl.value}
                     onClick={this.props.ctrl.onClick}
-                    onChange={this.props.ctrl.onChange} />
+                    onChange={this.props.ctrl.onChange}
+                />
             </section>
         );
     }
@@ -155,101 +175,122 @@ class UpdateSection extends React.Component {
         const display = {
             display: this.props.ctrl.display
         };
-        const itemsDisplay = {
-            display: (this.props.ctrl.items.length > 0) ? "block" : "none"
-        }
-        
-        const addedNum = this.props.ctrl.items.filter(item => item.updateMethod === UPDATE_METHOD.add).length;
-        const modifiedNum = this.props.ctrl.items.filter(item => item.updateMethod === UPDATE_METHOD.modify).length;
-        const deletedNum = this.props.ctrl.items.filter(item => item.updateMethod === UPDATE_METHOD.delete).length;
-        const origNum = this.props.ctrl.items.length - addedNum;
         
         return(
-            <section id="update-table-items" style={display}>
+            <section id="update" style={display}>
                 <h1>Update Items</h1>
                 <button onClick={this.props.ctrl.onClickAddItem}>Add Item</button>
                 <button onClick={this.props.ctrl.onClickAddAttr}>Add Attribute</button>
-                <table id="update-status">
-                    <tbody>
-                        <tr>
-                            <td>Total in DB:</td>
-                            <td><span className="stress">{origNum}</span> items</td>
-                        </tr>
-                        <tr>
-                            <td>Added:</td>
-                            <td><span className="stress">{addedNum}</span> items</td>
-                        </tr>
-                        <tr>
-                            <td>Modified:</td>
-                            <td><span className="stress">{modifiedNum}</span> items</td>
-                        </tr>
-                        <tr>
-                            <td>Deleted:</td>
-                            <td><span className="stress">{deletedNum}</span> items</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table id="update-items" style={itemsDisplay}>
-                    <thead>
-                        <tr>
-                            <td>Reset</td>
-                            <td>Update</td>
-                            {
-                                this.props.attrs.orig.map(attr => (
-                                    <td key={attr}>
-                                        <div>{attr}</div>
-                                        <div className="attr-type">{this.props.attrs.nameTypeMap[attr]}</div>
-                                    </td>
-                                ))
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            this.props.ctrl.items.map(item => (
-                                <UpdateItemRow key={item.id}
-                                    item={item}
-                                    attrs={this.props.attrs}
-                                    onChange={this.props.ctrl.onChangeAttrValue}
-                                    onClickDeleteAddedItem={this.props.ctrl.onClickDeleteAddedItem}
-                                />
-                            ))
-                        }
-                    </tbody>
-                </table>
+                <UpdateStatus items={this.props.ctrl.items} />
+                <UpdateItems ctrl={this.props.ctrl} attrs={this.props.attrs} />
             </section>
         );
     }
 }
 
-class UpdateItemRow extends React.Component {
+class UpdateStatus extends React.Component {
     render() {
-        let resetInput;
-        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
-            resetInput = (
-                <img className="delete-btn"
-                    src="./resources/manage-table-items-page/delete.png"
-                    onClick={() => this.props.onClickDeleteAddedItem(this.props.item.id)}
-                />
-            );
+        const addedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.add).length;
+        const modifiedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.modify).length;
+        const deletedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.delete).length;
+        const origNum = this.props.items.length - addedNum;
+        
+        return (
+            <table id="update-status">
+                <tbody>
+                    <tr>
+                        <td>Total in DB:</td>
+                        <td><span className="stress">{origNum}</span> items</td>
+                    </tr>
+                    <tr>
+                        <td>Added:</td>
+                        <td><span className="stress">{addedNum}</span> items</td>
+                    </tr>
+                    <tr>
+                        <td>Modified:</td>
+                        <td><span className="stress">{modifiedNum}</span> items</td>
+                    </tr>
+                    <tr>
+                        <td>Deleted:</td>
+                        <td><span className="stress">{deletedNum}</span> items</td>
+                    </tr>
+                </tbody>
+            </table>
+        );
+    }
+}
+
+class UpdateItems extends React.Component {
+    render() {
+        const display = {
+            display: (this.props.ctrl.items.length > 0) ? "block" : "none"
         }
         
-        let updateInput;
-        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
-            updateInput = (<p>add</p>);
-        }
-                           
+        return (
+            <table id="update-items" style={display}>
+                <UpdateItemHeadRows item={this.props.ctrl.items}
+                    attrs={this.props.attrs}
+                />
+                <tbody>
+                    {
+                        this.props.ctrl.items.map(item => (
+                            <UpdateItemRow key={item.id}
+                                item={item}
+                                attrs={this.props.attrs}
+                                onChange={this.props.ctrl.onChangeAttrValue}
+                                onClickDeleteAddedItem={this.props.ctrl.onClickDeleteAddedItem}
+                                onChangeUpdateMethod={this.props.ctrl.onChangeUpdateMethod}
+                            />
+                        ))
+                    }
+                </tbody>
+            </table>
+        );
+    }
+}
+
+class UpdateItemHeadRows extends React.Component {
+    render() {
+        return (
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    {
+                        this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{attr}</td>))
+                    }
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    {
+                        this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameTypeMap[attr]}</td>))
+                    }
+                </tr>
+                <tr>
+                    <th>Key Type</th>
+                    {
+                        this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameKeyMap[attr]}</td>))
+                    }
+                </tr>
+            </thead>
+        );
+    }
+}
+
+class UpdateItemRow extends React.Component {
+    render() { 
+        let updateInput = this.getUpdateInput();
+        let bkColor = this.getUpdateBkColor();
+        
         return(
-            <tr>
-                <td>{resetInput}</td>
-                <td>{updateInput}</td>
+            <tr style={bkColor}>
+                <th>{updateInput}</th>
                 {
-                    Object.keys(this.props.item.attrs).map(attr => (
+                    this.props.attrs.keyAttrs.map(attr => (
                         <td key={attr}>
                             <input type="text"
                                 name={attr}
                                 value={this.props.item.attrs[attr]}
-                                onChange={(e) => this.props.onChange(e, this.props.item.id)}
+                                onChange={() => this.props.onChange(e, this.props.item.id)}
                             />
                         </td>
                     ))
@@ -257,13 +298,69 @@ class UpdateItemRow extends React.Component {
             </tr>
         );
     }
+    
+    getUpdateInput() {
+        let updateInput;
+        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
+            updateInput = (
+                <i className="far fa-trash-alt"
+                    onClick={() => this.props.onClickDeleteAddedItem(this.props.item.id)}>
+                </i>
+            );
+        }
+        else {
+            updateInput = (
+                <Dropdown 
+                    list={this.getUpdateOptions()}
+                    isIcon={true}
+                    value={this.props.item.updateMethod}
+                    onChange={this.props.onChangeUpdateMethod}
+                    onChangeParams={[this.props.item.id]}
+                />
+            );
+        }
+        
+        return updateInput;
+    }
+    
+    getUpdateOptions() {
+        let options = Object.entries(UPDATE_METHOD).reduce((accumulator, entry) => {
+            const [key, value] = entry;
+            if(value !== UPDATE_METHOD.add) {
+                accumulator.push(ICON_CLASS[key]);
+            }
+            return accumulator;
+        }, []);
+        
+        return options;
+    }
+
+    getUpdateBkColor() {
+        let bkColor = {
+            backgroundColor: UPDATE_BK_COLOR[this.props.item.updateMethod]
+        };
+        return bkColor;
+    }
 }
 
 const UPDATE_METHOD = {
     add: "add",
     delete: "delete",
     modify: "modify",
-    none: ""
+    undo: "reverse changes"
+}
+
+const UPDATE_BK_COLOR = {
+    add: "#2A9D8F",
+    delete: "#E76F51",
+    modify: "#0496ff",
+    undo: ""
+}
+
+const ICON_CLASS = {
+    delete: "far fa-trash-alt",
+    modify: "fas fa-pen",
+    undo: "fas fa-undo-alt"
 }
 
 export {

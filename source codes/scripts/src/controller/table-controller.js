@@ -10,12 +10,20 @@ class TableController {
         return tableNames;
     }
     
-    static async getAllAttrs(tableName) {
+    static async getKeyAttrs(tableName) {
         const params = { TableName: tableName };
         const result = await this.callModelFunc(params, FuncNames.describe);
-        const attrs = ResultParser.getAttrNames(result.data.Table.AttributeDefinitions);
+        const attrs = ResultParser.getKeyAttrNames(result.data.Table.AttributeDefinitions);
         
         return attrs;
+    }
+    
+    static async getAttrNameKeyMap(tableName) {
+        const params = { TableName: tableName };
+        const result = await this.callModelFunc(params, FuncNames.describe);
+        const schema = ResultParser.getAttrNameKeyMap(result.data.Table.KeySchema);
+        
+        return schema;
     }
     
     static async getAllAttrNameTypeMap(tableName) {

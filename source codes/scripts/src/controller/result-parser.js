@@ -45,9 +45,27 @@ class ResultParser {
         Output:
             [ "A1", "A2" ]
     */
-    static getAttrNames(attrDefs) {
+    static getKeyAttrNames(attrDefs) {
         const names = attrDefs.map(attrDef => attrDef.AttributeName);
         return names;
+    }
+    
+    /*
+        Input:
+            [
+                {"AttributeName": "A1", "KeyType": "HASH"},
+                {"AttributeName": "A2", "KeyType": "RANGE"},
+            ],
+        Output:
+            { "A1": "HASH", "A2": "RANGE" }
+    */
+    static getAttrNameKeyMap(keySchema) {
+        const map = keySchema.reduce((accumulator, schema) => {
+            accumulator[schema.AttributeName] = schema.KeyType;
+            return accumulator;
+        }, {});
+        
+        return map;
     }
     
     /*

@@ -83,6 +83,10 @@ $outer-width: 700px;
 $outer-height: 80vh;
 $inner-width: $outer-width * 0.9;
 
+/* box-shadow */
+$common-box-shadow: 0 0 0 4px $light-green;
+$thin-blue-box-shadow: 0 0 0 2px $light-blue;
+
 /* animation */
 $normal-trainsition-speed: 0.3s;
 $fast-trainsition-speed: 0.1s;
@@ -135,7 +139,7 @@ input[type=text] {
     background-color: $light-grey;
     
     &:hover {
-        box-shadow: 0 0 0 4px $light-green;
+        box-shadow: $common-box-shadow;
     }
     
     &:focus {
@@ -602,7 +606,11 @@ button,input[type=submit] {
         overflow: auto;
     }
     
-    .dropdown-list > input, .dropdown-list > a {
+    .dropdown-list > * {
+        width: inherit;
+    }
+    
+    .dropdown-list > * {
         display: block;
         cursor: pointer;
         background-color: $light-green;
@@ -626,20 +634,11 @@ section#update-table-items {
 table {
     color: $basic-text-color;
     
-    thead td {
-        font-weight: bold;
-    }
-    
     td {
-        padding: 5px;
+        padding: 3px;
         font-size: $td-font-size;
     }
 }
-
-/*table, th, td {
-    border: $thin-grey-border;
-    border-collapse: collapse;
-}*/
 
 .delete-btn {
     width: 20px;
@@ -651,31 +650,81 @@ table {
     color: $bright-blue;
 }
 
-#update-status {
-    border: none;
-    td, th {
-        border: none;
+section#update {
+    $input-width: 140px;
+    button {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    input {
+        width: $input-width;
+        padding: 3px;
+    }
+    .dropdown > * {
+        width: $input-width
+    }
+    input {
+        &:focus,&:hover {
+            box-shadow: none;
+            border: none;
+        }
     }
 }
 
+table#update-status {
+    border-radius: 5px;
+    border: 3px solid $green;
+    td, th {
+        border: none;
+        font-size: 0.99rem;
+        padding: 1px;
+    }
+    margin-bottom: 5px;
+}
+
 table#update-items {
-    border-collapse: collapse;
+    max-height: 60vh;
+    border-collapse: separate;
+    border-spacing: 0 3px;
     overflow: auto;
     
-    thead td {
-        border-bottom: 3px solid $red;
-        vertical-align: baseline;
+    $border-color: $green;
+    $thin-border: 1px solid $border-color;
+    $bold-border: 3px solid $border-color;
+    
+    thead {
+        td,th {
+            border-bottom: $thin-border;
+        }
+        
+        th {
+            padding-right: 8px;
+        }
+        
+        tr:last-child {
+            td,th {
+                border-bottom: $bold-border;
+            }
+        }
+        
+        tr:first-child {
+            td,th {
+                border-top: $bold-border;
+            }
+        }
     }
     
-    tbody>tr:nth-child(odd) {
-        background-color: $light-yellow;
+    th {
+        font-weight: bold;
+        text-align: start;
+        padding-left: 5px;
     }
     
-    tbody>tr:nth-child(even) {
-        background-color: $dark-yellow;
+    td {
+        font-weight: normal;
     }
     
-    .attr-type {
-        color: $light-grey;
+    .dropdown-list {
+        width: inherit;
     }
 }
