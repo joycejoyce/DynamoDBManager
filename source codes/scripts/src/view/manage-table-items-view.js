@@ -14,6 +14,7 @@ class ManageTableItemsView extends React.Component {
         this.handleClickDeleteAddedItem = this.handleClickDeleteAddedItem.bind(this);
         this.handleChangeAttrValue = this.handleChangeAttrValue.bind(this);
         this.handleChangeUpdateMethod = this.handleChangeUpdateMethod.bind(this);
+        this.handleClickUpdateItemOption = this.handleClickUpdateItemOption.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -27,11 +28,14 @@ class ManageTableItemsView extends React.Component {
             update: {
                 display: "none",
                 items: [],
-                onClickAddItem: this.handleClickAddItem,
-                onClickAddAttr: this.handleClickAddAttr,
-                onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
-                onChangeAttrValue: this.handleChangeAttrValue,
-                onChangeUpdateMethod: this.handleChangeUpdateMethod
+                eventHandler: {
+                    onClickAddItem: this.handleClickAddItem,
+                    onClickAddAttr: this.handleClickAddAttr,
+                    onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
+                    onChangeAttrValue: this.handleChangeAttrValue,
+                    onChangeUpdateMethod: this.handleChangeUpdateMethod,
+                    onClickUpdateItemOption: this.handleClickUpdateItemOption
+                }
             },
             attrs: {
                 keyAttrs: [],
@@ -144,6 +148,18 @@ class ManageTableItemsView extends React.Component {
         this.changeState("update", "items", newItems);
     }
     
+    handleClickUpdateItemOption(id, action) {
+        const newItems = [...this.state.update.items].reduce((accumulator, item) => {
+            if(item.id === id) {
+                item.updateMethod = action;
+            }
+            accumulator.push(item);
+            return accumulator;
+        }, []);
+        
+        this.changeState("update", "items", newItems);
+    }
+    
     render() {
         return(
             <div>
@@ -237,9 +253,7 @@ class UpdateItems extends React.Component {
                             <UpdateItemRow key={item.id}
                                 item={item}
                                 attrs={this.props.attrs}
-                                onChange={this.props.ctrl.onChangeAttrValue}
-                                onClickDeleteAddedItem={this.props.ctrl.onClickDeleteAddedItem}
-                                onChangeUpdateMethod={this.props.ctrl.onChangeUpdateMethod}
+                                eventHandler={this.props.ctrl.eventHandler}
                             />
                         ))
                     }
@@ -277,8 +291,44 @@ class UpdateItemHeadRows extends React.Component {
 }
 
 class UpdateItemRow extends React.Component {
+    getUpdateBkColor() {
+        let bkColor = {
+            backgroundColor: UPDATE_BK_COLOR[this.props.item.updateMethod]
+        };
+        return bkColor;
+    }
+    
+    getUpdateInput() {
+        let updateInput;
+        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
+            updateInput = (
+                <i className="far fa-trash-alt"
+                    onClick={() => this.props.eventHandler.onClickDeleteAddedItem(this.props.item.id)}>
+                </i>
+            );
+        }
+        else {
+            updateInput = (
+                <div>
+                    <i className="far fa-trash-alt"
+                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.delete)}>
+                    </i>
+                    <i className="fas fa-pen"
+                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.modify)}>
+                    </i>
+                    <i className="fas fa-undo-alt"
+                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.undo)}>
+                    </i>
+                </div>
+            );
+        }
+        
+        return updateInput;
+    }
+    
     render() { 
         let updateInput = this.getUpdateInput();
+        console.log({updateInput});
         let bkColor = this.getUpdateBkColor();
         
         return(
@@ -290,56 +340,13 @@ class UpdateItemRow extends React.Component {
                             <input type="text"
                                 name={attr}
                                 value={this.props.item.attrs[attr]}
-                                onChange={() => this.props.onChange(e, this.props.item.id)}
+                                onChange={() => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
                             />
                         </td>
                     ))
                 }
             </tr>
         );
-    }
-    
-    getUpdateInput() {
-        let updateInput;
-        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
-            updateInput = (
-                <i className="far fa-trash-alt"
-                    onClick={() => this.props.onClickDeleteAddedItem(this.props.item.id)}>
-                </i>
-            );
-        }
-        else {
-            updateInput = (
-                <Dropdown 
-                    list={this.getUpdateOptions()}
-                    isIcon={true}
-                    value={this.props.item.updateMethod}
-                    onChange={this.props.onChangeUpdateMethod}
-                    onChangeParams={[this.props.item.id]}
-                />
-            );
-        }
-        
-        return updateInput;
-    }
-    
-    getUpdateOptions() {
-        let options = Object.entries(UPDATE_METHOD).reduce((accumulator, entry) => {
-            const [key, value] = entry;
-            if(value !== UPDATE_METHOD.add) {
-                accumulator.push(ICON_CLASS[key]);
-            }
-            return accumulator;
-        }, []);
-        
-        return options;
-    }
-
-    getUpdateBkColor() {
-        let bkColor = {
-            backgroundColor: UPDATE_BK_COLOR[this.props.item.updateMethod]
-        };
-        return bkColor;
     }
 }
 
