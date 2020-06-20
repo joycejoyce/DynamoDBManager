@@ -18,6 +18,18 @@ class TableController {
         return attrs;
     }
     
+    static async getNonKeyAttrs(tableName) {
+        const params = {
+            TableName: tableName,
+            ReturnConsumedCapacity: "TOTAL"
+        };
+        const result = await this.callModelFunc(params, FuncNames.scan);
+        const keyAttrs = await this.getKeyAttrs(tableName);
+        const nonKeyAttrs = ResultParser.getNonKeyAttrNames(result.data.Items, keyAttrs);
+        
+        return nonKeyAttrs;
+    }
+    
     static async getAttrNameKeyMap(tableName) {
         const params = { TableName: tableName };
         const result = await this.callModelFunc(params, FuncNames.describe);
@@ -27,11 +39,17 @@ class TableController {
     }
     
     static async getAllAttrNameTypeMap(tableName) {
-        const params = { TableName: tableName };
+        /*const params = { TableName: tableName };
         const result = await this.callModelFunc(params, FuncNames.describe);
-        const attrTypeMap = ResultParser.getAttrNameTypeMap(result.data.Table.AttributeDefinitions);
+        const attrNameTypeMap = ResultParser.getAttrNameTypeMap(result.data.Table.AttributeDefinitions);*/
+        const params = {
+            TableName: tableName,
+            ReturnConsumedCapacity: "TOTAL"
+        };
+        const result = await this.callModelFunc(params, FuncNames.scan);
+        const attrNameTypeMap = ResultParser.getAttrNameTypeMap(result.data.Items);
         
-        return attrTypeMap;
+        return attrNameTypeMap;
     }
     
     static async getAllItems(tableName) {

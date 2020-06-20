@@ -27,6 +27,7 @@ class ManageTableItemsView extends React.Component {
             },
             update: {
                 display: "none",
+                origItems: [],
                 items: [],
                 eventHandler: {
                     onClickAddItem: this.handleClickAddItem,
@@ -39,6 +40,7 @@ class ManageTableItemsView extends React.Component {
             },
             attrs: {
                 keyAttrs: [],
+                nonKeyAttrs: [],
                 nameKeyMap: {},
                 added: [],
                 nameTypeMap: {}
@@ -81,9 +83,13 @@ class ManageTableItemsView extends React.Component {
     async setTableData(tableName) {
         const items = await TableController.getAllItems(tableName);
         this.changeState("update", "items", items);
+        this.changeState("update", "origItems", items);
         
         const keyAttrs = await TableController.getKeyAttrs(tableName);
         this.changeState("attrs", "keyAttrs", keyAttrs);
+        
+        const nonKeyAttrs = await TableController.getNonKeyAttrs(tableName);
+        this.changeState("attrs", "nonKeyAttrs", nonKeyAttrs);
         
         const nameKeyMap = await TableController.getAttrNameKeyMap(tableName);
         this.changeState("attrs", "nameKeyMap", nameKeyMap);
@@ -98,15 +104,22 @@ class ManageTableItemsView extends React.Component {
     }
     
     getEmptyNewItem() {
-        const attrs = this.state.attrs.keyAttrs.reduce((accumulator, attr) => {
+        let attrs = this.state.attrs.keyAttrs.reduce((accumulator, attr) => {
             accumulator[attr] = "";
             return accumulator;
         }, {});
+        
+        attrs = this.state.attrs.nonKeyAttrs.reduce((attrs, attr) => {
+            attrs[attr] = "";
+            return attrs;
+        }, attrs);
+        
         const item = {
             id: this.state.update.items.length,
             updateMethod: UPDATE_METHOD.add,
             attrs
         };
+        
         return item;
     }
     
@@ -158,6 +171,26 @@ class ManageTableItemsView extends React.Component {
         }, []);
         
         this.changeState("update", "items", newItems);
+        
+        this.doUpdateOnView(id, action);
+    }
+    
+    doUpdateOnView(id, action) {
+        switch(action) {
+            UPDATE_METHOD.add:
+                break;
+            UPDATE_METHOD.modify:
+                break;
+            UPDATE_METHOD.undo:
+                const newItems = [...this.state.update.items].reduce((accumulator, item) => {
+                    if(item.id === id) {
+                        item.attrs = this.state.update.origItems.filter(item => item.id === id);
+                    }
+                    accumulator.push(item);
+                    return accumulator;
+                }, []);
+                break;
+        }
     }
     
     render() {
@@ -195,8 +228,8 @@ class UpdateSection extends React.Component {
         return(
             <section id="update" style={display}>
                 <h1>Update Items</h1>
-                <button onClick={this.props.ctrl.onClickAddItem}>Add Item</button>
-                <button onClick={this.props.ctrl.onClickAddAttr}>Add Attribute</button>
+                <button onClick={this.props.ctrl.eventHandler.onClickAddItem}>Add Item</button>
+                <button onClick={this.props.ctrl.eventHandler.onClickAddAttr}>Add Attribute</button>
                 <UpdateStatus items={this.props.ctrl.items} />
                 <UpdateItems ctrl={this.props.ctrl} attrs={this.props.attrs} />
             </section>
@@ -238,6 +271,7 @@ class UpdateStatus extends React.Component {
 
 class UpdateItems extends React.Component {
     render() {
+        console.log("items", this.props.ctrl.items);
         const display = {
             display: (this.props.ctrl.items.length > 0) ? "block" : "none"
         }
@@ -272,17 +306,26 @@ class UpdateItemHeadRows extends React.Component {
                     {
                         this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{attr}</td>))
                     }
+                    {
+                        this.props.attrs.nonKeyAttrs.map(attr => (<td key={attr}>{attr}</td>))
+                    }
                 </tr>
                 <tr>
                     <th>Type</th>
                     {
                         this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameTypeMap[attr]}</td>))
                     }
+                    {
+                        this.props.attrs.nonKeyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameTypeMap[attr]}</td>))
+                    }
                 </tr>
                 <tr>
                     <th>Key Type</th>
                     {
                         this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameKeyMap[attr]}</td>))
+                    }
+                    {
+                        this.props.attrs.nonKeyAttrs.map(attr => (<td key={attr}>NON-KEY</td>))
                     }
                 </tr>
             </thead>
@@ -313,9 +356,11 @@ class UpdateItemRow extends React.Component {
                     <i className="far fa-trash-alt"
                         onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.delete)}>
                     </i>
+                    &nbsp;&nbsp;
                     <i className="fas fa-pen"
                         onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.modify)}>
                     </i>
+                    &nbsp;&nbsp;
                     <i className="fas fa-undo-alt"
                         onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.undo)}>
                     </i>
@@ -326,9 +371,16 @@ class UpdateItemRow extends React.Component {
         return updateInput;
     }
     
+    getReadOnly() {
+        if(this.props.item.updateMethod === UPDATE_METHOD.modify || this.props.item.updateMethod === UPDATE_METHOD.add) {
+            return false;
+        }
+        return true;
+    }
+    
     render() { 
         let updateInput = this.getUpdateInput();
-        console.log({updateInput});
+        let inputIsReadOnly = this.getReadOnly();
         let bkColor = this.getUpdateBkColor();
         
         return(
@@ -340,7 +392,20 @@ class UpdateItemRow extends React.Component {
                             <input type="text"
                                 name={attr}
                                 value={this.props.item.attrs[attr]}
-                                onChange={() => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
+                                onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
+                                readOnly={inputIsReadOnly}
+                            />
+                        </td>
+                    ))
+                }
+                {
+                    this.props.attrs.nonKeyAttrs.map(attr => (
+                        <td key={attr}>
+                            <input type="text"
+                                name={attr}
+                                value={this.props.item.attrs[attr]}
+                                onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
+                                readOnly={inputIsReadOnly}
                             />
                         </td>
                     ))

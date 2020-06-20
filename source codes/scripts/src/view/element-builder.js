@@ -13,7 +13,7 @@ ElementBuilder.init = () => {
     
     ReactDOM.render(
         <DeleteTableView />,
-        document.querySelector("section#delete-table")
+        document.querySelector("#delete-table-section")
     );
     
     ReactDOM.render(

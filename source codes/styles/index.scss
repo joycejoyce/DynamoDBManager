@@ -5,11 +5,11 @@ $basic-red: hsla(0, 100%, 50%, 1);
 $yellow: hsl(43, 74%, 66%);
 $light-yellow: hsl(43, 74%, 71%);
 $dark-yellow: hsl(43, 74%, 61%);
-$light-grey: #f1f1f1;
-$normal-grey: #ddd;
-$dark-grey: #ccc;
+$grey: hsl(0, 0%, 80%);
+$light-grey: lighten($grey, 40%);
+$dark-grey: darken($grey, 10%);
+$darker-grey: darken($grey, 15%);
 $basic-text-color: #264653;
-$darker-grey: #6d6d6d;
 $green: #2A9D8F;
 $light-green: lighten($green, 25%);
 $red: #E76F51;
@@ -51,7 +51,7 @@ inner-elem-color {
 }
 
 inner2-elem-color {
-    background-color: $normal-grey;
+    background-color: inherit;
     color: $basic-text-color;
 }
 
@@ -73,8 +73,8 @@ $title-font: 'Montserrat', sans-serif;
 $contents-font: 'Nunito', sans-serif;
 
 /* border */
-$thin-grey-border: 1px solid $normal-grey;
-$bold-grey-border: 3px solid $normal-grey;
+$thin-grey-border: 1px solid $grey;
+$bold-grey-border: 3px solid $grey;
 $thin-dark-grey-border: 1px solid $dark-grey;
 $bold-dark-grey-border: 3px solid $dark-grey;
 
@@ -246,6 +246,7 @@ button,input[type=submit],input[type=button] {
         table {
             width: $inner-width - 40px;
             margin: 5px auto;
+            $bold-border: 3px solid $main-color;
             
             tr:nth-child(even){
                 background-color: lighten($main-color, 40%);
@@ -262,9 +263,13 @@ button,input[type=submit],input[type=button] {
             
             th {
                 text-align: left;
-                border-bottom: 3px solid $main-color;
+                border-bottom: $bold-border;
                 font-weight: bold;
                 font-family: $title-font;
+            }
+            
+            tr:last-child td {
+                border-bottom: $bold-border;
             }
             
             input {
@@ -295,7 +300,7 @@ button,input[type=submit],input[type=button] {
         font-size: $h1-font-size;
         font-weight: bold;
         float: left;
-        @include changeBkColorOnHover(inherit, $normal-grey);
+        @include changeBkColorOnHover(inherit, $grey);
         
         &.active {
             background-color: $dark-grey;
@@ -487,7 +492,17 @@ button,input[type=submit],input[type=button] {
             }
         }
     }
+    
+    &#create-table {
+        border: 3px solid $green;
+    }
+    
+    &#delete-table {
+        border: 3px solid $red;
+    }
 }
+
+
 
 .middle {
     height: 10px;
@@ -673,7 +688,7 @@ section#update {
 
 table#update-status {
     border-radius: 5px;
-    border: 3px solid $green;
+    border: 3px solid $bright-blue;
     td, th {
         border: none;
         font-size: 0.99rem;
@@ -688,7 +703,7 @@ table#update-items {
     border-spacing: 0 3px;
     overflow: auto;
     
-    $border-color: $green;
+    $border-color: $bright-blue;
     $thin-border: 1px solid $border-color;
     $bold-border: 3px solid $border-color;
     
@@ -726,5 +741,14 @@ table#update-items {
     
     .dropdown-list {
         width: inherit;
+    }
+    
+    i {
+        cursor: pointer;
+    }
+    
+    input:read-only {
+        background-color: #b3b3b3;
+        cursor: default;
     }
 }

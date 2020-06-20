@@ -53,6 +53,26 @@ class ResultParser {
     /*
         Input:
             [
+                { "Key1": { "S": "K1" }, "Key2": { "BOOL": true }, "NonKey1": { "S": "NK1" } },
+                { "Key1": { "S": "K2" }, "Key2": { "BOOL": false }, "NonKey2": { "BOOL": false } }
+            ]
+        Output:
+            [ "NonKey1", "NonKey2" ]
+    */
+    static getNonKeyAttrNames(items, keyAttrNames) {
+        const names = items.reduce((accumulator, item) => {
+            const nonKeyAttrNames = Object.keys(item).filter(attrName => !keyAttrNames.includes(attrName));
+            accumulator = [...accumulator, ...nonKeyAttrNames];
+            accumulator = Array.from(new Set(accumulator));
+            return accumulator;
+        }, []);
+        
+        return names;
+    }
+    
+    /*
+        Input:
+            [
                 {"AttributeName": "A1", "KeyType": "HASH"},
                 {"AttributeName": "A2", "KeyType": "RANGE"},
             ],
@@ -71,15 +91,21 @@ class ResultParser {
     /*
         Input:
             [
-                {"AttributeName": "A1", "AttributeType": "S"},
-                {"AttributeName": "A2", "AttributeType": "BOOL"},
-            ],
+                { "Key1": { "S": "K1" }, "Key2": { "BOOL": true }, "NonKey1": { "S": "NK1" } },
+                { "Key1": { "S": "K2" }, "Key2": { "BOOL": false }, "NonKey2": { "BOOL": false } }
+            ]
         Output:
-            [ "A1": "S", "A2": "BOOL" ]
+            { "Key1": "S", "Key2": "BOOL", "NonKey1": "S", "NonKey2": "BOOL" }
     */
-    static getAttrNameTypeMap(attrDefs) {
-        const map = attrDefs.reduce((accumulator, attrDef) => {
-            accumulator[attrDef.AttributeName] = attrDef.AttributeType;
+    static getAttrNameTypeMap(items) {
+        const map = items.reduce((accumulator, item) => {
+            const tmpMap = Object.entries(item).reduce((accumulator, attrInfo) => {
+                const [name, typeToValue] = attrInfo;
+                const type = Object.keys(typeToValue)[0];
+                accumulator[name] = type;
+                return accumulator;
+            }, accumulator);
+            
             return accumulator;
         }, {});
         

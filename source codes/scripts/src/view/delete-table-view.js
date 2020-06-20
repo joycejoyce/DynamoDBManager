@@ -7,7 +7,7 @@ const React = require("react");
 class DeleteTableView extends React.Component {
     render() {
 		return (
-			<Collapsible
+			<Collapsible id="delete-table"
                 btnText="Delete Tables"
                 contents=<DeleteTableForm />
             />
