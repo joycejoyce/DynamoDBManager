@@ -10,10 +10,8 @@ class ManageTableItemsView extends React.Component {
         this.handleClickChooseTableName = this.handleClickChooseTableName.bind(this);
         this.handleTableNameChange = this.handleTableNameChange.bind(this);
         this.handleClickAddItem = this.handleClickAddItem.bind(this);
-        this.handleClickAddAttr = this.handleClickAddAttr.bind(this);
         this.handleClickDeleteAddedItem = this.handleClickDeleteAddedItem.bind(this);
         this.handleChangeAttrValue = this.handleChangeAttrValue.bind(this);
-        this.handleChangeUpdateMethod = this.handleChangeUpdateMethod.bind(this);
         this.handleClickUpdateItemOption = this.handleClickUpdateItemOption.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
@@ -34,7 +32,6 @@ class ManageTableItemsView extends React.Component {
                     onClickAddAttr: this.handleClickAddAttr,
                     onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
                     onChangeAttrValue: this.handleChangeAttrValue,
-                    onChangeUpdateMethod: this.handleChangeUpdateMethod,
                     onClickUpdateItemOption: this.handleClickUpdateItemOption
                 }
             },
@@ -83,7 +80,7 @@ class ManageTableItemsView extends React.Component {
     async setTableData(tableName) {
         const items = await TableController.getAllItems(tableName);
         this.changeState("update", "items", items);
-        this.changeState("update", "origItems", items);
+        this.changeState("update", "origItems", JSON.parse(JSON.stringify(items)));
         
         const keyAttrs = await TableController.getKeyAttrs(tableName);
         this.changeState("attrs", "keyAttrs", keyAttrs);
@@ -128,12 +125,11 @@ class ManageTableItemsView extends React.Component {
         this.changeState("update", "items", newItems);
     }
     
-    handleChangeAttrValue(e, id) {
+    async handleChangeAttrValue(e, id) {
         const name = e.target.name;
         const value = e.target.value;
         
-        const curItems = [...this.state.update.items];
-        const newItems= curItems.reduce((result, item) => {
+        const newItems = [...this.state.update.items].reduce((result, item) => {
             if(item.id === id) {
                 item.attrs[name] = value;
             }
@@ -141,56 +137,25 @@ class ManageTableItemsView extends React.Component {
             return result;
         }, []);
         
-        this.changeState("update", "items", newItems);
+        await this.changeState("update", "items", newItems);
     }
     
-    handleClickAddAttr() {
-        
-    }
-    
-    handleChangeUpdateMethod(e, id) {
-        const updateMethod = e.target.value == UPDATE_METHOD.reverseChanges ? "" : e.target.value;
-        const newItems = [...this.state.update.items].reduce((accumulator, item) => {
-            if(item.id === id) {
-                item.updateMethod = updateMethod;
-            }
-            accumulator.push(item);
-            return accumulator;
-        }, []);
-        
-        this.changeState("update", "items", newItems);
-    }
-    
-    handleClickUpdateItemOption(id, action) {
+    async handleClickUpdateItemOption(id, action) {
         const newItems = [...this.state.update.items].reduce((accumulator, item) => {
             if(item.id === id) {
                 item.updateMethod = action;
+                switch(action) {
+                    case UPDATE_METHOD.undo:
+                        const origAttrs = this.state.update.origItems.filter(item => item.id === id)[0].attrs;
+                        item.attrs = Object.assign({}, origAttrs);
+                        break;
+                } 
             }
             accumulator.push(item);
             return accumulator;
         }, []);
         
-        this.changeState("update", "items", newItems);
-        
-        this.doUpdateOnView(id, action);
-    }
-    
-    doUpdateOnView(id, action) {
-        switch(action) {
-            UPDATE_METHOD.add:
-                break;
-            UPDATE_METHOD.modify:
-                break;
-            UPDATE_METHOD.undo:
-                const newItems = [...this.state.update.items].reduce((accumulator, item) => {
-                    if(item.id === id) {
-                        item.attrs = this.state.update.origItems.filter(item => item.id === id);
-                    }
-                    accumulator.push(item);
-                    return accumulator;
-                }, []);
-                break;
-        }
+        await this.changeState("update", "items", newItems);
     }
     
     render() {
@@ -271,7 +236,6 @@ class UpdateStatus extends React.Component {
 
 class UpdateItems extends React.Component {
     render() {
-        console.log("items", this.props.ctrl.items);
         const display = {
             display: (this.props.ctrl.items.length > 0) ? "block" : "none"
         }

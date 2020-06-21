@@ -621,18 +621,17 @@ button,input[type=submit] {
         overflow: auto;
     }
     
-    .dropdown-list > * {
+    .dropdown-list > input {
         width: inherit;
-    }
-    
-    .dropdown-list > * {
         display: block;
         cursor: pointer;
         background-color: $light-green;
         padding: 10px 10px;
-        margin-top: 1px;
+        border: none;
         border-radius: 0px;
-        
+        &:not(:first-child) {
+            margin-top: 2px;
+        }
         &:hover {
             box-shadow: none;
         }
