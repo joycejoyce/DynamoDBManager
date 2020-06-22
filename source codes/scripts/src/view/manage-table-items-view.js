@@ -1,5 +1,6 @@
 import { TableController } from "../controller/table-controller.js";
 import { Dropdown } from "./form-components/dropdown.js";
+import { KEY_TYPE } from "../controller/result-parser.js";
 
 const React = require("react");
 
@@ -13,6 +14,8 @@ class ManageTableItemsView extends React.Component {
         this.handleClickDeleteAddedItem = this.handleClickDeleteAddedItem.bind(this);
         this.handleChangeAttrValue = this.handleChangeAttrValue.bind(this);
         this.handleClickUpdateItemOption = this.handleClickUpdateItemOption.bind(this);
+        this.handleClickAddAttr = this.handleClickAddAttr.bind(this);
+        this.handleChangeAddedAttr = this.handleChangeAddedAttr.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -27,20 +30,15 @@ class ManageTableItemsView extends React.Component {
                 display: "none",
                 origItems: [],
                 items: [],
+                attrs: [],
                 eventHandler: {
                     onClickAddItem: this.handleClickAddItem,
                     onClickAddAttr: this.handleClickAddAttr,
                     onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
                     onChangeAttrValue: this.handleChangeAttrValue,
-                    onClickUpdateItemOption: this.handleClickUpdateItemOption
+                    onClickUpdateItemOption: this.handleClickUpdateItemOption,
+                    onChangeAddedAttr: this.handleChangeAddedAttr
                 }
-            },
-            attrs: {
-                keyAttrs: [],
-                nonKeyAttrs: [],
-                nameKeyMap: {},
-                added: [],
-                nameTypeMap: {}
             }
         }
     }
@@ -82,17 +80,8 @@ class ManageTableItemsView extends React.Component {
         this.changeState("update", "items", items);
         this.changeState("update", "origItems", JSON.parse(JSON.stringify(items)));
         
-        const keyAttrs = await TableController.getKeyAttrs(tableName);
-        this.changeState("attrs", "keyAttrs", keyAttrs);
-        
-        const nonKeyAttrs = await TableController.getNonKeyAttrs(tableName);
-        this.changeState("attrs", "nonKeyAttrs", nonKeyAttrs);
-        
-        const nameKeyMap = await TableController.getAttrNameKeyMap(tableName);
-        this.changeState("attrs", "nameKeyMap", nameKeyMap);
-        
-        const attrNameTypeMap = await TableController.getAllAttrNameTypeMap(tableName);
-        this.changeState("attrs", "nameTypeMap", attrNameTypeMap);
+        const attrs = await TableController.getAllAttrs(tableName);
+        this.changeState("update", "attrs", attrs);
     }
     
     handleClickAddItem() {
@@ -101,15 +90,10 @@ class ManageTableItemsView extends React.Component {
     }
     
     getEmptyNewItem() {
-        let attrs = this.state.attrs.keyAttrs.reduce((accumulator, attr) => {
-            accumulator[attr] = "";
+        const attrs = this.state.update.attrs.reduce((accumulator, attr) => {
+            accumulator[attr.name] = "";
             return accumulator;
         }, {});
-        
-        attrs = this.state.attrs.nonKeyAttrs.reduce((attrs, attr) => {
-            attrs[attr] = "";
-            return attrs;
-        }, attrs);
         
         const item = {
             id: this.state.update.items.length,
@@ -125,7 +109,7 @@ class ManageTableItemsView extends React.Component {
         this.changeState("update", "items", newItems);
     }
     
-    async handleChangeAttrValue(e, id) {
+    handleChangeAttrValue(e, id) {
         const name = e.target.name;
         const value = e.target.value;
         
@@ -137,7 +121,7 @@ class ManageTableItemsView extends React.Component {
             return result;
         }, []);
         
-        await this.changeState("update", "items", newItems);
+        this.changeState("update", "items", newItems);
     }
     
     async handleClickUpdateItemOption(id, action) {
@@ -156,6 +140,54 @@ class ManageTableItemsView extends React.Component {
         }, []);
         
         await this.changeState("update", "items", newItems);
+    }
+    
+    handleClickAddAttr() {
+        const newAttr = this.getEmptyNewAttr();
+        const newAttrs = [...this.state.update.attrs, newAttr];
+        this.changeState("update", "attrs", newAttrs);
+    }
+    
+    getEmptyNewAttr() {
+        const attr = {
+            id: this.state.update.attrs.length,
+            name: "",
+            type: "",
+            keyType: KEY_TYPE.NON_KEY,
+            isNewAttr: true
+        }
+        
+        return attr;
+    }
+    
+    handleChangeAddedAttr(e, id) {
+        const name = e.target.name;
+        const value = e.target.value;
+        
+        const newAttrs = [...this.state.update.attrs].reduce((accumulator, attr) => {
+            if(attr.id === id) {
+                attr[name] = value;
+            }
+            accumulator.push(attr);
+            return accumulator;
+        }, []);
+        
+        this.changeState("update", "attrs", newAttrs);
+        
+        /*
+        const name = e.target.name;
+        const value = e.target.value;
+        
+        const newItems = [...this.state.update.items].reduce((result, item) => {
+            if(item.id === id) {
+                item.attrs[name] = value;
+            }
+            result.push(item);
+            return result;
+        }, []);
+        
+        this.changeState("update", "items", newItems);
+        */
     }
     
     render() {
@@ -242,15 +274,15 @@ class UpdateItems extends React.Component {
         
         return (
             <table id="update-items" style={display}>
-                <UpdateItemHeadRows item={this.props.ctrl.items}
-                    attrs={this.props.attrs}
+                <UpdateItemHeadRows attrs={this.props.ctrl.attrs}
+                    eventHandler={this.props.ctrl.eventHandler}
                 />
                 <tbody>
                     {
                         this.props.ctrl.items.map(item => (
                             <UpdateItemRow key={item.id}
                                 item={item}
-                                attrs={this.props.attrs}
+                                attrs={this.props.ctrl.attrs}
                                 eventHandler={this.props.ctrl.eventHandler}
                             />
                         ))
@@ -262,35 +294,47 @@ class UpdateItems extends React.Component {
 }
 
 class UpdateItemHeadRows extends React.Component {
+    getInput(attr, name) {
+        const className = (name === "keyType" && attr[name] != KEY_TYPE.NON_KEY) ? "is-key": "";
+        const isReadOnly = (name === "keyType") ? true:false;
+        const deleteBtn = (name === "name") ? 
+            (<i class="fas fa-times"></i>) :
+            (<div></div>);
+        
+        if(attr.isNewAttr) {
+            return (
+                <td key={attr.id}>
+                    {deleteBtn}
+                    <input type="text"
+                        name={name}
+                        value={attr[name]}
+                        onChange={(e) => this.props.eventHandler.onChangeAddedAttr(e, attr.id)}
+                        readOnly={isReadOnly}
+                    />
+                </td>
+            );
+        }
+        else {
+            return (
+                <td key={attr.id} className={className}>{attr[name]}</td>
+            );
+        }
+    }
+    
     render() {
         return (
             <thead>
                 <tr>
                     <th>Name</th>
-                    {
-                        this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{attr}</td>))
-                    }
-                    {
-                        this.props.attrs.nonKeyAttrs.map(attr => (<td key={attr}>{attr}</td>))
-                    }
+                    { this.props.attrs.map(attr => this.getInput(attr, "name")) }
                 </tr>
                 <tr>
                     <th>Type</th>
-                    {
-                        this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameTypeMap[attr]}</td>))
-                    }
-                    {
-                        this.props.attrs.nonKeyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameTypeMap[attr]}</td>))
-                    }
+                    { this.props.attrs.map(attr => this.getInput(attr, "type")) }
                 </tr>
                 <tr>
                     <th>Key Type</th>
-                    {
-                        this.props.attrs.keyAttrs.map(attr => (<td key={attr}>{this.props.attrs.nameKeyMap[attr]}</td>))
-                    }
-                    {
-                        this.props.attrs.nonKeyAttrs.map(attr => (<td key={attr}>NON-KEY</td>))
-                    }
+                    { this.props.attrs.map(attr => this.getInput(attr, "keyType")) }
                 </tr>
             </thead>
         );
@@ -305,17 +349,17 @@ class UpdateItemRow extends React.Component {
         return bkColor;
     }
     
-    getUpdateInput() {
-        let updateInput;
+    getUpdateOptions() {
+        let updateOptions;
         if(this.props.item.updateMethod === UPDATE_METHOD.add) {
-            updateInput = (
+            updateOptions = (
                 <i className="far fa-trash-alt"
                     onClick={() => this.props.eventHandler.onClickDeleteAddedItem(this.props.item.id)}>
                 </i>
             );
         }
         else {
-            updateInput = (
+            updateOptions = (
                 <div>
                     <i className="far fa-trash-alt"
                         onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.delete)}>
@@ -332,7 +376,7 @@ class UpdateItemRow extends React.Component {
             );
         }
         
-        return updateInput;
+        return updateOptions;
     }
     
     getReadOnly() {
@@ -341,39 +385,52 @@ class UpdateItemRow extends React.Component {
         }
         return true;
     }
+
+    getAttrInputs() {
+        const isReadOnly = this.getReadOnly();
+        const inputs = this.props.attrs.map(attr => {
+            let input;
+            switch(attr.type) {
+                case ATTR_TYPE.BOOL:
+                    input =
+                        <td key={attr.id}>
+                            <Dropdown id={attr.name + "-input-" + this.props.item.id}
+                                list={BOOL_OPTIONS}
+                                name={attr.name}
+                                value={this.props.item.attrs[attr.name]}
+                                onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
+                                onChangeParams={[this.props.item.id]}
+                                readOnly={isReadOnly}
+                            />
+                        </td>;
+                    break;
+                default:
+                    input =
+                        <td key={attr.id}>
+                            <input type="text"
+                                name={attr.name}
+                                value={this.props.item.attrs[attr.name]}
+                                onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
+                                readOnly={isReadOnly}
+                            />
+                        </td>;
+                    break;
+            }
+            return input;
+        });
+        
+        return inputs;
+    }
     
-    render() { 
-        let updateInput = this.getUpdateInput();
-        let inputIsReadOnly = this.getReadOnly();
+    render() {
+        let updateOptions = this.getUpdateOptions();
         let bkColor = this.getUpdateBkColor();
+        let attrInputs = this.getAttrInputs();
         
         return(
             <tr style={bkColor}>
-                <th>{updateInput}</th>
-                {
-                    this.props.attrs.keyAttrs.map(attr => (
-                        <td key={attr}>
-                            <input type="text"
-                                name={attr}
-                                value={this.props.item.attrs[attr]}
-                                onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
-                                readOnly={inputIsReadOnly}
-                            />
-                        </td>
-                    ))
-                }
-                {
-                    this.props.attrs.nonKeyAttrs.map(attr => (
-                        <td key={attr}>
-                            <input type="text"
-                                name={attr}
-                                value={this.props.item.attrs[attr]}
-                                onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
-                                readOnly={inputIsReadOnly}
-                            />
-                        </td>
-                    ))
-                }
+                <th>{updateOptions}</th>
+                {attrInputs}
             </tr>
         );
     }
@@ -398,6 +455,12 @@ const ICON_CLASS = {
     modify: "fas fa-pen",
     undo: "fas fa-undo-alt"
 }
+
+const ATTR_TYPE = {
+    BOOL: "BOOL"
+}
+
+const BOOL_OPTIONS = ["true", "false"];
 
 export {
     ManageTableItemsView

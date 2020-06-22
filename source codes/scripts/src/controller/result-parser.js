@@ -25,6 +25,12 @@ class ResultParser {
         return itemsOfView;
     }
     
+    /*
+        Input:
+            { "A": { "S": "A1" }, "B": { "BOOL": true }, "C": { "N": "1" } }
+        Output:
+            { "A": "A1", "B": true, "C": "1" }
+    */
     static getAttrNameValueMap(item) {
         const map = Object.entries(item).reduce((accumulator, entry) => {
             const [attrName, typeToValue] = entry;
@@ -38,43 +44,55 @@ class ResultParser {
     
     /*
         Input:
-            [
-                {"AttributeName": "A1", "AttributeType": "S"},
-                {"AttributeName": "A2", "AttributeType": "BOOL"},
-            ],
+            items =>
+                [
+                    { "A": { "S": "A1" }, "B": { "BOOL": true }, "C": { "N": "1" } },
+                    { "A": { "S": "A2" }, "B": { "BOOL": false }, "C": { "N": "2" } }
+                ]
+            keySchema => 
+                [
+                    {"AttributeName": "A1", "KeyType": "HASH"},
+                    {"AttributeName": "A2", "KeyType": "RANGE"}
+                ]
         Output:
-            [ "A1", "A2" ]
+            [
+                { id: 0, name: "A", type: "S", keyType: "HASH" },
+                { id: 1, name: "B", type: "BOOL", keyType: "RANGE" },
+                { id: 2, name: "C", type: "N", keyType: "NON-KEY" }
+            ]
     */
-    static getKeyAttrNames(attrDefs) {
-        const names = attrDefs.map(attrDef => attrDef.AttributeName);
-        return names;
+    static getAttrsOfView(items, keySchema) {
+        const attrNameKeyMap = this.getAttrNameKeyMap(keySchema);
+        
+        const attrNameTypeMap = this.getAttrNameTypeMap(items);
+        
+        const unsortedAttrs = Object.entries(attrNameTypeMap).map((attrNameTypeMap, index) => {
+            const [name, type] = attrNameTypeMap;
+            const keyType = Object.keys(attrNameKeyMap).includes(name) ? attrNameKeyMap[name] : "NON-KEY";
+            const attr = {
+                name: name,
+                type: type,
+                keyType: keyType
+            }
+            return attr;
+        });
+        
+        const sortedAttrs = unsortedAttrs.sort(this.sortAttrs);
+        
+        const attrs = sortedAttrs.map((attr, index) => ({id: index, ...attr}));
+        
+        return attrs;
     }
     
-    /*
-        Input:
-            [
-                { "Key1": { "S": "K1" }, "Key2": { "BOOL": true }, "NonKey1": { "S": "NK1" } },
-                { "Key1": { "S": "K2" }, "Key2": { "BOOL": false }, "NonKey2": { "BOOL": false } }
-            ]
-        Output:
-            [ "NonKey1", "NonKey2" ]
-    */
-    static getNonKeyAttrNames(items, keyAttrNames) {
-        const names = items.reduce((accumulator, item) => {
-            const nonKeyAttrNames = Object.keys(item).filter(attrName => !keyAttrNames.includes(attrName));
-            accumulator = [...accumulator, ...nonKeyAttrNames];
-            accumulator = Array.from(new Set(accumulator));
-            return accumulator;
-        }, []);
-        
-        return names;
+    static sortAttrs(v1, v2) {
+        return KEY_TYPE_VALUE[v1.keyType] < KEY_TYPE_VALUE[v2.keyType] ? 1 : -1;
     }
     
     /*
         Input:
             [
                 {"AttributeName": "A1", "KeyType": "HASH"},
-                {"AttributeName": "A2", "KeyType": "RANGE"},
+                {"AttributeName": "A2", "KeyType": "RANGE"}
             ],
         Output:
             { "A1": "HASH", "A2": "RANGE" }
@@ -112,5 +130,17 @@ class ResultParser {
         return map;
     }
 }
+    
+const KEY_TYPE = {
+    HASH: "HASH",
+    RANGE: "RANGE",
+    NON_KEY: "NON-KEY"
+}
 
-export { ResultParser }
+const KEY_TYPE_VALUE = {
+    [KEY_TYPE.HASH]: 2,
+    [KEY_TYPE.RANGE]: 1,
+    [KEY_TYPE.NON_KEY]: 0
+}
+
+export { ResultParser, KEY_TYPE }

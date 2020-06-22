@@ -10,24 +10,21 @@ class TableController {
         return tableNames;
     }
     
-    static async getKeyAttrs(tableName) {
-        const params = { TableName: tableName };
-        const result = await this.callModelFunc(params, FuncNames.describe);
-        const attrs = ResultParser.getKeyAttrNames(result.data.Table.AttributeDefinitions);
-        
-        return attrs;
-    }
-    
-    static async getNonKeyAttrs(tableName) {
-        const params = {
+    static async getAllAttrs(tableName) {
+        const scanParams = {
             TableName: tableName,
             ReturnConsumedCapacity: "TOTAL"
         };
-        const result = await this.callModelFunc(params, FuncNames.scan);
-        const keyAttrs = await this.getKeyAttrs(tableName);
-        const nonKeyAttrs = ResultParser.getNonKeyAttrNames(result.data.Items, keyAttrs);
+        const scanResult = await this.callModelFunc(scanParams, FuncNames.scan);
         
-        return nonKeyAttrs;
+        const describeParams = {
+            TableName: tableName
+        };
+        const describeResult = await this.callModelFunc(describeParams, FuncNames.describe);
+        
+        const attrs = ResultParser.getAttrsOfView(scanResult.data.Items, describeResult.data.Table.KeySchema);
+        
+        return attrs;
     }
     
     static async getAttrNameKeyMap(tableName) {

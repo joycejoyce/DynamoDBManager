@@ -36,10 +36,12 @@ class Dropdown extends React.Component {
     }
     
     handleBtnClick() {
-        this.toggle();
-        
-        if(this.props.onClick !== undefined) {
-            this.props.onClick();
+        if(!this.props.readOnly){
+            this.toggle();
+
+            if(this.props.onClick !== undefined) {
+                this.props.onClick();
+            }
         }
     }
     
@@ -64,19 +66,22 @@ class Dropdown extends React.Component {
         const styles = {
             listDisplay: {
                 display: this.state.listDisplay
+            },
+            arrowDisplay: {
+                display: this.props.readOnly ? "none" : "block"
             }
         };
         
         return (
             <div className="dropdown">
                 <div className="dropdown-btn-container">
-                    <input className="dropdown-btn"
+                    <input className={"dropdown-btn" + (this.props.readOnly ? "" : " choosable")}
                         type="text"
                         onClick={this.handleBtnClick}
                         value={this.props.value}
                         readOnly
                     />
-                    <i className={"fas "+this.state.iElemClass}></i>
+                    <i className={"fas "+this.state.iElemClass} style={styles.arrowDisplay}></i>
                 </div>
                 <div className="dropdown-list" style={styles.listDisplay}>
                     {
@@ -99,6 +104,7 @@ class Dropdown extends React.Component {
             listItemInput = (
                 <input key={item}
                     type="text"
+                    name={this.props.name}
                     value={item}
                     onClick={this.handleItemClick}
                     spellCheck="false"

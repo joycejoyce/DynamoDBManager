@@ -142,8 +142,9 @@ class TestElemView extends React.Component {
                         /*KEY: {N: year.toString()},*/
                             actor: {S: "John"},
                             year: {N: year.toString()},
-                            title: {S: "title-" + year.toString()},
-                            popular: {BOOL: (i%2 == 0)}
+                            title: {S: "title-" + i},
+                            popular: {BOOL: (i%2 == 0)},
+                            award: {S: "award-" + i}
                     }
                 }
             };

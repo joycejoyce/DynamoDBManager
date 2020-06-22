@@ -706,6 +706,22 @@ table#update-items {
     $thin-border: 1px solid $border-color;
     $bold-border: 3px solid $border-color;
     
+    
+    th {
+        white-space: nowrap;
+        font-weight: bold;
+        text-align: start;
+        padding-left: 5px;
+        position: sticky;
+        top: 0;
+        
+        &:first-child {
+            left: 0;
+            z-index: 1;
+            background-color: lighten($bright-blue, 25%);
+        }
+    }
+    
     thead {
         td,th {
             border-bottom: $thin-border;
@@ -728,12 +744,6 @@ table#update-items {
         }
     }
     
-    th {
-        font-weight: bold;
-        text-align: start;
-        padding-left: 5px;
-    }
-    
     td {
         font-weight: normal;
     }
@@ -750,4 +760,13 @@ table#update-items {
         background-color: #b3b3b3;
         cursor: default;
     }
+    
+    .is-key {
+        color: $bright-blue;
+        font-weight: bold;
+    }
+}
+
+input.choosable {
+    background-color: white !important;
 }
