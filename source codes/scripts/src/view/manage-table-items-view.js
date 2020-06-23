@@ -16,6 +16,7 @@ class ManageTableItemsView extends React.Component {
         this.handleClickUpdateItemOption = this.handleClickUpdateItemOption.bind(this);
         this.handleClickAddAttr = this.handleClickAddAttr.bind(this);
         this.handleChangeAddedAttr = this.handleChangeAddedAttr.bind(this);
+        this.handleClickDeleteAddedAttr = this.handleClickDeleteAddedAttr.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -29,15 +30,16 @@ class ManageTableItemsView extends React.Component {
             update: {
                 display: "none",
                 origItems: [],
-                items: [],
-                attrs: [],
+                items: [], itemIdCnt: 0,
+                attrs: [], attrIdCnt: 0,
                 eventHandler: {
                     onClickAddItem: this.handleClickAddItem,
                     onClickAddAttr: this.handleClickAddAttr,
                     onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
                     onChangeAttrValue: this.handleChangeAttrValue,
                     onClickUpdateItemOption: this.handleClickUpdateItemOption,
-                    onChangeAddedAttr: this.handleChangeAddedAttr
+                    onChangeAddedAttr: this.handleChangeAddedAttr,
+                    onClickDeleteAddedAttr: this.handleClickDeleteAddedAttr
                 }
             }
         }
@@ -79,24 +81,32 @@ class ManageTableItemsView extends React.Component {
         const items = await TableController.getAllItems(tableName);
         this.changeState("update", "items", items);
         this.changeState("update", "origItems", JSON.parse(JSON.stringify(items)));
+        this.changeState("update", "itemIdCnt", items.length-1);
         
         const attrs = await TableController.getAllAttrs(tableName);
         this.changeState("update", "attrs", attrs);
+        this.changeState("update", "attrIdCnt", attrs.length-1);
     }
     
     handleClickAddItem() {
-        const newItem = this.getEmptyNewItem();
+        const newId = this.getNewItemId();
+        const newItem = this.getEmptyNewItem(newId);
+        this.changeState("update", "itemIdCnt", newId);
         this.changeState("update", "items", [...this.state.update.items, newItem]);
     }
     
-    getEmptyNewItem() {
+    getNewItemId() {
+        return this.state.update.itemIdCnt + 1;
+    }
+    
+    getEmptyNewItem(id) {
         const attrs = this.state.update.attrs.reduce((accumulator, attr) => {
             accumulator[attr.name] = "";
             return accumulator;
         }, {});
         
         const item = {
-            id: this.state.update.items.length,
+            id: id,
             updateMethod: UPDATE_METHOD.add,
             attrs
         };
@@ -143,14 +153,20 @@ class ManageTableItemsView extends React.Component {
     }
     
     handleClickAddAttr() {
-        const newAttr = this.getEmptyNewAttr();
+        const newId = this.getNewAttrId();
+        const newAttr = this.getEmptyNewAttr(newId);
         const newAttrs = [...this.state.update.attrs, newAttr];
+        this.changeState("update", "attrIdCnt", newId);
         this.changeState("update", "attrs", newAttrs);
     }
     
-    getEmptyNewAttr() {
+    getNewAttrId() {
+        return this.state.update.attrIdCnt + 1;
+    }
+    
+    getEmptyNewAttr(id) {
         const attr = {
-            id: this.state.update.attrs.length,
+            id: id,
             name: "",
             type: "",
             keyType: KEY_TYPE.NON_KEY,
@@ -173,21 +189,11 @@ class ManageTableItemsView extends React.Component {
         }, []);
         
         this.changeState("update", "attrs", newAttrs);
-        
-        /*
-        const name = e.target.name;
-        const value = e.target.value;
-        
-        const newItems = [...this.state.update.items].reduce((result, item) => {
-            if(item.id === id) {
-                item.attrs[name] = value;
-            }
-            result.push(item);
-            return result;
-        }, []);
-        
-        this.changeState("update", "items", newItems);
-        */
+    }
+    
+    handleClickDeleteAddedAttr(id) {
+        const newAttrs = [...this.state.update.attrs].filter(attr => attr.id !== id);
+        this.changeState("update", "attrs", newAttrs);
     }
     
     render() {
@@ -297,44 +303,69 @@ class UpdateItemHeadRows extends React.Component {
     getInput(attr, name) {
         const className = (name === "keyType" && attr[name] != KEY_TYPE.NON_KEY) ? "is-key": "";
         const isReadOnly = (name === "keyType") ? true:false;
-        const deleteBtn = (name === "name") ? 
-            (<i class="fas fa-times"></i>) :
-            (<div></div>);
+        let contents;
         
-        if(attr.isNewAttr) {
-            return (
-                <td key={attr.id}>
-                    {deleteBtn}
+        if(name === "delete") {
+            if(attr.isNewAttr) {
+                contents = (
+                    <i className="fas fa-times"
+                        onClick={() => this.props.eventHandler.onClickDeleteAddedAttr(attr.id)}>
+                    </i>
+                );
+            }
+            else {
+                contents = (
+                    <label className="checkbox">
+                        <input type="checkbox"
+                            name={name}
+                        />
+                        <span className="checkmark"></span>
+                    </label>
+                );
+            }
+        }
+        else {
+            if(attr.isNewAttr) {
+                contents = (
                     <input type="text"
                         name={name}
                         value={attr[name]}
                         onChange={(e) => this.props.eventHandler.onChangeAddedAttr(e, attr.id)}
                         readOnly={isReadOnly}
                     />
-                </td>
-            );
+                );
+            }
+            else {
+                contents = attr[name];
+            }
         }
-        else {
-            return (
-                <td key={attr.id} className={className}>{attr[name]}</td>
-            );
-        }
+        
+        return <td key={attr.id} className={className}>{contents}</td>
     }
     
     render() {
+        const deleteRows = this.props.attrs.map(attr => this.getInput(attr, "delete"));
+        const nameRows = this.props.attrs.map(attr => this.getInput(attr, "name"));
+        const typeRows = this.props.attrs.map(attr => this.getInput(attr, "type"));
+        const keyTypeRows = this.props.attrs.map(attr => this.getInput(attr, "keyType"));
+        
         return (
             <thead>
                 <tr>
+                    <th className="delete">Delete</th>
+                    { deleteRows }
+                </tr>
+                <tr>
                     <th>Name</th>
-                    { this.props.attrs.map(attr => this.getInput(attr, "name")) }
+                    { nameRows }
                 </tr>
                 <tr>
                     <th>Type</th>
-                    { this.props.attrs.map(attr => this.getInput(attr, "type")) }
+                    { typeRows }
                 </tr>
                 <tr>
                     <th>Key Type</th>
-                    { this.props.attrs.map(attr => this.getInput(attr, "keyType")) }
+                    { keyTypeRows }
                 </tr>
             </thead>
         );
