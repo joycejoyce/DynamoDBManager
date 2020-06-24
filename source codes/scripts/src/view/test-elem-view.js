@@ -11,9 +11,10 @@ class TestElemView extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmitCreateTableForm = this.handleSubmitCreateTableForm.bind(this);
         this.handleSubmitAddItemForm = this.handleSubmitAddItemForm.bind(this);
+        
+        this.deleteItem = this.deleteItem.bind(this);
         this.queryItems = this.queryItems.bind(this);
         this.queryAllItems = this.queryAllItems.bind(this);
-        
         this.createTable = this.createTable.bind(this);
         this.deleteTable = this.deleteTable.bind(this);
         this.genNewTableName = this.genNewTableName.bind(this);
@@ -41,6 +42,16 @@ class TestElemView extends React.Component {
                 onClickQuery: this.queryItems,
                 onClickQueryAll: this.queryAllItems
             },
+            deleteItem: {
+                actor: "John",
+                award: "award-1",
+                year: "1901",
+                title: "title-1",
+                popular: "N",
+                tableName: "TestTable1",
+                onChange: this.handleChange,
+                onClickDelete: this.deleteItem
+            },
             result: {}
         };
     }
@@ -54,8 +65,6 @@ class TestElemView extends React.Component {
         const ctrl = {...this.state[ctrlName]};
         ctrl[ctrlProp] = e.target.value;
         await this.setState(state => state[ctrlName] = ctrl);
-        
-        console.log(`${ctrlName}.${ctrlProp} = ${this.state[ctrlName][ctrlProp]}`)
     }
     
     async handleSubmitCreateTableForm(e) {
@@ -203,10 +212,35 @@ class TestElemView extends React.Component {
         const items = await TableController.getAllItems(this.state.queryItem.tableName);
         this.setState({result: {...items}});
     }
+
+    deleteItem(e) {
+        e.preventDefault();
+        const tableName = this.state.deleteItem.tableName;
+        const attrDefs = [
+            { name: "actor", type: "S", keyType: "HASH" },
+            { name: "year", type: "N", keyType: "RANGE" },
+            { name: "award", type: "S", keyType: "NON-KEY" },
+            { name: "title", type: "S", keyType: "NON-KEY" },
+            { name: "popular", type: "BOOL", keyType: "NON-KEY" }
+        ];
+        const attrCondition = {
+            actor: this.state.deleteItem.actor,
+            award: this.state.deleteItem.award,
+            year: this.state.deleteItem.year,
+            title: this.state.deleteItem.title,
+            popular: this.state.deleteItem.popular
+        };
+        const result = TableController.deleteItem(tableName, attrDefs, attrCondition);
+        this.setState({result});
+    }
     
     render() {        
         return(
             <div>
+                <DeleteItemForm 
+                    name="deleteItem"
+                    formControls={this.state.deleteItem}
+                />
                 <QueryItemForm 
                     name="queryItem"
                     formControls={this.state.queryItem}
@@ -277,6 +311,41 @@ class QueryItemForm extends React.Component {
                 </table>
                 <input type="submit" value="Query" onClick={this.props.formControls.onClickQuery} />
                 <input type="submit" value="Query All" onClick={this.props.formControls.onClickQueryAll} />
+            </form>
+        );
+    }
+}
+
+class DeleteItemForm extends React.Component {
+    render() {
+        return(
+            <form id="delete-item">
+                <h1>Delete Items</h1>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Actor:</td>
+                            <td><input name={this.props.name+"-actor"} value={this.props.formControls.actor} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                        <tr>
+                            <td>Year:</td>
+                            <td><input name={this.props.name+"-year"} value={this.props.formControls.year} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                        <tr>
+                            <td>Award:</td>
+                            <td><input name={this.props.name+"-award"} value={this.props.formControls.award} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                        <tr>
+                            <td>Title:</td>
+                            <td><input name={this.props.name+"-title"} value={this.props.formControls.title} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                        <tr>
+                            <td>Popular:</td>
+                            <td><input name={this.props.name+"-popular"} value={this.props.formControls.popular} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <input type="submit" value="Delete" onClick={(e) => this.props.formControls.onClickDelete(e)} />
             </form>
         );
     }

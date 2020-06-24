@@ -1,3 +1,5 @@
+import { CommonVar } from "./common-var.js";
+
 class ResultParser {
     /*
         Input:
@@ -130,12 +132,8 @@ class ResultParser {
         return map;
     }
 }
-    
-const KEY_TYPE = {
-    HASH: "HASH",
-    RANGE: "RANGE",
-    NON_KEY: "NON-KEY"
-}
+
+const KEY_TYPE = CommonVar.KEY_TYPE;
 
 const KEY_TYPE_VALUE = {
     [KEY_TYPE.HASH]: 2,
@@ -143,4 +141,4 @@ const KEY_TYPE_VALUE = {
     [KEY_TYPE.NON_KEY]: 0
 }
 
-export { ResultParser, KEY_TYPE }
+export { ResultParser }

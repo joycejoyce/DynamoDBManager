@@ -683,6 +683,11 @@ section#update {
             border: none;
         }
     }
+    button[type="submit"] {
+        margin: 10px 0 0 auto;
+        background-color: $green;
+        display: block;
+    }
 }
 
 table#update-status {
@@ -705,7 +710,6 @@ table#update-items {
     $border-color: $bright-blue;
     $thin-border: 1px solid $border-color;
     $bold-border: 3px solid $border-color;
-    
     
     th {
         white-space: nowrap;
@@ -849,6 +853,10 @@ table#update-items {
     .is-key {
         color: $bright-blue;
         font-weight: bold;
+    }
+    
+    .deleted-attr {
+        background-color: $red;
     }
 }
 

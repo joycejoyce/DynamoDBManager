@@ -19,7 +19,6 @@ TableModel.create = (params) => {
 
 TableModel.delete = (tableName) => {
     return new Promise((resolve) => {
-        const action = "delete-tables";
         const params = { TableName: tableName };
         dbApi.deleteTable(params, (err, data) => resolve({err, data}));
     });
@@ -48,6 +47,12 @@ TableModel.scan = (params) => {
         dbApi.scan(params, (err, data) => resolve({err, data}));
     });
 };
+
+TableModel.deleteItem = (params) => {
+    return new Promise((resolve) => {
+        dbApi.deleteItem(params, (err, data) => resolve({err, data}));
+    });
+}
                     
 export {
     TableModel

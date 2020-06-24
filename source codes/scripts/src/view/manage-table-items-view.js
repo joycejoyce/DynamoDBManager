@@ -1,6 +1,6 @@
 import { TableController } from "../controller/table-controller.js";
 import { Dropdown } from "./form-components/dropdown.js";
-import { KEY_TYPE } from "../controller/result-parser.js";
+import { CommonVar } from "../controller/common-var.js";
 
 const React = require("react");
 
@@ -17,6 +17,8 @@ class ManageTableItemsView extends React.Component {
         this.handleClickAddAttr = this.handleClickAddAttr.bind(this);
         this.handleChangeAddedAttr = this.handleChangeAddedAttr.bind(this);
         this.handleClickDeleteAddedAttr = this.handleClickDeleteAddedAttr.bind(this);
+        this.handleChangeCheckDeleteAttr = this.handleChangeCheckDeleteAttr.bind(this);
+        this.handleClickUpdate = this.handleClickUpdate.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -39,7 +41,9 @@ class ManageTableItemsView extends React.Component {
                     onChangeAttrValue: this.handleChangeAttrValue,
                     onClickUpdateItemOption: this.handleClickUpdateItemOption,
                     onChangeAddedAttr: this.handleChangeAddedAttr,
-                    onClickDeleteAddedAttr: this.handleClickDeleteAddedAttr
+                    onClickDeleteAddedAttr: this.handleClickDeleteAddedAttr,
+                    onChangeCheckDeleteAttr: this.handleChangeCheckDeleteAttr,
+                    onClickUpdate: this.handleClickUpdate
                 }
             }
         }
@@ -196,6 +200,41 @@ class ManageTableItemsView extends React.Component {
         this.changeState("update", "attrs", newAttrs);
     }
     
+    handleChangeCheckDeleteAttr(e, id) {
+        const name = e.target.name;
+        const isChecked = e.target.checked;
+        const newAttrs = [...this.state.update.attrs].reduce((acc, attr) => {
+            if(attr.id === id) {
+                attr.delete = isChecked;
+            }
+            acc.push(attr);
+            return acc;
+        }, []);
+        this.changeState("update", "attrs", newAttrs);
+    }
+    
+    async handleClickUpdate(e) {
+        e.preventDefault();
+        const results = await this.deleteItems();
+        this.setTableData(this.state.tableName.value);
+    }
+    
+    async deleteItems() {
+        const tableName = this.state.tableName.value;
+        const attrDefs = this.state.update.attrs;
+        const deleteItems = this.state.update.items.filter(item => item.updateMethod === UPDATE_METHOD.delete);
+        const results = await Promise.all(
+            this.state.update.items
+                .filter(item => item.updateMethod === UPDATE_METHOD.delete)
+                .map(async item => {
+                    const result = await TableController.deleteItem(tableName, attrDefs, item.attrs);
+                    return result;
+                })
+        );
+        
+        return results;
+    }
+    
     render() {
         return(
             <div>
@@ -235,6 +274,7 @@ class UpdateSection extends React.Component {
                 <button onClick={this.props.ctrl.eventHandler.onClickAddAttr}>Add Attribute</button>
                 <UpdateStatus items={this.props.ctrl.items} />
                 <UpdateItems ctrl={this.props.ctrl} attrs={this.props.attrs} />
+                <button type="submit" onClick={(e) => this.props.ctrl.eventHandler.onClickUpdate(e)}>Update</button>
             </section>
         );
     }
@@ -318,6 +358,8 @@ class UpdateItemHeadRows extends React.Component {
                     <label className="checkbox">
                         <input type="checkbox"
                             name={name}
+                            checked={attr.toDelete}
+                            onChange={(e) => this.props.eventHandler.onChangeCheckDeleteAttr(e, attr.id)}
                         />
                         <span className="checkmark"></span>
                     </label>
@@ -417,14 +459,20 @@ class UpdateItemRow extends React.Component {
         return true;
     }
 
+    getAttrDeleted(attr) {
+        return attr.delete;
+    }
+
     getAttrInputs() {
-        const isReadOnly = this.getReadOnly();
         const inputs = this.props.attrs.map(attr => {
             let input;
+            const isAttrDeleted = this.getAttrDeleted(attr);
+            const deleteClassName = isAttrDeleted ? "deleted-attr" : "";
+            const isReadOnly = (this.getReadOnly() || isAttrDeleted) ? true : false;
             switch(attr.type) {
                 case ATTR_TYPE.BOOL:
                     input =
-                        <td key={attr.id}>
+                        <td key={attr.id} className={deleteClassName}>
                             <Dropdown id={attr.name + "-input-" + this.props.item.id}
                                 list={BOOL_OPTIONS}
                                 name={attr.name}
@@ -437,7 +485,7 @@ class UpdateItemRow extends React.Component {
                     break;
                 default:
                     input =
-                        <td key={attr.id}>
+                        <td key={attr.id} className={deleteClassName}>
                             <input type="text"
                                 name={attr.name}
                                 value={this.props.item.attrs[attr.name]}
@@ -492,6 +540,8 @@ const ATTR_TYPE = {
 }
 
 const BOOL_OPTIONS = ["true", "false"];
+
+const KEY_TYPE = CommonVar.KEY_TYPE;
 
 export {
     ManageTableItemsView

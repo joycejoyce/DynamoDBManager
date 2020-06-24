@@ -1,5 +1,6 @@
 import { TableModel } from "../model/table-model.js";
 import { ResultParser } from "./result-parser.js";
+import { InputParser } from "./input-parser.js";
 
 class TableController {
     static async getAllTableNames() {
@@ -36,9 +37,6 @@ class TableController {
     }
     
     static async getAllAttrNameTypeMap(tableName) {
-        /*const params = { TableName: tableName };
-        const result = await this.callModelFunc(params, FuncNames.describe);
-        const attrNameTypeMap = ResultParser.getAttrNameTypeMap(result.data.Table.AttributeDefinitions);*/
         const params = {
             TableName: tableName,
             ReturnConsumedCapacity: "TOTAL"
@@ -60,9 +58,19 @@ class TableController {
         return items;
     }
     
-    static callModelFunc(params, func) {
-        const result = TableModel[func](params);
-        if(result.err) { throw err; }
+    static async callModelFunc(params, func) {
+        const result = await TableModel[func](params);
+        if(result.err !== null) {
+            throw result.err;
+        }
+        
+        return result;
+    }
+    
+    static async deleteItem(tableName, attrDefs, attrCondition) {
+        const params = InputParser.getDeleteParams(tableName, attrDefs, attrCondition);
+        const result = await this.callModelFunc(params, FuncNames.deleteItem);
+
         return result;
     }
 }
@@ -70,7 +78,8 @@ class TableController {
 const FuncNames = {
     list: "list",
     describe: "describe",
-    scan: "scan"
+    scan: "scan",
+    deleteItem: "deleteItem"
 }
 
 export {
