@@ -53,6 +53,18 @@ TableModel.deleteItem = (params) => {
         dbApi.deleteItem(params, (err, data) => resolve({err, data}));
     });
 }
+
+TableModel.updateItem = (params) => {
+    return new Promise((resolve) => {
+        dbApi.updateItem(params, (err, data) => resolve({err, data}));
+    });
+}
+
+TableModel.addItem = (params) => {
+    return new Promise((resolve) => {
+        dbApi.batchWriteItem(params, (err, data) => resolve({err, data}));
+    });
+}
                     
 export {
     TableModel

@@ -215,24 +215,41 @@ class ManageTableItemsView extends React.Component {
     
     async handleClickUpdate(e) {
         e.preventDefault();
-        const results = await this.deleteItems();
+        const deleteResults = await this.updateItems(UPDATE_METHOD.delete);
+        const updateResults = await this.updateItems(UPDATE_METHOD.update);
+        const addResults = await this.updateItems(UPDATE_METHOD.add);
         this.setTableData(this.state.tableName.value);
     }
     
-    async deleteItems() {
-        const tableName = this.state.tableName.value;
-        const attrDefs = this.state.update.attrs;
-        const deleteItems = this.state.update.items.filter(item => item.updateMethod === UPDATE_METHOD.delete);
+    async updateItems(action) {
+        const updateParams = this.getUpdateParams(action);
         const results = await Promise.all(
-            this.state.update.items
-                .filter(item => item.updateMethod === UPDATE_METHOD.delete)
-                .map(async item => {
-                    const result = await TableController.deleteItem(tableName, attrDefs, item.attrs);
-                    return result;
-                })
+            updateParams.attrConditions.map(async attrCondition => {
+                const params = {
+                    tableName: updateParams.tableName,
+                    attrDefs: updateParams.attrDefs,
+                    attrCondition: attrCondition
+                };
+                const result = await TableController[action+"Item"](params);
+                return result;
+            })
         );
         
         return results;
+    }
+    
+    getUpdateParams(action) {
+        const tableName = this.state.tableName.value;
+        const attrDefs = this.state.update.attrs;
+        const attrConditions = this.state.update.items
+            .filter(item => item.updateMethod === UPDATE_METHOD[action])
+            .map(item => item.attrs);
+        
+        return {
+            tableName,
+            attrDefs,
+            attrConditions
+        };
     }
     
     render() {
@@ -274,7 +291,6 @@ class UpdateSection extends React.Component {
                 <button onClick={this.props.ctrl.eventHandler.onClickAddAttr}>Add Attribute</button>
                 <UpdateStatus items={this.props.ctrl.items} />
                 <UpdateItems ctrl={this.props.ctrl} attrs={this.props.attrs} />
-                <button type="submit" onClick={(e) => this.props.ctrl.eventHandler.onClickUpdate(e)}>Update</button>
             </section>
         );
     }
@@ -283,7 +299,7 @@ class UpdateSection extends React.Component {
 class UpdateStatus extends React.Component {
     render() {
         const addedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.add).length;
-        const modifiedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.modify).length;
+        const modifiedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.update).length;
         const deletedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.delete).length;
         const origNum = this.props.items.length - addedNum;
         
@@ -319,22 +335,28 @@ class UpdateItems extends React.Component {
         }
         
         return (
-            <table id="update-items" style={display}>
-                <UpdateItemHeadRows attrs={this.props.ctrl.attrs}
-                    eventHandler={this.props.ctrl.eventHandler}
-                />
-                <tbody>
-                    {
-                        this.props.ctrl.items.map(item => (
-                            <UpdateItemRow key={item.id}
-                                item={item}
-                                attrs={this.props.ctrl.attrs}
-                                eventHandler={this.props.ctrl.eventHandler}
-                            />
-                        ))
-                    }
-                </tbody>
-            </table>
+            <div>
+                <table id="update-items" style={display}>
+                    <UpdateItemHeadRows attrs={this.props.ctrl.attrs}
+                        eventHandler={this.props.ctrl.eventHandler}
+                    />
+                    <tbody>
+                        {
+                            this.props.ctrl.items.map(item => (
+                                <UpdateItemRow key={item.id}
+                                    item={item}
+                                    attrs={this.props.ctrl.attrs}
+                                    eventHandler={this.props.ctrl.eventHandler}
+                                />
+                            ))
+                        }
+                    </tbody>
+                </table>
+                <button style={display}
+                    type="submit"
+                    onClick={(e) => this.props.ctrl.eventHandler.onClickUpdate(e)}>Update
+                </button>
+            </div>
         );
     }
 }
@@ -439,7 +461,7 @@ class UpdateItemRow extends React.Component {
                     </i>
                     &nbsp;&nbsp;
                     <i className="fas fa-pen"
-                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.modify)}>
+                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.update)}>
                     </i>
                     &nbsp;&nbsp;
                     <i className="fas fa-undo-alt"
@@ -453,7 +475,7 @@ class UpdateItemRow extends React.Component {
     }
     
     getReadOnly() {
-        if(this.props.item.updateMethod === UPDATE_METHOD.modify || this.props.item.updateMethod === UPDATE_METHOD.add) {
+        if(this.props.item.updateMethod === UPDATE_METHOD.update || this.props.item.updateMethod === UPDATE_METHOD.add) {
             return false;
         }
         return true;
@@ -518,20 +540,20 @@ class UpdateItemRow extends React.Component {
 const UPDATE_METHOD = {
     add: "add",
     delete: "delete",
-    modify: "modify",
+    update: "update",
     undo: "reverse changes"
 }
 
 const UPDATE_BK_COLOR = {
     add: "#2A9D8F",
     delete: "#E76F51",
-    modify: "#0496ff",
+    update: "#0496ff",
     undo: ""
 }
 
 const ICON_CLASS = {
     delete: "far fa-trash-alt",
-    modify: "fas fa-pen",
+    update: "fas fa-pen",
     undo: "fas fa-undo-alt"
 }
 

@@ -67,9 +67,23 @@ class TableController {
         return result;
     }
     
-    static async deleteItem(tableName, attrDefs, attrCondition) {
-        const params = InputParser.getDeleteParams(tableName, attrDefs, attrCondition);
-        const result = await this.callModelFunc(params, FuncNames.deleteItem);
+    static async deleteItem(params) {
+        const parsedParams = InputParser.getDeleteParams(params);
+        const result = await this.callModelFunc(parsedParams, FuncNames.deleteItem);
+
+        return result;
+    }
+    
+    static async updateItem(params) {
+        const parsedParams = InputParser.getUpdateParams(params);
+        const result = await this.callModelFunc(parsedParams, FuncNames.updateItem);
+
+        return result;
+    }
+    
+    static async addItem(params) {
+        const parsedParams = InputParser.getAddParams(params);
+        const result = await this.callModelFunc(parsedParams, FuncNames.addItem);
 
         return result;
     }
@@ -79,7 +93,9 @@ const FuncNames = {
     list: "list",
     describe: "describe",
     scan: "scan",
-    deleteItem: "deleteItem"
+    deleteItem: "deleteItem",
+    updateItem: "updateItem",
+    addItem: "addItem"
 }
 
 export {

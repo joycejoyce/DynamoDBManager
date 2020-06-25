@@ -2,6 +2,26 @@ import { CommonVar } from "./common-var.js";
 
 class InputParser {
     /*
+        (output)
+        ConditionExpression: 
+            "#name0 = :value0 AND #name1 = :value1"
+        ReturnConsumedCapacity:
+            "TOTAL"
+    */
+    static getDeleteParams(params) {
+        const commonParams = this.getUpdateCommonParams(params);
+        const ReturnConsumedCapacity = "TOTAL";
+        const ConditionExpression = this.getCondExp("", Object.keys(commonParams.ExpressionAttributeNames).length, "AND");
+        const parsedParams = {
+            ...commonParams,
+            ReturnConsumedCapacity,
+            ConditionExpression
+        };
+        
+        return parsedParams;
+    }
+    
+    /*
         input:
             tableName =>
                 "TestTable"
@@ -33,35 +53,25 @@ class InputParser {
                     ExpressionAttributeValues: {
                         ":value0": { BOOL: true },
                         ":value1": { "S": "Test" }
-                    },
-                    ConditionExpression: 
-                        "#name0 = :value0 AND #name1 = :value1",
-                    ReturnConsumedCapacity:
-                        "TOTAL"
+                    }
                 }
             ]
     */
-    static getDeleteParams(tableName, attrDefs, attrCondition) {
-        const Key = this.getKeyOfDeleteParams(attrDefs, attrCondition);
+    static getUpdateCommonParams(params) {
+        const {tableName, attrDefs, attrCondition} = params;
         
+        const Key = this.getKeyConditions(attrDefs, attrCondition);
         const TableName = tableName;
+        const [ExpressionAttributeNames, ExpressionAttributeValues] = this.getExpAttrNamesAndValues(attrDefs, attrCondition);
         
-        const [ExpressionAttributeNames, ExpressionAttributeValues] = this.getExpAttrNamesAndValuesOfDeleteParams(attrDefs, attrCondition);
-        
-        const ConditionExpression = this.getCondExp(Object.keys(ExpressionAttributeNames).length);
-        
-        const ReturnConsumedCapacity = "TOTAL";
-        
-        const params = {
+        const parsedParams = {
             Key,
             TableName,
             ExpressionAttributeNames,
-            ExpressionAttributeValues,
-            ConditionExpression,
-            ReturnConsumedCapacity
+            ExpressionAttributeValues
         };
         
-        return params;
+        return parsedParams;
     }
     
     /*
@@ -85,19 +95,11 @@ class InputParser {
                 }
             }
     */
-    static getKeyOfDeleteParams(attrDefs, attrCondition) {
+    static getKeyConditions(attrDefs, attrCondition) {
         const keyAttrDefs = this.getKeyAttrDefs(attrDefs);
-        const key = keyAttrDefs.reduce((acc, cond) => {
-            const name = cond.name;
-            const type = cond.type;
-            const value = this.getMappedValue(attrCondition[name], type);
-            acc[name] = {
-                [type]: value
-            };
-            return acc;
-        }, {});
+        const keyConditions = this.getAttrNameTypeValueObj(keyAttrDefs, attrCondition);
         
-        return key;
+        return keyConditions;
     }
     
     /*
@@ -117,6 +119,47 @@ class InputParser {
     */
     static getKeyAttrDefs(attrDefs) {
         return attrDefs.filter(attrDef => attrDef.keyType != KEY_TYPE.NON_KEY);
+    }
+    
+    /*
+        input:
+            attrDefs =>
+                [
+                    { name: "A", type: "S", keyType: "HASH" },
+                    { name: "B", type: "N", keyType: "RANGE" },
+                    { name: "C", type: "BOOL", keyType: "NON-KEY" },
+                    { name: "D", type: "S", keyType: "NON-KEY" }
+                ]
+            attrCondition =>
+                { "A": "A1", "B": "100", "C": "Y"/"true", "D": "Test" }
+        output:
+            {
+                "A": {
+                    S: "A1"
+                },
+                "B": {
+                    N: "100"
+                },
+                "C": {
+                    BOOL: true
+                },
+                "D": {
+                    S: "Test"
+                }
+            }
+    */
+    static getAttrNameTypeValueObj(attrDefs, attrCondition) {
+        const obj = attrDefs.reduce((acc, def) => {
+            const name = def.name;
+            const type = def.type;
+            const value = this.getMappedValue(attrCondition[name], type);
+            acc[name] = {
+                [type]: value
+            };
+            return acc;
+        }, {});
+        
+        return obj;
     }
     
     static getMappedValue(value, type) {
@@ -161,7 +204,7 @@ class InputParser {
                 }
             ]
     */
-    static getExpAttrNamesAndValuesOfDeleteParams(attrDefs, attrCondition) {
+    static getExpAttrNamesAndValues(attrDefs, attrCondition) {
         const nonKeyAttrDefs = this.getNonKeyAttrDefs(attrDefs);
         
         const ExpressionAttributeNames = nonKeyAttrDefs.reduce((acc, attrDef, index) => {
@@ -205,16 +248,89 @@ class InputParser {
         output:
             "#name0 = :value0 AND #name1 = :value1 AND #name2 = :value2"
     */
-    static getCondExp(num) {
-        let exp = "";
+    static getCondExp(start, num, delimiter) {
+        let exp = (start.length > 0) ? `${start} ` : "";
         for(let i=0; i<num; i++) {
             if(i > 0) {
-                exp += " AND ";
+                exp += ` ${delimiter} `;
             }
             exp += `#name${i.toString()} = :value${i.toString()}`;
         }
         
         return exp;
+    }
+    
+    /*
+        (output)
+        UpdateExpression: 
+            "SET #name0 = :value0, #name1 = :value1"
+        ReturnValues:
+            "ALL_NEW"
+    */
+    static getUpdateParams(params) {
+        const commonParams = this.getUpdateCommonParams(params);
+        const ReturnValues = "ALL_NEW";
+        const UpdateExpression = this.getCondExp("SET", Object.keys(commonParams.ExpressionAttributeNames).length, ",");
+        const parsedParams = {
+            ...commonParams,
+            UpdateExpression,
+            ReturnValues
+        };
+
+        return parsedParams;
+    }
+    
+    /*
+        input:
+            tableName =>
+                "TestTable"
+            attrDefs =>
+                [
+                    { name: "A", type: "S", keyType: "HASH" },
+                    { name: "B", type: "N", keyType: "RANGE" },
+                    { name: "C", type: "BOOL", keyType: "NON-KEY" },
+                    { name: "D", type: "S", keyType: "NON-KEY" }
+                ]
+            attrCondition =>
+                { "A": "A1", "B": "100", "C": "Y"/"true", "D": "Test" }
+        output:
+            {
+                RequestItems: {
+                    "TestTable": [
+                        {
+                            PutRequest: {
+                                Item: {
+                                    "A": {
+                                        S: "A1"
+                                    },
+                                    "B": {
+                                        N: "100"
+                                    },
+                                    "C": {
+                                        BOOL: true
+                                    },
+                                    "D": {
+                                        S: "Test"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                ReturnConsumedCapacity:
+                    "TOTAL"
+            }
+    */
+    static getAddParams(params) {
+        const {tableName, attrDefs, attrCondition} = params;
+        const attrNameTypeValueObj = this.getAttrNameTypeValueObj(attrDefs, attrCondition);
+        const Item = {...attrNameTypeValueObj};
+        const PutRequest = {Item};
+        const RequestItems = {[tableName]: [{PutRequest}]};
+        const ReturnConsumedCapacity = "TOTAL";
+        const parsedParams = {RequestItems, ReturnConsumedCapacity};
+        
+        return parsedParams;
     }
 }
 

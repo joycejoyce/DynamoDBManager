@@ -12,6 +12,7 @@ class TestElemView extends React.Component {
         this.handleSubmitCreateTableForm = this.handleSubmitCreateTableForm.bind(this);
         this.handleSubmitAddItemForm = this.handleSubmitAddItemForm.bind(this);
         
+        this.updateItem = this.updateItem.bind(this);
         this.deleteItem = this.deleteItem.bind(this);
         this.queryItems = this.queryItems.bind(this);
         this.queryAllItems = this.queryAllItems.bind(this);
@@ -51,6 +52,16 @@ class TestElemView extends React.Component {
                 tableName: "TestTable1",
                 onChange: this.handleChange,
                 onClickDelete: this.deleteItem
+            },
+            updateItem: {
+                actor: "John",
+                year: "1901",
+                award: "award-A",
+                title: "title-A",
+                popular: "Y",
+                tableName: "TestTable1",
+                onChange: this.handleChange,
+                onSubmit: this.updateItem
             },
             result: {}
         };
@@ -149,7 +160,7 @@ class TestElemView extends React.Component {
                 PutRequest: {
                     Item: {
                         /*KEY: {N: year.toString()},*/
-                            actor: {S: "John"},
+                            actor: {S: "John-" + i},
                             year: {N: year.toString()},
                             title: {S: "title-" + i},
                             popular: {BOOL: (i%2 == 0)},
@@ -216,13 +227,6 @@ class TestElemView extends React.Component {
     deleteItem(e) {
         e.preventDefault();
         const tableName = this.state.deleteItem.tableName;
-        const attrDefs = [
-            { name: "actor", type: "S", keyType: "HASH" },
-            { name: "year", type: "N", keyType: "RANGE" },
-            { name: "award", type: "S", keyType: "NON-KEY" },
-            { name: "title", type: "S", keyType: "NON-KEY" },
-            { name: "popular", type: "BOOL", keyType: "NON-KEY" }
-        ];
         const attrCondition = {
             actor: this.state.deleteItem.actor,
             award: this.state.deleteItem.award,
@@ -230,13 +234,31 @@ class TestElemView extends React.Component {
             title: this.state.deleteItem.title,
             popular: this.state.deleteItem.popular
         };
-        const result = TableController.deleteItem(tableName, attrDefs, attrCondition);
+        const result = TableController.deleteItem(tableName, ATTR_DEFS, attrCondition);
+        this.setState({result});
+    }
+    
+    updateItem(e) {
+        e.preventDefault();
+        const tableName = this.state.updateItem.tableName;
+        const attrCondition = {
+            actor: this.state.updateItem.actor,
+            award: this.state.updateItem.award,
+            year: this.state.updateItem.year,
+            title: this.state.updateItem.title,
+            popular: this.state.updateItem.popular
+        };
+        const result = TableController.updateItem(tableName, ATTR_DEFS, attrCondition);
         this.setState({result});
     }
     
     render() {        
         return(
             <div>
+                <UpdateItemForm 
+                    name="updateItem"
+                    formControls={this.state.updateItem}
+                />
                 <DeleteItemForm 
                     name="deleteItem"
                     formControls={this.state.deleteItem}
@@ -351,6 +373,48 @@ class DeleteItemForm extends React.Component {
     }
 }
 
+class UpdateItemForm extends React.Component {
+    render() {
+        return(
+            <form id="update-item" onSubmit={(e) => this.props.formControls.onSubmit(e)}>
+                <h1>Update Items</h1>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Actor:</td>
+                            <td><input name={this.props.name+"-actor"} value={this.props.formControls.actor} type="text" onChange={this.props.formControls.onChange} readOnly /></td>
+                        </tr>
+                        <tr>
+                            <td>Year:</td>
+                            <td><input name={this.props.name+"-year"} value={this.props.formControls.year} type="text" onChange={this.props.formControls.onChange} readOnly /></td>
+                        </tr>
+                        <tr>
+                            <td>Award:</td>
+                            <td><input name={this.props.name+"-award"} value={this.props.formControls.award} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                        <tr>
+                            <td>Title:</td>
+                            <td><input name={this.props.name+"-title"} value={this.props.formControls.title} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                        <tr>
+                            <td>Popular:</td>
+                            <td><input name={this.props.name+"-popular"} value={this.props.formControls.popular} type="text" onChange={this.props.formControls.onChange} /></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <input type="submit" value="Update" />
+            </form>
+        );
+    }
+}
+
+const ATTR_DEFS = [
+    { name: "actor", type: "S", keyType: "HASH" },
+    { name: "year", type: "N", keyType: "RANGE" },
+    { name: "award", type: "S", keyType: "NON-KEY" },
+    { name: "title", type: "S", keyType: "NON-KEY" },
+    { name: "popular", type: "BOOL", keyType: "NON-KEY" }
+];
 
 export {
     TestElemView
