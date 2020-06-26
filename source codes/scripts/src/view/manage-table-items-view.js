@@ -31,6 +31,12 @@ class ManageTableItemsView extends React.Component {
             },
             update: {
                 display: "none",
+                addAttr: {
+                    display: "none",
+                    name: "",
+                    type: "",
+                    onChange: this.handleChangeAddedAttr
+                },
                 origItems: [],
                 items: [], itemIdCnt: 0,
                 attrs: [], attrIdCnt: 0,
@@ -40,7 +46,6 @@ class ManageTableItemsView extends React.Component {
                     onClickDeleteAddedItem: this.handleClickDeleteAddedItem,
                     onChangeAttrValue: this.handleChangeAttrValue,
                     onClickUpdateItemOption: this.handleClickUpdateItemOption,
-                    onChangeAddedAttr: this.handleChangeAddedAttr,
                     onClickDeleteAddedAttr: this.handleClickDeleteAddedAttr,
                     onChangeCheckDeleteAttr: this.handleChangeCheckDeleteAttr,
                     onClickUpdate: this.handleClickUpdate
@@ -157,42 +162,19 @@ class ManageTableItemsView extends React.Component {
     }
     
     handleClickAddAttr() {
-        const newId = this.getNewAttrId();
-        const newAttr = this.getEmptyNewAttr(newId);
-        const newAttrs = [...this.state.update.attrs, newAttr];
-        this.changeState("update", "attrIdCnt", newId);
-        this.changeState("update", "attrs", newAttrs);
+        const newAddAttr = {...this.state.update.addAttr};
+        newAddAttr.display = "block";
+        this.changeState("update", "addAttr", newAddAttr);
     }
     
-    getNewAttrId() {
-        return this.state.update.attrIdCnt + 1;
-    }
-    
-    getEmptyNewAttr(id) {
-        const attr = {
-            id: id,
-            name: "",
-            type: "",
-            keyType: KEY_TYPE.NON_KEY,
-            isNewAttr: true
-        }
-        
-        return attr;
-    }
-    
-    handleChangeAddedAttr(e, id) {
+    handleChangeAddedAttr(e) {
         const name = e.target.name;
         const value = e.target.value;
         
-        const newAttrs = [...this.state.update.attrs].reduce((accumulator, attr) => {
-            if(attr.id === id) {
-                attr[name] = value;
-            }
-            accumulator.push(attr);
-            return accumulator;
-        }, []);
+        const newAddAttr = {...this.state.update.addAttr};
+        newAddAttr[name] = value;
         
-        this.changeState("update", "attrs", newAttrs);
+        this.changeState("update", "addAttr", newAddAttr);
     }
     
     handleClickDeleteAddedAttr(id) {
@@ -256,7 +238,7 @@ class ManageTableItemsView extends React.Component {
         return(
             <div>
                 <TableNameSection ctrl={this.state.tableName} />
-                <UpdateSection ctrl={this.state.update} attrs={this.state.attrs} />
+                <UpdateSection ctrl={this.state.update} />
             </div>
         );
     }
@@ -289,6 +271,7 @@ class UpdateSection extends React.Component {
                 <h1>Update Items</h1>
                 <button onClick={this.props.ctrl.eventHandler.onClickAddItem}>Add Item</button>
                 <button onClick={this.props.ctrl.eventHandler.onClickAddAttr}>Add Attribute</button>
+                <AddAttrForm ctrl={this.props.ctrl.addAttr} />
                 <UpdateStatus items={this.props.ctrl.items} />
                 <UpdateItems ctrl={this.props.ctrl} attrs={this.props.attrs} />
             </section>
@@ -537,6 +520,56 @@ class UpdateItemRow extends React.Component {
     }
 }
 
+class AddAttrForm extends React.Component {
+    getAttrTypes() {
+        return Object.values(ATTR_TYPE);
+    }
+    
+    render() {
+        const display = {
+            display: this.props.ctrl.display
+        };
+        
+        return (
+            <div className="confirm-container" style={display}  id="add-attr">
+                <div className="confirm-page confirm-page-animate">
+                    <div className="confirm-contents">
+                        <div className="confirm-msg">
+                            <h1>Add Attribute</h1>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td>
+                                            <input type="text"
+                                                name="name"
+                                                value={this.props.ctrl.name}
+                                                onChange={this.props.ctrl.onChange}
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Type:</td>
+                                        <td>
+                                            <Dropdown
+                                                list={this.getAttrTypes()}
+                                                value={this.props.ctrl.type}
+                                                onChange={this.props.ctrl.onChange}
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button className="no" onClick={this.props.ctrl.onClickCancel}>Cancel</button>
+                        <button className="yes" onClick={this.props.ctrl.onSubmit}>OK</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
 const UPDATE_METHOD = {
     add: "add",
     delete: "delete",
@@ -558,6 +591,9 @@ const ICON_CLASS = {
 }
 
 const ATTR_TYPE = {
+    S: "S",
+    N: "N",
+    B: "B",
     BOOL: "BOOL"
 }
 

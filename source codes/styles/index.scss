@@ -366,7 +366,8 @@ button,input[type=submit],input[type=button] {
         .confirm-contents {
             width: 90%;
             position: absolute;
-            overflow: auto;
+            /*overflow: auto;*/
+            overflow: visible;
             margin: auto;
             top: 0; left: 0; bottom: 0; right: 0;
             
@@ -402,7 +403,7 @@ button,input[type=submit],input[type=button] {
     }
 }
 
-.confirm-container#delete-all-attr-ctrl-items {
+#delete-all-attr-ctrl-items {
     .confirm-page {
         width: 500px;
         height: 100px;
@@ -862,4 +863,29 @@ table#update-items {
 
 input.choosable {
     background-color: white !important;
+}
+
+#add-attr {
+    .confirm-page {
+        width: 280px;
+        height: 200px;
+    }
+    table {
+        margin: 10px auto;
+    }
+    button {
+        $space: 5%;
+        &.yes {
+            left: $space;
+        }
+        &.no {
+            right: $space;
+        }
+    }
+    input {
+        &:focus,&:hover {
+            border: 1px solid $dark-grey !important;
+            border-radious: 3px;
+        }
+    }
 }
