@@ -347,7 +347,7 @@ button,input[type=submit],input[type=button] {
 .confirm-container {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 2; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -366,12 +366,11 @@ button,input[type=submit],input[type=button] {
         .confirm-contents {
             width: 90%;
             position: absolute;
-            /*overflow: auto;*/
             overflow: visible;
             margin: auto;
             top: 0; left: 0; bottom: 0; right: 0;
             
-            .confirm-msg {
+            .confirm-msg,h1 {
                 font-weight: normal;
                 text-align: center;
             }
@@ -379,24 +378,23 @@ button,input[type=submit],input[type=button] {
             button {
                 position: absolute;
                 width: 100px;
-                $space: 20%;
+                bottom: 10px;
+                $space: 5%;
                 &.yes {
                     background-color: $red;
-                    left: $space;
-                }
-                &.no {
-                    background-color: $dark-grey;
                     right: $space;
+                }
+                &.no,&.cancel {
+                    background-color: $dark-grey;
+                    left: $space;
                 }
                 &.copy {
                     background-color: $green;
                     left: $space;
-                    bottom: 20px;
                 }
                 &.ok {
                     background-color: $bright-blue;
                     right: $space;
-                    bottom: 20px;
                 }
             }
         }
@@ -872,15 +870,6 @@ input.choosable {
     }
     table {
         margin: 10px auto;
-    }
-    button {
-        $space: 5%;
-        &.yes {
-            left: $space;
-        }
-        &.no {
-            right: $space;
-        }
     }
     input {
         &:focus,&:hover {

@@ -1,5 +1,6 @@
 import { TableController } from "../controller/table-controller.js";
 import { Dropdown } from "./form-components/dropdown.js";
+import { ConfirmForm } from "./form-components/confirm-form.js";
 import { CommonVar } from "../controller/common-var.js";
 
 const React = require("react");
@@ -19,6 +20,8 @@ class ManageTableItemsView extends React.Component {
         this.handleClickDeleteAddedAttr = this.handleClickDeleteAddedAttr.bind(this);
         this.handleChangeCheckDeleteAttr = this.handleChangeCheckDeleteAttr.bind(this);
         this.handleClickUpdate = this.handleClickUpdate.bind(this);
+        this.handleSubmitAddAttrForm = this.handleSubmitAddAttrForm.bind(this);
+        this.handleClickCancelAddAttr = this.handleClickCancelAddAttr.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -35,7 +38,9 @@ class ManageTableItemsView extends React.Component {
                     display: "none",
                     name: "",
                     type: "",
-                    onChange: this.handleChangeAddedAttr
+                    onChange: this.handleChangeAddedAttr,
+                    onClickCancel: this.handleClickCancelAddAttr,
+                    onSubmit: this.handleSubmitAddAttrForm
                 },
                 origItems: [],
                 items: [], itemIdCnt: 0,
@@ -69,6 +74,10 @@ class ManageTableItemsView extends React.Component {
                 break;
             case 2:
                 newState[args[1]] = args[2];
+                this.setState({[args[0]]: newState});
+                break;
+            case 3:
+                newState[args[1]][args[2]] = args[3];
                 this.setState({[args[0]]: newState});
                 break;
             default:
@@ -170,9 +179,11 @@ class ManageTableItemsView extends React.Component {
     handleChangeAddedAttr(e) {
         const name = e.target.name;
         const value = e.target.value;
+        console.log({name, value});
         
         const newAddAttr = {...this.state.update.addAttr};
         newAddAttr[name] = value;
+        console.log({newAddAttr});
         
         this.changeState("update", "addAttr", newAddAttr);
     }
@@ -232,6 +243,42 @@ class ManageTableItemsView extends React.Component {
             attrDefs,
             attrConditions
         };
+    }
+    
+    async handleSubmitAddAttrForm() {
+        const newId = this.getNewAttrId();
+        await this.changeState("update", "attrIdCnt", newId);
+        
+        const newAttr = this.getNewAttr(newId, this.state.update.addAttr.name, this.state.update.addAttr.type);
+        const newAttrs = [...this.state.update.attrs, newAttr];
+        await this.changeState("update", "attrs", newAttrs);
+        
+        this.handleClickCancelAddAttr();
+        this.clearAddAttr();
+    }
+    
+    getNewAttrId() {
+        return this.state.update.attrIdCnt + 1;
+    }
+    
+    getNewAttr(id, name, type) {
+        const newAttr = {
+            id: id,
+            keyType: "NON-KEY",
+            name: name,
+            type: type
+        };
+        
+        return newAttr;
+    }
+    
+    clearAddAttr() {
+        this.changeState("update", "addAttr", "name", "");
+        this.changeState("update", "addAttr", "type", "");
+    }
+    
+    handleClickCancelAddAttr() {
+        this.changeState("update", "addAttr", "display", "none");
     }
     
     render() {
@@ -521,51 +568,63 @@ class UpdateItemRow extends React.Component {
 }
 
 class AddAttrForm extends React.Component {
+    getContents() {
+        const h1Elem = <h1>Add Attribute</h1>;
+        const tableElem = (
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Name:</td>
+                        <td>
+                            <input type="text"
+                                name="name"
+                                value={this.props.ctrl.name}
+                                onChange={(e) => this.props.ctrl.onChange(e)}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Type:</td>
+                        <td>
+                            <Dropdown
+                                list={this.getAttrTypes()}
+                                name="type"
+                                value={this.props.ctrl.type}
+                                onChange={this.props.ctrl.onChange}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        );
+        const contents = (
+            <div>
+                {h1Elem}
+                {tableElem}
+            </div>
+        );
+
+        return contents;
+    }
+    
     getAttrTypes() {
         return Object.values(ATTR_TYPE);
     }
+
+    getButtons() {
+        const cancelBtn = ConfirmForm.getCancelBtn("Cancel", this.props.ctrl.onClickCancel);
+        const okBtn = ConfirmForm.getOkBtn("OK", this.props.ctrl.onSubmit);
+        
+        return [cancelBtn, okBtn];
+    }
     
     render() {
-        const display = {
-            display: this.props.ctrl.display
-        };
-        
         return (
-            <div className="confirm-container" style={display}  id="add-attr">
-                <div className="confirm-page confirm-page-animate">
-                    <div className="confirm-contents">
-                        <div className="confirm-msg">
-                            <h1>Add Attribute</h1>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td>Name:</td>
-                                        <td>
-                                            <input type="text"
-                                                name="name"
-                                                value={this.props.ctrl.name}
-                                                onChange={this.props.ctrl.onChange}
-                                            />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Type:</td>
-                                        <td>
-                                            <Dropdown
-                                                list={this.getAttrTypes()}
-                                                value={this.props.ctrl.type}
-                                                onChange={this.props.ctrl.onChange}
-                                            />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <button className="no" onClick={this.props.ctrl.onClickCancel}>Cancel</button>
-                        <button className="yes" onClick={this.props.ctrl.onSubmit}>OK</button>
-                    </div>
-                </div>
-            </div>
+            <ConfirmForm display={this.props.ctrl.display}
+                id="add-attr"
+                contents={this.getContents()}
+                buttons={this.getButtons()}
+            />
         );
     }
 }
