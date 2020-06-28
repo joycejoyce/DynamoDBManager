@@ -125,7 +125,7 @@ class ManageTableItemsView extends React.Component {
         
         const item = {
             id: id,
-            updateMethod: UPDATE_METHOD.add,
+            updateMethod: UPDATE_METHOD.addItem,
             attrs
         };
         
@@ -188,7 +188,21 @@ class ManageTableItemsView extends React.Component {
         this.changeState("update", "addAttr", newAddAttr);
     }
     
-    handleClickDeleteAddedAttr(id) {
+    async handleClickDeleteAddedAttr(id) {
+        await this.deleteAttrFromItems(id);
+        await this.deleteAttr(id);
+    }
+    
+    deleteAttrFromItems(id) {
+        const attrName = this.state.update.attrs.filter(attr => attr.id === id)[0].name;
+        const newItems = [...this.state.update.items];
+        newItems.map(item => {
+            delete item.attrs[attrName];
+        });
+        this.changeState("update", "items", newItems);
+    }
+    
+    deleteAttr(id) {
         const newAttrs = [...this.state.update.attrs].filter(attr => attr.id !== id);
         this.changeState("update", "attrs", newAttrs);
     }
@@ -208,9 +222,12 @@ class ManageTableItemsView extends React.Component {
     
     async handleClickUpdate(e) {
         e.preventDefault();
-        const deleteResults = await this.updateItems(UPDATE_METHOD.delete);
-        const updateResults = await this.updateItems(UPDATE_METHOD.update);
-        const addResults = await this.updateItems(UPDATE_METHOD.add);
+        
+        const deleteResults = await this.updateItems(UPDATE_METHOD.deleteItem);
+        const updateResults = await this.updateItems(UPDATE_METHOD.updateItem);
+        const addResults = await this.updateItems(UPDATE_METHOD.addItem);
+        const removeAttrResults = await this.updateItems(UPDATE_METHOD.removeAttr);
+        
         this.setTableData(this.state.tableName.value);
     }
     
@@ -223,7 +240,7 @@ class ManageTableItemsView extends React.Component {
                     attrDefs: updateParams.attrDefs,
                     attrCondition: attrCondition
                 };
-                const result = await TableController[action+"Item"](params);
+                const result = await TableController[action](params);
                 return result;
             })
         );
@@ -234,15 +251,35 @@ class ManageTableItemsView extends React.Component {
     getUpdateParams(action) {
         const tableName = this.state.tableName.value;
         const attrDefs = this.state.update.attrs;
-        const attrConditions = this.state.update.items
-            .filter(item => item.updateMethod === UPDATE_METHOD[action])
-            .map(item => item.attrs);
+        const attrConditions = this.getAttrConditions(action);
         
         return {
             tableName,
             attrDefs,
             attrConditions
         };
+    }
+    
+    getAttrConditions(action) {
+        const items = this.getItemsToUpdate(action);
+        const attrConditions = items.map(item => item.attrs);
+        
+        return attrConditions;
+    }
+    
+    getItemsToUpdate(action) {
+        let items;
+        switch(action) {
+            case UPDATE_METHOD.removeAttr:
+                items = this.state.update.items; 
+                break;
+            default:
+                items = this.state.update.items
+                    .filter(item => item.updateMethod === UPDATE_METHOD[action]);
+                break;
+        }
+        
+        return items;
     }
     
     async handleSubmitAddAttrForm() {
@@ -252,6 +289,8 @@ class ManageTableItemsView extends React.Component {
         const newAttr = this.getNewAttr(newId, this.state.update.addAttr.name, this.state.update.addAttr.type);
         const newAttrs = [...this.state.update.attrs, newAttr];
         await this.changeState("update", "attrs", newAttrs);
+        
+        console.log("attrs", this.state.update.attrs);
         
         this.handleClickCancelAddAttr();
         this.clearAddAttr();
@@ -266,7 +305,8 @@ class ManageTableItemsView extends React.Component {
             id: id,
             keyType: "NON-KEY",
             name: name,
-            type: type
+            type: type,
+            isAdded: true
         };
         
         return newAttr;
@@ -328,9 +368,9 @@ class UpdateSection extends React.Component {
 
 class UpdateStatus extends React.Component {
     render() {
-        const addedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.add).length;
-        const modifiedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.update).length;
-        const deletedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.delete).length;
+        const addedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.addItem).length;
+        const modifiedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.updateItem).length;
+        const deletedNum = this.props.items.filter(item => item.updateMethod === UPDATE_METHOD.deleteItem).length;
         const origNum = this.props.items.length - addedNum;
         
         return (
@@ -398,7 +438,7 @@ class UpdateItemHeadRows extends React.Component {
         let contents;
         
         if(name === "delete") {
-            if(attr.isNewAttr) {
+            if(attr.isAdded) {
                 contents = (
                     <i className="fas fa-times"
                         onClick={() => this.props.eventHandler.onClickDeleteAddedAttr(attr.id)}>
@@ -476,7 +516,7 @@ class UpdateItemRow extends React.Component {
     
     getUpdateOptions() {
         let updateOptions;
-        if(this.props.item.updateMethod === UPDATE_METHOD.add) {
+        if(this.props.item.updateMethod === UPDATE_METHOD.addItem) {
             updateOptions = (
                 <i className="far fa-trash-alt"
                     onClick={() => this.props.eventHandler.onClickDeleteAddedItem(this.props.item.id)}>
@@ -487,11 +527,11 @@ class UpdateItemRow extends React.Component {
             updateOptions = (
                 <div>
                     <i className="far fa-trash-alt"
-                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.delete)}>
+                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.deleteItem)}>
                     </i>
                     &nbsp;&nbsp;
                     <i className="fas fa-pen"
-                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.update)}>
+                        onClick={() => this.props.eventHandler.onClickUpdateItemOption(this.props.item.id, UPDATE_METHOD.updateItem)}>
                     </i>
                     &nbsp;&nbsp;
                     <i className="fas fa-undo-alt"
@@ -505,7 +545,7 @@ class UpdateItemRow extends React.Component {
     }
     
     getReadOnly() {
-        if(this.props.item.updateMethod === UPDATE_METHOD.update || this.props.item.updateMethod === UPDATE_METHOD.add) {
+        if(this.props.item.updateMethod === UPDATE_METHOD.updateItem || this.props.item.updateMethod === UPDATE_METHOD.addItem) {
             return false;
         }
         return true;
@@ -630,9 +670,10 @@ class AddAttrForm extends React.Component {
 }
 
 const UPDATE_METHOD = {
-    add: "add",
-    delete: "delete",
-    update: "update",
+    addItem: "addItem",
+    deleteItem: "deleteItem",
+    updateItem: "updateItem",
+    removeAttr: "removeAttr",
     undo: "reverse changes"
 }
 

@@ -87,6 +87,15 @@ class TableController {
 
         return result;
     }
+    
+    static async removeAttr(params) {
+        console.log("Enter removeAttr()");
+        const parsedParams = InputParser.getRemoveAttrParams(params);
+        console.log({parsedParams});
+        const result = await this.callModelFunc(parsedParams, FuncNames.updateItem);
+
+        return result;
+    }
 }
 
 const FuncNames = {

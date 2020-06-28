@@ -332,6 +332,79 @@ class InputParser {
         
         return parsedParams;
     }
+    
+    /*
+        input:
+            tableName =>
+                "TestTable"
+            attrDefs =>
+                [
+                    { name: "A", type: "S", keyType: "HASH" },
+                    { name: "B", type: "N", keyType: "RANGE" },
+                    { name: "C", type: "BOOL", keyType: "NON-KEY", delete: true },
+                    { name: "D", type: "S", keyType: "NON-KEY", delete: true }
+                ]
+            attrCondition =>
+                { "A": "A1", "B": "100", "C": "Y"/"true", "D": "Test" }
+        output:
+            [
+                {
+                    Key: {
+                        "A": {
+                            S: "A1"
+                        },
+                        "B": {
+                            N: "100"
+                        }
+                    },
+                    TableName: "TestTable",
+                    UpdateExpression: 
+                        "REMOVE C, D",
+                    ReturnValues:
+                        "ALL_NEW"
+                }
+            ]
+    */
+    static getRemoveAttrParams(params) {
+        const commonParams = this.getUpdateCommonParams(params);
+        const UpdateExpression = this.getRemoveAttrUpdExp(params.attrDefs);
+        const ReturnValues = "ALL_NEW";
+        const parsedParams = {
+            TableName: commonParams.TableName,
+            Key: commonParams.Key,
+            UpdateExpression,
+            ReturnValues
+        };
+        
+        return parsedParams;
+    }
+    
+    static getRemoveAttrUpdExp(attrDefs) {
+        const attrNames = this.getAttrsToRemove(attrDefs);
+        const exp = this.getRemoveAttrExp(attrNames);
+        
+        return exp;
+    }
+    
+    static getAttrsToRemove(attrDefs) {
+        const names = attrDefs
+            .filter(attrDef => attrDef.delete)
+            .map(attrDef => attrDef.name);
+        
+        return names;
+    }
+    
+    static getRemoveAttrExp(attrNames) {
+        const exp = attrNames.reduce((acc, name, index) => {
+            if(index > 0) {
+                acc += ", ";
+            }
+            acc += name;
+            return acc;
+        }, "REMOVE ");
+        
+        return exp;
+    }
 }
 
 const KEY_TYPE = CommonVar.KEY_TYPE;
