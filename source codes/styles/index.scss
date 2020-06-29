@@ -878,3 +878,7 @@ input.choosable {
         }
     }
 }
+
+.dropdown-list > input {
+    background-color: $light-green !important;
+}

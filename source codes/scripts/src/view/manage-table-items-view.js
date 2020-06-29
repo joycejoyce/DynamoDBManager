@@ -22,6 +22,7 @@ class ManageTableItemsView extends React.Component {
         this.handleClickUpdate = this.handleClickUpdate.bind(this);
         this.handleSubmitAddAttrForm = this.handleSubmitAddAttrForm.bind(this);
         this.handleClickCancelAddAttr = this.handleClickCancelAddAttr.bind(this);
+        this.handleClickFilterItem = this.handleClickFilterItem.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -34,6 +35,10 @@ class ManageTableItemsView extends React.Component {
             },
             update: {
                 display: "none",
+                filter: {
+                    //attrName: attrValue
+                    
+                },
                 addAttr: {
                     display: "none",
                     name: "",
@@ -53,7 +58,8 @@ class ManageTableItemsView extends React.Component {
                     onClickUpdateItemOption: this.handleClickUpdateItemOption,
                     onClickDeleteAddedAttr: this.handleClickDeleteAddedAttr,
                     onChangeCheckDeleteAttr: this.handleChangeCheckDeleteAttr,
-                    onClickUpdate: this.handleClickUpdate
+                    onClickUpdate: this.handleClickUpdate,
+                    onClickFilterItem: this.handleClickFilterItem
                 }
             }
         }
@@ -104,6 +110,8 @@ class ManageTableItemsView extends React.Component {
         const attrs = await TableController.getAllAttrs(tableName);
         this.changeState("update", "attrs", attrs);
         this.changeState("update", "attrIdCnt", attrs.length-1);
+        
+        console.log({attrs});
     }
     
     handleClickAddItem() {
@@ -179,11 +187,9 @@ class ManageTableItemsView extends React.Component {
     handleChangeAddedAttr(e) {
         const name = e.target.name;
         const value = e.target.value;
-        console.log({name, value});
         
         const newAddAttr = {...this.state.update.addAttr};
         newAddAttr[name] = value;
-        console.log({newAddAttr});
         
         this.changeState("update", "addAttr", newAddAttr);
     }
@@ -233,17 +239,21 @@ class ManageTableItemsView extends React.Component {
     
     async updateItems(action) {
         const updateParams = this.getUpdateParams(action);
-        const results = await Promise.all(
-            updateParams.attrConditions.map(async attrCondition => {
-                const params = {
-                    tableName: updateParams.tableName,
-                    attrDefs: updateParams.attrDefs,
-                    attrCondition: attrCondition
-                };
-                const result = await TableController[action](params);
-                return result;
-            })
-        );
+        const needToUpdate = this.getNeedToUpdate(updateParams);
+        let results = [];
+        if(needToUpdate) {
+            results = await Promise.all(
+                updateParams.attrConditions.map(async attrCondition => {
+                    const params = {
+                        tableName: updateParams.tableName,
+                        attrDefs: updateParams.attrDefs,
+                        attrCondition: attrCondition
+                    };
+                    const result = await TableController[action](params);
+                    return result;
+                })
+            );
+        }
         
         return results;
     }
@@ -271,7 +281,7 @@ class ManageTableItemsView extends React.Component {
         let items;
         switch(action) {
             case UPDATE_METHOD.removeAttr:
-                items = this.state.update.items; 
+                items = this.getItemsToRemoveAttr();
                 break;
             default:
                 items = this.state.update.items
@@ -282,6 +292,27 @@ class ManageTableItemsView extends React.Component {
         return items;
     }
     
+    getItemsToRemoveAttr() {
+        const removeAttrCnt = this.state.update.attrs.reduce((acc, attr) => {
+            if(attr.delete) {
+                acc++;
+            }
+            return acc;
+        }, 0);
+        
+        let items = [];
+        if(removeAttrCnt > 0) {
+            items = this.state.update.items;
+        }
+        
+        return items;
+    }
+    
+    getNeedToUpdate(updateParams) {
+        const need = updateParams.attrConditions.length > 0 ? true : false;
+        return need;
+    }
+    
     async handleSubmitAddAttrForm() {
         const newId = this.getNewAttrId();
         await this.changeState("update", "attrIdCnt", newId);
@@ -289,8 +320,6 @@ class ManageTableItemsView extends React.Component {
         const newAttr = this.getNewAttr(newId, this.state.update.addAttr.name, this.state.update.addAttr.type);
         const newAttrs = [...this.state.update.attrs, newAttr];
         await this.changeState("update", "attrs", newAttrs);
-        
-        console.log("attrs", this.state.update.attrs);
         
         this.handleClickCancelAddAttr();
         this.clearAddAttr();
@@ -319,6 +348,16 @@ class ManageTableItemsView extends React.Component {
     
     handleClickCancelAddAttr() {
         this.changeState("update", "addAttr", "display", "none");
+    }
+    
+    handleClickFilterItem(e) {
+        const name = e.target.name;
+        const value = e.target.value;
+        
+        const newFilter = {...this.state.update.filter};
+        newFilter[name] = value;
+        
+        this.changeState("update", "filter", newFilter);
     }
     
     render() {
@@ -408,6 +447,8 @@ class UpdateItems extends React.Component {
             <div>
                 <table id="update-items" style={display}>
                     <UpdateItemHeadRows attrs={this.props.ctrl.attrs}
+                        filter={this.props.ctrl.filter}
+                        items={this.props.ctrl.items}
                         eventHandler={this.props.ctrl.eventHandler}
                     />
                     <tbody>
@@ -437,26 +478,15 @@ class UpdateItemHeadRows extends React.Component {
         const isReadOnly = (name === "keyType") ? true:false;
         let contents;
         
-        if(name === "delete") {
-            if(attr.isAdded) {
-                contents = (
-                    <i className="fas fa-times"
-                        onClick={() => this.props.eventHandler.onClickDeleteAddedAttr(attr.id)}>
-                    </i>
-                );
-            }
-            else {
-                contents = (
-                    <label className="checkbox">
-                        <input type="checkbox"
-                            name={name}
-                            checked={attr.toDelete}
-                            onChange={(e) => this.props.eventHandler.onChangeCheckDeleteAttr(e, attr.id)}
-                        />
-                        <span className="checkmark"></span>
-                    </label>
-                );
-            }
+        if(name === UPDATE_CTRL_ROW.delete) {
+            contents = <DeleteCtrlRow attr={attr} eventHandler={this.props.eventHandler} />;
+        }
+        else if(name === UPDATE_CTRL_ROW.filter) {
+            contents = <FilterCtrlRow attr={attr}
+                filter={this.props.filter}
+                items={this.props.items}
+                eventHandler={this.props.eventHandler}
+            />;
         }
         else {
             if(attr.isNewAttr) {
@@ -478,7 +508,8 @@ class UpdateItemHeadRows extends React.Component {
     }
     
     render() {
-        const deleteRows = this.props.attrs.map(attr => this.getInput(attr, "delete"));
+        const deleteRows = this.props.attrs.map(attr => this.getInput(attr, UPDATE_CTRL_ROW.delete));
+        const filterRows = this.props.attrs.map(attr => this.getInput(attr, UPDATE_CTRL_ROW.filter));
         const nameRows = this.props.attrs.map(attr => this.getInput(attr, "name"));
         const typeRows = this.props.attrs.map(attr => this.getInput(attr, "type"));
         const keyTypeRows = this.props.attrs.map(attr => this.getInput(attr, "keyType"));
@@ -486,8 +517,12 @@ class UpdateItemHeadRows extends React.Component {
         return (
             <thead>
                 <tr>
-                    <th className="delete">Delete</th>
+                    <th className={UPDATE_CTRL_ROW.delete}>Delete</th>
                     { deleteRows }
+                </tr>
+                <tr>
+                    <th className={UPDATE_CTRL_ROW.filter}>Filter</th>
+                    { filterRows }
                 </tr>
                 <tr>
                     <th>Name</th>
@@ -502,6 +537,87 @@ class UpdateItemHeadRows extends React.Component {
                     { keyTypeRows }
                 </tr>
             </thead>
+        );
+    }
+}
+
+class DeleteCtrlRow extends React.Component {
+    getContents(attr, eventHandler) {
+        let contents;
+        
+        if(attr.isAdded) {
+            contents = (
+                <i className="fas fa-times"
+                    onClick={() => eventHandler.onClickDeleteAddedAttr(attr.id)}>
+                </i>
+            );
+        }
+        else {
+            contents = (
+                <label className="checkbox">
+                    <input type="checkbox"
+                        name={name}
+                        checked={attr.delete}
+                        onChange={(e) => eventHandler.onChangeCheckDeleteAttr(e, attr.id)}
+                    />
+                    <span className="checkmark"></span>
+                </label>
+            );
+        }
+        
+        return contents;
+    }
+    
+    render() {
+        const contents = this.getContents(this.props.attr, this.props.eventHandler);
+        
+        return (
+            contents
+        );
+    }
+}
+
+class FilterCtrlRow extends React.Component {
+    getAttrsOfItems(items) {
+        const itemAttrs = items.map(item => item.attrs);
+        
+        return itemAttrs;
+    }
+    
+    getList(attrName, attrsOfItems) {
+        const list = attrsOfItems.reduce((acc, attrs) => {
+            const attrValue = attrs[attrName];
+            if(acc.indexOf(attrValue) === -1) {
+                acc.push(attrValue);
+            }
+            return acc;
+        }, []);
+        
+        return list;
+    }
+    /*
+    <Dropdown id={attr.name + "-input-" + this.props.item.id}
+        list={BOOL_OPTIONS}
+        name={attr.name}
+        value={this.props.item.attrs[attr.name]}
+        onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
+        onChangeParams={[this.props.item.id]}
+        readOnly={isReadOnly}
+    />
+    */
+    
+    render() {
+        const attrName = this.props.attr.name;
+        const attrsOfItems = this.getAttrsOfItems(this.props.items);
+        const list = this.getList(attrName, attrsOfItems);
+        
+        return (
+            <Dropdown id={attrName + "-filter"}
+                list={list}
+                name={attrName}
+                value={this.props.filter[attrName]}
+                onChange={(e) => this.props.eventHandler.onClickFilterItem(e)}
+            />
         );
     }
 }
@@ -678,16 +794,10 @@ const UPDATE_METHOD = {
 }
 
 const UPDATE_BK_COLOR = {
-    add: "#2A9D8F",
-    delete: "#E76F51",
-    update: "#0496ff",
+    addItem: "#2A9D8F",
+    deleteItem: "#E76F51",
+    updateItem: "#0496ff",
     undo: ""
-}
-
-const ICON_CLASS = {
-    delete: "far fa-trash-alt",
-    update: "fas fa-pen",
-    undo: "fas fa-undo-alt"
 }
 
 const ATTR_TYPE = {
@@ -695,6 +805,11 @@ const ATTR_TYPE = {
     N: "N",
     B: "B",
     BOOL: "BOOL"
+}
+
+const UPDATE_CTRL_ROW = {
+    delete: "delete",
+    filter: "filter"
 }
 
 const BOOL_OPTIONS = ["true", "false"];

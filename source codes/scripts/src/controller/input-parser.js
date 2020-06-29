@@ -205,7 +205,8 @@ class InputParser {
             ]
     */
     static getExpAttrNamesAndValues(attrDefs, attrCondition) {
-        const nonKeyAttrDefs = this.getNonKeyAttrDefs(attrDefs);
+        const filteredAttrDefs = [...attrDefs].filter(attrDef => attrCondition[attrDef.name] !== undefined);
+        const nonKeyAttrDefs = this.getNonKeyAttrDefs(filteredAttrDefs);
         
         const ExpressionAttributeNames = nonKeyAttrDefs.reduce((acc, attrDef, index) => {
             acc["#name"+index.toString()] = attrDef.name;
