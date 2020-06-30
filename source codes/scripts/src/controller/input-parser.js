@@ -11,12 +11,15 @@ class InputParser {
     static getDeleteParams(params) {
         const commonParams = this.getUpdateCommonParams(params);
         const ReturnConsumedCapacity = "TOTAL";
-        const ConditionExpression = this.getCondExp("", Object.keys(commonParams.ExpressionAttributeNames).length, "AND");
+        //const ConditionExpression = this.getCondExp("", Object.keys(commonParams.ExpressionAttributeNames).length, "AND");
         const parsedParams = {
             ...commonParams,
-            ReturnConsumedCapacity,
-            ConditionExpression
+            ReturnConsumedCapacity
         };
+        
+        if(commonParams.ExpressionAttributeNames !== undefined) {
+            parsedParams.ConditionExpression = this.getCondExp("", Object.keys(commonParams.ExpressionAttributeNames).length, "AND");
+        }
         
         return parsedParams;
     }
@@ -63,13 +66,16 @@ class InputParser {
         const Key = this.getKeyConditions(attrDefs, attrCondition);
         const TableName = tableName;
         const [ExpressionAttributeNames, ExpressionAttributeValues] = this.getExpAttrNamesAndValues(attrDefs, attrCondition);
-        
+        console.log({ExpressionAttributeNames, ExpressionAttributeValues});
         const parsedParams = {
             Key,
-            TableName,
-            ExpressionAttributeNames,
-            ExpressionAttributeValues
+            TableName
         };
+        
+        if(Object.entries(ExpressionAttributeNames).length > 0) {
+            parsedParams.ExpressionAttributeNames = ExpressionAttributeNames;
+            parsedParams.ExpressionAttributeValues = ExpressionAttributeValues;
+        }
         
         return parsedParams;
     }

@@ -23,6 +23,7 @@ class ManageTableItemsView extends React.Component {
         this.handleSubmitAddAttrForm = this.handleSubmitAddAttrForm.bind(this);
         this.handleClickCancelAddAttr = this.handleClickCancelAddAttr.bind(this);
         this.handleClickFilterItem = this.handleClickFilterItem.bind(this);
+        this.handleClickClearFilter = this.handleClickClearFilter.bind(this);
         
         this.setTableData = this.setTableData.bind(this);
         
@@ -59,7 +60,8 @@ class ManageTableItemsView extends React.Component {
                     onClickDeleteAddedAttr: this.handleClickDeleteAddedAttr,
                     onChangeCheckDeleteAttr: this.handleChangeCheckDeleteAttr,
                     onClickUpdate: this.handleClickUpdate,
-                    onClickFilterItem: this.handleClickFilterItem
+                    onClickFilterItem: this.handleClickFilterItem,
+                    onClickClearFilter: this.handleClickClearFilter
                 }
             }
         }
@@ -110,15 +112,13 @@ class ManageTableItemsView extends React.Component {
         const attrs = await TableController.getAllAttrs(tableName);
         this.changeState("update", "attrs", attrs);
         this.changeState("update", "attrIdCnt", attrs.length-1);
-        
-        console.log({attrs});
     }
     
-    handleClickAddItem() {
+    async handleClickAddItem() {
         const newId = this.getNewItemId();
         const newItem = this.getEmptyNewItem(newId);
-        this.changeState("update", "itemIdCnt", newId);
-        this.changeState("update", "items", [...this.state.update.items, newItem]);
+        await this.changeState("update", "itemIdCnt", newId);
+        await this.changeState("update", "items", [...this.state.update.items, newItem]);
     }
     
     getNewItemId() {
@@ -354,9 +354,12 @@ class ManageTableItemsView extends React.Component {
         const name = e.target.name;
         const value = e.target.value;
         
+        this.changeState("update", "filter", name, value);
+    }
+    
+    handleClickClearFilter(attrName) {
         const newFilter = {...this.state.update.filter};
-        newFilter[name] = value;
-        
+        delete newFilter[attrName];
         this.changeState("update", "filter", newFilter);
     }
     
@@ -438,10 +441,49 @@ class UpdateStatus extends React.Component {
 }
 
 class UpdateItems extends React.Component {
+    getItemsToDisplay() {
+        const items = [...this.props.ctrl.items].reduce((acc, item) => {
+            const filterEntries = Object.entries(this.props.ctrl.filter);
+            const attrs = item.attrs;
+            let display = true;
+            for(let i=0; i<filterEntries.length; i++) {
+                let [name, value] = filterEntries[i];
+                const type = this.getAttrType(name);
+                switch(type) {
+                    case ATTR_TYPE.BOOL:
+                        value = BOOL_MAP[value];
+                        break;
+                    default:
+                        break;
+                }
+                if(attrs[name] != value) {
+                    display = false;
+                    break;
+                }
+            }
+            
+            if(display) {
+                acc.push(item);
+            }
+            
+            return acc;
+        }, []);
+        
+        return items;
+    }
+    
+    getAttrType(attrName) {
+        const type = this.props.ctrl.attrs.filter(attr => attr.name === attrName)
+            .map(attr => attr.type)[0];
+        
+        return type;
+    }
+    
     render() {
         const display = {
             display: (this.props.ctrl.items.length > 0) ? "block" : "none"
         }
+        const itemsToDisplay = this.getItemsToDisplay();
         
         return (
             <div>
@@ -453,7 +495,7 @@ class UpdateItems extends React.Component {
                     />
                     <tbody>
                         {
-                            this.props.ctrl.items.map(item => (
+                            itemsToDisplay.map(item => (
                                 <UpdateItemRow key={item.id}
                                     item={item}
                                     attrs={this.props.ctrl.attrs}
@@ -465,7 +507,8 @@ class UpdateItems extends React.Component {
                 </table>
                 <button style={display}
                     type="submit"
-                    onClick={(e) => this.props.ctrl.eventHandler.onClickUpdate(e)}>Update
+                    onClick={(e) => this.props.ctrl.eventHandler.onClickUpdate(e)}>
+                    Update
                 </button>
             </div>
         );
@@ -521,10 +564,6 @@ class UpdateItemHeadRows extends React.Component {
                     { deleteRows }
                 </tr>
                 <tr>
-                    <th className={UPDATE_CTRL_ROW.filter}>Filter</th>
-                    { filterRows }
-                </tr>
-                <tr>
                     <th>Name</th>
                     { nameRows }
                 </tr>
@@ -535,6 +574,10 @@ class UpdateItemHeadRows extends React.Component {
                 <tr>
                     <th>Key Type</th>
                     { keyTypeRows }
+                </tr>
+                <tr>
+                    <th className={UPDATE_CTRL_ROW.filter}>Filter</th>
+                    { filterRows }
                 </tr>
             </thead>
         );
@@ -551,6 +594,9 @@ class DeleteCtrlRow extends React.Component {
                     onClick={() => eventHandler.onClickDeleteAddedAttr(attr.id)}>
                 </i>
             );
+        }
+        else if(attr.keyType !== KEY_TYPE.NON_KEY) {
+            contents = <div></div>;
         }
         else {
             contents = (
@@ -595,29 +641,28 @@ class FilterCtrlRow extends React.Component {
         
         return list;
     }
-    /*
-    <Dropdown id={attr.name + "-input-" + this.props.item.id}
-        list={BOOL_OPTIONS}
-        name={attr.name}
-        value={this.props.item.attrs[attr.name]}
-        onChange={(e) => this.props.eventHandler.onChangeAttrValue(e, this.props.item.id)}
-        onChangeParams={[this.props.item.id]}
-        readOnly={isReadOnly}
-    />
-    */
     
     render() {
         const attrName = this.props.attr.name;
+        const attrValue = this.props.filter[attrName] !== undefined ? this.props.filter[attrName] : "";
         const attrsOfItems = this.getAttrsOfItems(this.props.items);
         const list = this.getList(attrName, attrsOfItems);
         
         return (
-            <Dropdown id={attrName + "-filter"}
-                list={list}
-                name={attrName}
-                value={this.props.filter[attrName]}
-                onChange={(e) => this.props.eventHandler.onClickFilterItem(e)}
-            />
+            <div className="filter">
+                <input type="button"
+                    name={attrName}
+                    className="clear"
+                    value="Clear"
+                    onClick={() => this.props.eventHandler.onClickClearFilter(attrName)}
+                />
+                <Dropdown id={attrName + "-filter"}
+                    list={list}
+                    name={attrName}
+                    value={attrValue}
+                    onChange={(e) => this.props.eventHandler.onClickFilterItem(e)}
+                />
+            </div>
         );
     }
 }
@@ -813,6 +858,11 @@ const UPDATE_CTRL_ROW = {
 }
 
 const BOOL_OPTIONS = ["true", "false"];
+
+const BOOL_MAP = {
+    "true": true,
+    "false": false
+};
 
 const KEY_TYPE = CommonVar.KEY_TYPE;
 

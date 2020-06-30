@@ -66,6 +66,7 @@ class DeleteTableForm extends React.Component {
         e.preventDefault();
         await this.deleteTables();
         await this.resetTables();
+        document.querySelector("#select-all").checked = false;
     }
     
     async deleteTables() {
@@ -102,7 +103,7 @@ class TableList extends React.Component {
             <table>
                 <thead>
                     <tr>
-                        <th><input type="checkbox" onChange={this.props.toggleAllCheckboxes}/></th>
+                        <th><input id="select-all" type="checkbox" onChange={this.props.toggleAllCheckboxes}/></th>
                         <th>Table Name</th>
                     </tr>
                 </thead>

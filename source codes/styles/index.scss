@@ -14,7 +14,7 @@ $green: #2A9D8F;
 $light-green: lighten($green, 25%);
 $red: #E76F51;
 $bright-blue: #0496ff;
-$light-blue: lighten($bright-blue, 35%);
+$light-blue: lighten($bright-blue, 25%);
 
 @mixin lightenOnHover($color) {
     background-color: $color;
@@ -620,7 +620,7 @@ button,input[type=submit] {
         overflow: auto;
     }
     
-    .dropdown-list > input {
+    .dropdown-list>input, .dropdown-list>a {
         width: inherit;
         display: block;
         cursor: pointer;
@@ -721,7 +721,7 @@ table#update-items {
         &:first-child {
             left: 0;
             z-index: 1;
-            background-color: lighten($bright-blue, 25%);
+            background-color: $light-blue;
         }
     }
     
@@ -845,8 +845,12 @@ table#update-items {
     }
     
     input:read-only {
-        background-color: #b3b3b3;
+        background-color: #b3b3b3 !important;
         cursor: default;
+    }
+    
+    input:-webkit-autofill {
+        background-color: "" !important;
     }
     
     .is-key {
@@ -881,4 +885,15 @@ input.choosable {
 
 .dropdown-list > input {
     background-color: $light-green !important;
+}
+
+.filter {
+    .clear {
+        display: block;
+        width: 60px !important;
+        margin: 3px 0px 3px 3px;
+        border-radius: 10px;
+        background-color: $green;
+        color: white;
+    }
 }

@@ -56,6 +56,11 @@ class ResultParser {
                     {"AttributeName": "A1", "KeyType": "HASH"},
                     {"AttributeName": "A2", "KeyType": "RANGE"}
                 ]
+            attrDefs =>
+                [
+                    {"AttributeName": "A", "AttributeType": "S"},
+                    {"AttributeName": "B", "AttributeType": "BOOL"}
+                ]
         Output:
             [
                 { id: 0, name: "A", type: "S", keyType: "HASH" },
@@ -63,73 +68,110 @@ class ResultParser {
                 { id: 2, name: "C", type: "N", keyType: "NON-KEY" }
             ]
     */
-    static getAttrsOfView(items, keySchema) {
-        const attrNameKeyMap = this.getAttrNameKeyMap(keySchema);
-        
-        const attrNameTypeMap = this.getAttrNameTypeMap(items);
-        
-        const unsortedAttrs = Object.entries(attrNameTypeMap).map((attrNameTypeMap, index) => {
-            const [name, type] = attrNameTypeMap;
-            const keyType = Object.keys(attrNameKeyMap).includes(name) ? attrNameKeyMap[name] : "NON-KEY";
-            const attr = {
-                name: name,
-                type: type,
-                keyType: keyType
-            }
-            return attr;
-        });
-        
+    static getAttrsOfView(items, keySchema, attrDefs) {
+        const unsortedAttrs = this.getAttrs(items, keySchema, attrDefs);
         const sortedAttrs = unsortedAttrs.sort(this.sortAttrs);
-        
         const attrs = sortedAttrs.map((attr, index) => ({id: index, ...attr}));
         
         return attrs;
     }
     
+    static getAttrs(items, keySchema, attrDefs) {
+        const attrsOfKeys = this.getAttrsByKeys(keySchema, attrDefs);
+        const attrsOfItems = this.getAttrsByItems(items, keySchema);
+        const attrs = [...attrsOfKeys, ...attrsOfItems];
+        
+        return attrs;
+    }
+    
+    /*
+        Input:
+            keySchema => 
+                [
+                    {"AttributeName": "A1", "KeyType": "HASH"},
+                    {"AttributeName": "A2", "KeyType": "RANGE"}
+                ]
+            attrDefs =>
+                [
+                    {"AttributeName": "A", "AttributeType": "S"},
+                    {"AttributeName": "B", "AttributeType": "BOOL"}
+                ]
+        Output:
+            [
+                { name: "A", type: "S", keyType: "HASH" },
+                { name: "B", type: "BOOL", keyType: "RANGE" }
+            ]
+    */
+    static getAttrsByKeys(keySchema, attrDefs) {
+        const attrs = keySchema.reduce((acc, key) => {
+            const name = key.AttributeName;
+            const type = attrDefs.filter(attrDef => attrDef.AttributeName === name)
+                .map(attrDef => attrDef.AttributeType)[0];
+            const keyType = key.KeyType;
+            
+            const attr = {name, type, keyType};
+            acc.push(attr);
+            return acc;
+        }, []);
+        
+        return attrs;
+    }
+    
+    /*
+        Input:
+            items =>
+                [
+                    { "A": { "S": "A1" }, "B": { "BOOL": true }, "C": { "N": "1" } },
+                    { "A": { "S": "A2" }, "B": { "BOOL": false }, "C": { "N": "2" } }
+                ]
+            keySchema => 
+                [
+                    {"AttributeName": "A1", "KeyType": "HASH"},
+                    {"AttributeName": "A2", "KeyType": "RANGE"}
+                ]
+        Output:
+            [
+                { name: "C", type: "N", keyType: "NON-KEY" }
+            ]
+    */
+    static getAttrsByItems(items, keySchema) {
+        const keyType = KEY_TYPE.NON_KEY;
+        let names = [];
+        const keyNames = this.getKeyNames(keySchema);
+        const attrs = items.reduce((acc, item) => {
+            Object.entries(item).forEach(itemEntry => {
+                const [name, typeToValue] = itemEntry;
+                if(!names.includes(name) && !keyNames.includes(name)) {
+                    names.push(name);
+                    const type = Object.keys(typeToValue)[0];
+                    const attr = {name, type, keyType};
+                    acc.push(attr);
+                }
+            });
+            return acc;
+        }, []);
+        
+        return attrs;
+    }
+    
+    /*
+        Input:
+            keySchema => 
+                [
+                    {"AttributeName": "A1", "KeyType": "HASH"},
+                    {"AttributeName": "A2", "KeyType": "RANGE"}
+                ]
+        Output:
+            [ "A1", "A2" ]
+    */
+    static getKeyNames(keySchema) {
+        const keyNames = keySchema.map(key => key.AttributeName);
+        
+        return keyNames;
+    }
+    
     static sortAttrs(v1, v2) {
         return KEY_TYPE_VALUE[v1.keyType] < KEY_TYPE_VALUE[v2.keyType] ? 1 : -1;
-    }
-    
-    /*
-        Input:
-            [
-                {"AttributeName": "A1", "KeyType": "HASH"},
-                {"AttributeName": "A2", "KeyType": "RANGE"}
-            ],
-        Output:
-            { "A1": "HASH", "A2": "RANGE" }
-    */
-    static getAttrNameKeyMap(keySchema) {
-        const map = keySchema.reduce((accumulator, schema) => {
-            accumulator[schema.AttributeName] = schema.KeyType;
-            return accumulator;
-        }, {});
-        
-        return map;
-    }
-    
-    /*
-        Input:
-            [
-                { "Key1": { "S": "K1" }, "Key2": { "BOOL": true }, "NonKey1": { "S": "NK1" } },
-                { "Key1": { "S": "K2" }, "Key2": { "BOOL": false }, "NonKey2": { "BOOL": false } }
-            ]
-        Output:
-            { "Key1": "S", "Key2": "BOOL", "NonKey1": "S", "NonKey2": "BOOL" }
-    */
-    static getAttrNameTypeMap(items) {
-        const map = items.reduce((accumulator, item) => {
-            const tmpMap = Object.entries(item).reduce((accumulator, attrInfo) => {
-                const [name, typeToValue] = attrInfo;
-                const type = Object.keys(typeToValue)[0];
-                accumulator[name] = type;
-                return accumulator;
-            }, accumulator);
-            
-            return accumulator;
-        }, {});
-        
-        return map;
     }
 }
 

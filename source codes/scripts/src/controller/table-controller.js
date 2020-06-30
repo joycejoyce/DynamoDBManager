@@ -23,7 +23,7 @@ class TableController {
         };
         const describeResult = await this.callModelFunc(describeParams, FuncNames.describe);
         
-        const attrs = ResultParser.getAttrsOfView(scanResult.data.Items, describeResult.data.Table.KeySchema);
+        const attrs = ResultParser.getAttrsOfView(scanResult.data.Items, describeResult.data.Table.KeySchema, describeResult.data.Table.AttributeDefinitions);
         
         return attrs;
     }
@@ -69,6 +69,7 @@ class TableController {
     
     static async deleteItem(params) {
         const parsedParams = InputParser.getDeleteParams(params);
+        console.log("(delete)", parsedParams);
         const result = await this.callModelFunc(parsedParams, FuncNames.deleteItem);
 
         return result;
