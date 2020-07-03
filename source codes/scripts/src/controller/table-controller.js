@@ -69,7 +69,6 @@ class TableController {
     
     static async deleteItem(params) {
         const parsedParams = InputParser.getDeleteParams(params);
-        console.log("(delete)", parsedParams);
         const result = await this.callModelFunc(parsedParams, FuncNames.deleteItem);
 
         return result;

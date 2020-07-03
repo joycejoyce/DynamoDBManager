@@ -626,11 +626,8 @@ class DeleteCtrlRow extends React.Component {
 class FilterCtrlRow extends React.Component {
     getList(attrName) {
         const attrsOfItems = this.getAttrsOfItems(this.props.items);
-        console.log({attrsOfItems});
         const list = attrsOfItems.reduce((acc, attrs) => {
-            //const attrValue = attrs[attrName];
             const attrValue = this.getAttrValue(attrName, attrs);
-            console.log({attrValue});
             if(acc.indexOf(attrValue) === -1) {
                 acc.push(attrValue);
             }

@@ -66,7 +66,6 @@ class InputParser {
         const Key = this.getKeyConditions(attrDefs, attrCondition);
         const TableName = tableName;
         const [ExpressionAttributeNames, ExpressionAttributeValues] = this.getExpAttrNamesAndValues(attrDefs, attrCondition);
-        console.log({ExpressionAttributeNames, ExpressionAttributeValues});
         const parsedParams = {
             Key,
             TableName
