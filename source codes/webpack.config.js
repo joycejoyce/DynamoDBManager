@@ -39,10 +39,10 @@ module.exports = {
         ]
     },
     //增加一個給devserver的設定
-    devServer: {
+    /*devServer: {
         //指定開啟port為9000
         port: 9000
-    },
+    },*/
     plugins: [
         new MiniCssExtractPlugin({
             // 指定輸出位置

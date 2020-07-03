@@ -1,0 +1,590 @@
+/* colors */
+outer-elem-color, html {
+  background-color: #2A9D8F;
+  color: #e8c468; }
+
+inner-elem-color, #main-pages > * {
+  background-color: #e8c468;
+  color: #264653; }
+
+inner2-elem-color, .collapsible {
+  background-color: inherit;
+  color: #264653; }
+
+add-btn-color, button#add-attr-ctrl-item-btn, input#add-attr-ctrl-item-btn[type=submit], input#add-attr-ctrl-item-btn[type=button] {
+  background-color: #0496ff; }
+  add-btn-color:hover, button#add-attr-ctrl-item-btn:hover, input#add-attr-ctrl-item-btn:hover[type=submit], input#add-attr-ctrl-item-btn[type=submit][type=text]:focus, input#add-attr-ctrl-item-btn:hover[type=button], input#add-attr-ctrl-item-btn[type=button][type=text]:focus {
+    background-color: #37abff; }
+
+del-btn-color {
+  background-color: #E76F51; }
+  del-btn-color:hover {
+    background-color: #ed947e; }
+
+/* font-size */
+/* font-family */
+/* border */
+/* width / height */
+/* box-shadow */
+/* animation */
+collapsible-animate, .collapsible .collapsible-contents, #query-table-form #query {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out; }
+
+/* padding */
+html {
+  font-size: 16px;
+  font-family: "Nunito", sans-serif;
+  width: 100vw;
+  height: 100vh; }
+
+header {
+  text-align: center;
+  font-size: 3rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+  margin: 5vh; }
+
+h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+  font-size: 1.3rem; }
+
+input[type=text] {
+  width: inherit;
+  font-size: 1rem;
+  outline: none;
+  padding-top: 8px;
+  padding-right: 12px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  border: 1px solid #b3b3b3;
+  border-radius: 5px;
+  transition: 0.1s;
+  font-family: "Nunito", sans-serif;
+  background-color: white; }
+  input[type=text]:hover, input[type=text]:focus {
+    box-shadow: 0 0 0 4px #6ed8cb; }
+  input[type=text]:focus {
+    border-color: #2A9D8F; }
+
+textarea {
+  resize: none;
+  padding: 10px;
+  border: 1px solid #b3b3b3;
+  border-radius: 10px;
+  font-family: "Nunito", sans-serif;
+  font-size: 1rem;
+  display: block; }
+  textarea:focus {
+    outline: none; }
+
+table {
+  border-spacing: 5px; }
+  table th {
+    font-weight: normal; }
+  table td {
+    vertical-align: middle; }
+
+button, input[type=submit], input[type=button] {
+  font-family: "Nunito", sans-serif;
+  font-size: 1rem;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  color: white;
+  transition: 0.3s;
+  background-color: #0496ff; }
+  button:disabled, input[type=submit]:disabled, input[type=button]:disabled {
+    cursor: no-drop;
+    color: #a6a6a6 !important;
+    background-color: white !important; }
+  button#delete-all-attr-ctrl-item-btn, button#delete-all-cond-btn, input[type=submit]#delete-all-attr-ctrl-item-btn, input[type=submit]#delete-all-cond-btn, input[type=button]#delete-all-attr-ctrl-item-btn, input[type=button]#delete-all-cond-btn {
+    background-color: #E76F51; }
+    button#delete-all-attr-ctrl-item-btn:hover, button#delete-all-cond-btn:hover, input[type=submit]#delete-all-attr-ctrl-item-btn:hover, input[type=submit]#delete-all-attr-ctrl-item-btn[type=text]:focus, input[type=submit]#delete-all-cond-btn:hover, input[type=submit]#delete-all-cond-btn[type=text]:focus, input[type=button]#delete-all-attr-ctrl-item-btn:hover, input[type=button]#delete-all-attr-ctrl-item-btn[type=text]:focus, input[type=button]#delete-all-cond-btn:hover, input[type=button]#delete-all-cond-btn[type=text]:focus {
+      background-color: #ed947e; }
+  button#create-table-page-btn, input[type=submit]#create-table-page-btn, input[type=button]#create-table-page-btn {
+    background-color: #2A9D8F; }
+    button#create-table-page-btn:hover, input[type=submit]#create-table-page-btn:hover, input[type=submit]#create-table-page-btn[type=text]:focus, input[type=button]#create-table-page-btn:hover, input[type=button]#create-table-page-btn[type=text]:focus {
+      background-color: #1f756a; }
+  button#create-tbl-btn, input[type=submit]#create-tbl-btn, input[type=button]#create-tbl-btn {
+    background-color: #2A9D8F; }
+    button#create-tbl-btn:hover, input[type=submit]#create-tbl-btn:hover, input[type=submit]#create-tbl-btn[type=text]:focus, input[type=button]#create-tbl-btn:hover, input[type=button]#create-tbl-btn[type=text]:focus {
+      background-color: #35c5b4; }
+
+#delete-table .collapsible-btn {
+  background-color: #E76F51; }
+  #delete-table .collapsible-btn:hover, #delete-table input.collapsible-btn[type=text]:focus {
+    background-color: #e14a24; }
+
+#delete-table #delete-table-form {
+  padding: 0px 10px 10px;
+  overflow: auto;
+  max-height: 60%; }
+  #delete-table #delete-table-form > * {
+    margin-top: 10px; }
+  #delete-table #delete-table-form #table-num {
+    color: #E76F51;
+    font-weight: bold; }
+  #delete-table #delete-table-form button {
+    display: block; }
+    #delete-table #delete-table-form button#refresh {
+      background-color: #0496ff; }
+    #delete-table #delete-table-form button#delete {
+      background-color: #E76F51;
+      margin-left: auto; }
+  #delete-table #delete-table-form table {
+    width: 590px;
+    margin: 5px auto; }
+    #delete-table #delete-table-form table tr:nth-child(even) {
+      background-color: white; }
+    #delete-table #delete-table-form table, #delete-table #delete-table-form table th, #delete-table #delete-table-form table td {
+      border-bottom: 1px solid #cccccc;
+      border-collapse: collapse; }
+    #delete-table #delete-table-form table td, #delete-table #delete-table-form table th {
+      padding: 10px; }
+    #delete-table #delete-table-form table th {
+      text-align: left;
+      border-bottom: 3px solid #E76F51;
+      font-weight: bold;
+      font-family: "Montserrat", sans-serif; }
+    #delete-table #delete-table-form table tr:last-child td {
+      border-bottom: 3px solid #E76F51; }
+    #delete-table #delete-table-form table input {
+      transform: scale(1.3);
+      border: 1px solid #cccccc; }
+      #delete-table #delete-table-form table input:hover, #delete-table #delete-table-form table input[type=text]:focus {
+        cursor: pointer; }
+
+#container {
+  margin: 0 auto;
+  width: 700px; }
+
+#main-tabs {
+  background-color: white;
+  overflow: hidden; }
+  #main-tabs > button {
+    outline: none;
+    color: #264653;
+    border-radius: 0;
+    font-size: 1.3rem;
+    font-weight: bold;
+    float: left;
+    background-color: inherit; }
+    #main-tabs > button:hover {
+      background-color: #cccccc; }
+    #main-tabs > button.active {
+      background-color: #b3b3b3; }
+
+#main-pages > * {
+  display: none;
+  padding: 12px 12px; }
+
+#main-pages > .active {
+  display: block; }
+
+.fa-caret-down, .fa-caret-up {
+  position: absolute;
+  right: 8px; }
+
+#create-table-form {
+  padding: 0px 10px 10px; }
+
+.delete-attr-ctrl-item-btn {
+  width: 20px; }
+
+.attribute-control-item > * {
+  display: inline-block; }
+
+.attribute-type-list {
+  display: none;
+  position: absolute; }
+
+.attribute-type-list > a {
+  display: block; }
+
+.confirm-container {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 2;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  background-color: black;
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+  padding-top: 60px; }
+  .confirm-container .confirm-page {
+    position: relative;
+    margin: auto;
+    padding: 10px 10px;
+    border-radius: 5px;
+    background-color: white; }
+    .confirm-container .confirm-page .confirm-contents {
+      width: 90%;
+      position: absolute;
+      overflow: visible;
+      margin: auto;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0; }
+      .confirm-container .confirm-page .confirm-contents .confirm-msg, .confirm-container .confirm-page .confirm-contents h1 {
+        font-weight: normal;
+        text-align: center; }
+      .confirm-container .confirm-page .confirm-contents button {
+        position: absolute;
+        width: 100px;
+        bottom: 10px; }
+        .confirm-container .confirm-page .confirm-contents button.yes {
+          background-color: #E76F51;
+          right: 5%; }
+        .confirm-container .confirm-page .confirm-contents button.no, .confirm-container .confirm-page .confirm-contents button.cancel {
+          background-color: #b3b3b3;
+          left: 5%; }
+        .confirm-container .confirm-page .confirm-contents button.copy {
+          background-color: #2A9D8F;
+          left: 5%; }
+        .confirm-container .confirm-page .confirm-contents button.ok {
+          background-color: #0496ff;
+          right: 5%; }
+
+#delete-all-attr-ctrl-items .confirm-page {
+  width: 500px;
+  height: 100px; }
+
+.confirm-container#create-table .confirm-page {
+  width: 500px;
+  height: 500px; }
+  .confirm-container#create-table .confirm-page .confirm-contents textarea {
+    resize: none;
+    padding: 10px;
+    border: 1px solid #b3b3b3;
+    border-radius: 10px;
+    position: absolute;
+    font-family: "Nunito", sans-serif;
+    font-size: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    width: 90%;
+    height: 70%; }
+    .confirm-container#create-table .confirm-page .confirm-contents textarea:focus {
+      outline: none; }
+
+.confirm-page-animate {
+  -webkit-animation: animatezoom 0.3s;
+  animation: animatezoom 0.3s; }
+
+@-webkit-keyframes animatezoom {
+  from {
+    -webkit-transform: scale(0); }
+  to {
+    -webkit-transform: scale(1); } }
+
+@keyframes animatezoom {
+  from {
+    transform: scale(0); }
+  to {
+    transform: scale(1); } }
+
+#provisioned-throughput-tbl input {
+  width: 100px; }
+
+#create-tbl-btn {
+  display: block;
+  margin-left: auto; }
+
+.collapsible {
+  width: 630px;
+  margin: auto; }
+  .collapsible .collapsible-btn {
+    font-size: 1.1rem;
+    border-radius: 0;
+    width: 630px;
+    padding: 10px 12px;
+    display: block;
+    cursor: pointer;
+    text-align: center;
+    position: relative; }
+    .collapsible .collapsible-btni {
+      position: absolute;
+      right: 6px; }
+  .collapsible .collapsible-contents {
+    width: 630px; }
+    .collapsible .collapsible-contents * :not(button):not(input) {
+      color: #264653; }
+  .collapsible#create-table {
+    border: 3px solid #2A9D8F; }
+  .collapsible#delete-table {
+    border: 3px solid #E76F51; }
+
+.middle {
+  height: 10px; }
+
+.confirm-msg {
+  color: #264653; }
+
+#query-table-form button[type=button] {
+  margin-right: 5px; }
+
+#query-table-form #add-query-condition-btn {
+  background-color: #0496ff; }
+
+#main-page-4 input {
+  margin-right: 5px; }
+
+#main-page-4 input[type="submit"], #main-page-4 button {
+  color: white;
+  background-color: #0496ff; }
+
+#main-page-4 textarea {
+  width: 100%;
+  height: 35%;
+  cursor: default;
+  overflow: visible; }
+
+#main-page-4 table {
+  color: #264653; }
+
+#query-form #conditions table#cond-ctrl-items {
+  color: #264653; }
+  #query-form #conditions table#cond-ctrl-items td {
+    text-align: center; }
+    #query-form #conditions table#cond-ctrl-items td .dropdown-list > * {
+      text-align: left; }
+
+#query-form #conditions #add-btn {
+  background-color: #0496ff; }
+
+#query-form #conditions #delete-all-btn {
+  background-color: #E76F51; }
+
+#query-form #conditions button {
+  margin-right: 5px; }
+
+#query-form #conditions .delete-cond-ctrl-item-btn {
+  max-width: 20px; }
+
+button:disabled, input[type=submit]:disabled {
+  cursor: no-drop;
+  color: #a6a6a6 !important;
+  background-color: white !important; }
+
+.dropdown {
+  position: relative; }
+  .dropdown > * {
+    width: 170px; }
+  .dropdown .dropdown-btn-container {
+    position: relative; }
+    .dropdown .dropdown-btn-container .dropdown-btn {
+      cursor: default; }
+    .dropdown .dropdown-btn-container .fa, .dropdown .dropdown-btn-container .fas {
+      display: inline-block;
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      margin: auto;
+      transform: translateY(-60%); }
+  .dropdown .dropdown-list {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    transform: translateY(5px);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: white;
+    max-height: 35vh;
+    overflow: auto; }
+  .dropdown .dropdown-list > input, .dropdown .dropdown-list > a {
+    width: inherit;
+    display: block;
+    cursor: pointer;
+    background-color: #6ed8cb;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 0px; }
+    .dropdown .dropdown-list > input:not(:first-child), .dropdown .dropdown-list > a:not(:first-child) {
+      margin-top: 2px; }
+    .dropdown .dropdown-list > input:hover, .dropdown .dropdown-list > input[type=text]:focus, .dropdown .dropdown-list > a:hover {
+      box-shadow: none; }
+
+section#update-table-items button {
+  margin-bottom: 10px;
+  margin-right: 10px; }
+
+table {
+  color: #264653; }
+  table td {
+    padding: 3px;
+    font-size: 1.1rem; }
+
+.delete-btn {
+  width: 20px;
+  cursor: pointer; }
+
+.stress {
+  font-weight: bold;
+  color: #0496ff; }
+
+section#update button {
+  margin-right: 5px;
+  margin-bottom: 5px; }
+
+section#update input {
+  width: 140px;
+  padding: 3px; }
+
+section#update .dropdown > * {
+  width: 140px; }
+
+section#update input:focus, section#update input:hover, section#update input[type=text]:focus {
+  box-shadow: none;
+  border: none; }
+
+section#update button[type="submit"] {
+  margin: 10px 0 0 auto;
+  background-color: #2A9D8F;
+  display: block; }
+
+table#update-status {
+  border-radius: 5px;
+  border: 3px solid #0496ff;
+  margin-bottom: 5px; }
+  table#update-status td, table#update-status th {
+    border: none;
+    font-size: 0.99rem;
+    padding: 1px; }
+
+table#update-items {
+  max-height: 60vh;
+  border-collapse: separate;
+  border-spacing: 0 3px;
+  overflow: auto; }
+  table#update-items th {
+    white-space: nowrap;
+    font-weight: bold;
+    text-align: start;
+    padding-left: 5px;
+    position: sticky;
+    top: 0; }
+    table#update-items th:first-child {
+      left: 0;
+      z-index: 1;
+      background-color: #84cbff; }
+  table#update-items .checkbox {
+    display: block;
+    position: relative;
+    padding-left: 45px;
+    margin-bottom: 23px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* Hide the browser's default checkbox */
+    /* Create a custom checkbox */ }
+    table#update-items .checkbox input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0; }
+    table#update-items .checkbox .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 20px;
+      width: 20px;
+      background-color: #eee;
+      border-radius: 3px;
+      border: 2px solid #f0a794; }
+      table#update-items .checkbox .checkmark:after {
+        /* Create the checkmark/indicator (hidden when not checked) */
+        content: "";
+        position: absolute;
+        display: none;
+        /* Style the checkmark/indicator */
+        left: 7px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg); }
+    table#update-items .checkbox:hover input ~ .checkmark, table#update-items input.checkbox[type=text]:focus input ~ .checkmark {
+      background-color: #f0a794; }
+    table#update-items .checkbox input:checked ~ .checkmark {
+      background-color: #E76F51; }
+      table#update-items .checkbox input:checked ~ .checkmark:after {
+        display: block; }
+  table#update-items thead tr td, table#update-items thead tr th {
+    border-bottom: 1px solid #0496ff; }
+  table#update-items thead tr:nth-child(2) td, table#update-items thead tr:nth-child(2) th {
+    border-top: 3px solid #0496ff; }
+  table#update-items thead tr:last-child td, table#update-items thead tr:last-child th {
+    border-bottom: 3px solid #0496ff; }
+  table#update-items thead tr th {
+    padding-right: 8px; }
+  table#update-items thead tr:first-child td, table#update-items thead tr:first-child th {
+    border: none; }
+  table#update-items thead .fa-times {
+    color: #E76F51;
+    display: block;
+    font-size: 1.5rem; }
+  table#update-items thead .delete {
+    background-color: #E76F51; }
+  table#update-items td {
+    font-weight: normal; }
+  table#update-items .dropdown-list {
+    width: inherit; }
+  table#update-items i {
+    cursor: pointer; }
+  table#update-items input:read-only {
+    background-color: #b3b3b3;
+    cursor: default; }
+  table#update-items input:-webkit-autofill {
+    background-color: "" !important; }
+  table#update-items .is-key {
+    color: #0496ff;
+    font-weight: bold; }
+  table#update-items .deleted-attr {
+    background-color: #E76F51; }
+
+input.choosable {
+  background-color: white !important; }
+
+#add-attr .confirm-page {
+  width: 280px;
+  height: 200px; }
+
+#add-attr table {
+  margin: 10px auto; }
+
+#add-attr input:focus, #add-attr input:hover, #add-attr input[type=text]:focus {
+  border: 1px solid #b3b3b3 !important;
+  border-radious: 3px; }
+
+.dropdown-list > input {
+  background-color: #6ed8cb !important; }
+
+.filter .clear {
+  display: block;
+  width: 60px !important;
+  margin: 3px 0px 3px 3px;
+  border-radius: 10px;
+  background-color: #2A9D8F;
+  color: white; }
+

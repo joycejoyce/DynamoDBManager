@@ -624,15 +624,13 @@ class DeleteCtrlRow extends React.Component {
 }
 
 class FilterCtrlRow extends React.Component {
-    getAttrsOfItems(items) {
-        const itemAttrs = items.map(item => item.attrs);
-        
-        return itemAttrs;
-    }
-    
-    getList(attrName, attrsOfItems) {
+    getList(attrName) {
+        const attrsOfItems = this.getAttrsOfItems(this.props.items);
+        console.log({attrsOfItems});
         const list = attrsOfItems.reduce((acc, attrs) => {
-            const attrValue = attrs[attrName];
+            //const attrValue = attrs[attrName];
+            const attrValue = this.getAttrValue(attrName, attrs);
+            console.log({attrValue});
             if(acc.indexOf(attrValue) === -1) {
                 acc.push(attrValue);
             }
@@ -642,11 +640,32 @@ class FilterCtrlRow extends React.Component {
         return list;
     }
     
+    getAttrsOfItems(items) {
+        const itemAttrs = items.map(item => item.attrs);
+        
+        return itemAttrs;
+    }
+    
+    getAttrValue(attrName, attrs) {
+        let attrValue = attrs[attrName];
+        if(typeof attrValue === "boolean") {
+            const entries = Object.entries(BOOL_MAP);
+            for(let i=0; i<entries.length; i++) {
+                const [strVal, boolVal] = entries[i];
+                if(attrValue === boolVal) {
+                    attrValue = strVal;
+                    break;
+                }
+            }
+        }
+        
+        return attrValue;
+    }
+    
     render() {
         const attrName = this.props.attr.name;
         const attrValue = this.props.filter[attrName] !== undefined ? this.props.filter[attrName] : "";
-        const attrsOfItems = this.getAttrsOfItems(this.props.items);
-        const list = this.getList(attrName, attrsOfItems);
+        const list = this.getList(attrName);
         
         return (
             <div className="filter">
