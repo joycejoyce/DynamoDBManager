@@ -93,7 +93,7 @@
 /*! exports provided: cognito, default */
 /***/ (function(module) {
 
-eval("module.exports = JSON.parse(\"{\\\"cognito\\\":{\\\"RESION\\\":\\\"us-east-1\\\",\\\"IDENTITY_POOL_ID\\\":\\\"us-east-1:2a20d46a-0260-4c08-8dd1-8867c3177e91\\\"}}\");\n\n//# sourceURL=webpack:///./config.json?");
+eval("module.exports = JSON.parse(\"{\\\"cognito\\\":{\\\"RESION\\\":\\\"ap-southeast-1\\\",\\\"IDENTITY_POOL_ID\\\":\\\"ap-southeast-1:51bef89a-596b-49ff-b420-087817c1964d\\\"}}\");\n\n//# sourceURL=webpack:///./config.json?");
 
 /***/ }),
 
